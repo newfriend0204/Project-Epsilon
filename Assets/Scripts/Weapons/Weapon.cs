@@ -116,7 +116,12 @@ namespace ProjectEpsilon {
 			if (_fireCooldown.ExpiredOrNotRunning(Runner) == false)
 				return;
 
-			IsReloading = true;
+			if (Type == EWeaponType.Shotgun) {
+                Animator.SetTrigger("ReturnReload");
+                ReloadingSound.Play();
+            }
+
+            IsReloading = true;
 			_fireCooldown = TickTimer.CreateFromSeconds(Runner, ReloadTime);
 		}
 
@@ -179,10 +184,13 @@ namespace ProjectEpsilon {
 				RemainingAmmo -= reloadAmmo;
 
 				if (Type == EWeaponType.Shotgun && ClipAmmo != MaxClipAmmo) {
-					Reload();
+                    Animator.SetBool("ReloadEnd", false);
+                    Reload();
+				} else if (Type == EWeaponType.Shotgun && ClipAmmo == MaxClipAmmo) {
+					Animator.SetBool("ReloadEnd", true);
 				}
 
-				_fireCooldown = TickTimer.CreateFromSeconds(Runner, 0.25f);
+				_fireCooldown = TickTimer.CreateFromSeconds(Runner, 0.5f);
 			}
 		}
 
@@ -210,7 +218,11 @@ namespace ProjectEpsilon {
 
 				_reloadingVisible = IsReloading;
 			}
-		}
+
+            if (Type == EWeaponType.Shotgun && ClipAmmo == MaxClipAmmo) {
+                Animator.SetBool("ReloadEnd", true);
+            }
+        }
 
 		private void FireProjectile(Vector3 firePosition, Vector3 fireDirection) {
 			var projectileData = new ProjectileData();
