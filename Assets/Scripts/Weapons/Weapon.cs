@@ -14,33 +14,33 @@ namespace ProjectEpsilon {
 		public EWeaponType Type;
 
 		[Header("Fire Setup")]
-		public bool      IsAutomatic = true;
-		public float     Damage = 10f;
-		public int       FireRate = 100;
+		public bool IsAutomatic = true;
+		public float Damage = 10f;
+		public int FireRate = 100;
 		[Range(1, 20)]
-		public int       ProjectilesPerShot = 1;
-		public float     Dispersion = 0f;
+		public int ProjectilesPerShot = 1;
+		public float Dispersion = 0f;
 		public LayerMask HitMask;
-		public float     MaxHitDistance = 100f;
+		public float MaxHitDistance = 100f;
 
 		[Header("Ammo")]
-		public int   MaxClipAmmo = 12;
-		public int   StartAmmo = 25;
+		public int MaxClipAmmo = 12;
+		public int StartAmmo = 25;
 		public float ReloadTime = 2f;
 
 		[Header("Visuals")]
-		public Sprite     Icon;
-		public string     Name;
-		public Animator   Animator;
+		public Sprite Icon;
+		public string Name;
+		public Animator Animator;
 		[FormerlySerializedAs("WeaponVisual")]
 		public GameObject FirstPersonVisual;
 		public GameObject ThirdPersonVisual;
 
 		[Header("Fire Effect")]
 		[FormerlySerializedAs("MuzzleTransform")]
-		public Transform        FirstPersonMuzzleTransform;
-		public Transform        ThirdPersonMuzzleTransform;
-		public GameObject       MuzzleEffectPrefab;
+		public Transform FirstPersonMuzzleTransform;
+		public Transform ThirdPersonMuzzleTransform;
+		public GameObject MuzzleEffectPrefab;
 		public ProjectileVisual ProjectileVisualPrefab;
 
 		[Header("Sounds")]
@@ -170,9 +170,17 @@ namespace ProjectEpsilon {
 
 				int reloadAmmo = MaxClipAmmo - ClipAmmo;
 				reloadAmmo = Mathf.Min(reloadAmmo, RemainingAmmo);
+				
+				if (Type == EWeaponType.Shotgun) {
+					reloadAmmo = 1;
+				}
 
 				ClipAmmo += reloadAmmo;
 				RemainingAmmo -= reloadAmmo;
+
+				if (Type == EWeaponType.Shotgun && ClipAmmo != MaxClipAmmo) {
+					Reload();
+				}
 
 				_fireCooldown = TickTimer.CreateFromSeconds(Runner, 0.25f);
 			}

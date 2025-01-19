@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace ProjectEpsilon {
     public class Weapons : NetworkBehaviour {
-		public Animator    Animator;
-	    public Transform   FireTransform;
-	    public float       WeaponSwitchTime = 1f;
+		public Animator Animator;
+	    public Transform FireTransform;
+	    public float WeaponSwitchTime = 1f;
 	    public AudioSource SwitchSound;
 
 	    public bool IsSwitching => _switchTimer.ExpiredOrNotRunning(Runner) == false;
