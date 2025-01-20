@@ -1,35 +1,36 @@
 using UnityEngine;
 using Fusion;
 using Fusion.Addons.SimpleKCC;
+using UnityEngine.InputSystem;
 using Cinemachine;
 
 namespace ProjectEpsilon {
     [DefaultExecutionOrder(-5)]
 	public class Player : NetworkBehaviour {
 		[Header("Components")]
-		public SimpleKCC     KCC;
-		public Weapons       Weapons;
-		public Health        Health;
-		public Animator      Animator;
-		public HitboxRoot    HitboxRoot;
+		public SimpleKCC KCC;
+		public Weapons Weapons;
+		public Health Health;
+		public Animator Animator;
+		public HitboxRoot HitboxRoot;
 
 		[Header("Setup")]
-		public float         MoveSpeed = 6f;
-		public float         JumpForce = 10f;
-		public AudioSource   JumpSound;
-		public AudioClip[]   JumpClips;
-		public Transform     CameraHandle;
-		public GameObject    FirstPersonRoot;
-		public GameObject    ThirdPersonRoot;
+		public float MoveSpeed = 6f;
+		public float JumpForce = 10f;
+		public AudioSource JumpSound;
+		public AudioClip[] JumpClips;
+		public Transform CameraHandle;
+		public GameObject FirstPersonRoot;
+		public GameObject ThirdPersonRoot;
 		public NetworkObject SprayPrefab;
 
 		[Header("Movement")]
-		public float         UpGravity = 15f;
-		public float         DownGravity = 25f;
-		public float         GroundAcceleration = 55f;
-		public float         GroundDeceleration = 25f;
-		public float         AirAcceleration = 25f;
-		public float         AirDeceleration = 1.3f;
+		public float UpGravity = 15f;
+		public float DownGravity = 25f;
+		public float GroundAcceleration = 55f;
+		public float GroundDeceleration = 25f;
+		public float AirAcceleration = 25f;
+		public float AirDeceleration = 1.3f;
 
 		[Networked]
 		private NetworkButtons _previousButtons { get; set; }
@@ -38,9 +39,12 @@ namespace ProjectEpsilon {
 		[Networked]
 		private Vector3 _moveVelocity { get; set; }
 
+		internal bool isAiming = false;
+
 		private int _visibleJumpCount;
 
 		private SceneObjects _sceneObjects;
+
 
 		public void PlayFireEffect(){
 			if (Mathf.Abs(GetAnimationMoveVelocity().x) > 0.2f)
@@ -88,6 +92,13 @@ namespace ProjectEpsilon {
 				MovePlayer();
 				RefreshCamera();
 			}
+
+			float saveSpeed = 6.0f;
+			if (isAiming) {
+				saveSpeed -= 0.5f;
+			}
+			MoveSpeed = saveSpeed;
+
 		}
 
 		public override void Render() {
@@ -156,6 +167,12 @@ namespace ProjectEpsilon {
 				Health.StopImmortality();
 			} else if (input.Buttons.IsSet(EInputButton.Reload)) {
 				Weapons.Reload();
+			}
+
+			if (Mouse.current.rightButton.isPressed) {
+				isAiming = true;
+			} else {
+				isAiming = false;
 			}
 
 			if (input.Buttons.WasPressed(_previousButtons, EInputButton.Pistol)) {

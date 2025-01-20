@@ -12,11 +12,12 @@ namespace ProjectEpsilon {
 		Rifle,
 		Shotgun,
 		Spray,
+		Aim,
 	}
 
 	public struct NetworkedInput : INetworkInput {
-		public Vector2        MoveDirection;
-		public Vector2        LookRotationDelta;
+		public Vector2 MoveDirection;
+		public Vector2 LookRotationDelta;
 		public NetworkButtons Buttons;
 	}
 
@@ -24,7 +25,7 @@ namespace ProjectEpsilon {
 	public sealed class PlayerInput : NetworkBehaviour, IBeforeUpdate {
 		public static float LookSensitivity;
 
-		private NetworkedInput     _accumulatedInput;
+		private NetworkedInput _accumulatedInput;
 		private Vector2Accumulator _lookRotationAccumulator = new Vector2Accumulator(0.02f, true);
 
 		public override void Spawned() {
@@ -74,8 +75,9 @@ namespace ProjectEpsilon {
 				lookRotationDelta *= LookSensitivity / 60f;
 				_lookRotationAccumulator.Accumulate(lookRotationDelta);
 
-				_accumulatedInput.Buttons.Set(EInputButton.Fire, mouse.leftButton.isPressed);
-			}
+                _accumulatedInput.Buttons.Set(EInputButton.Fire, mouse.leftButton.isPressed);
+                _accumulatedInput.Buttons.Set(EInputButton.Aim, mouse.rightButton.isPressed);
+            }
 
 			if (keyboard != null) {
 				var moveDirection = Vector2.zero;
@@ -97,7 +99,7 @@ namespace ProjectEpsilon {
 
 				_accumulatedInput.Buttons.Set(EInputButton.Jump, keyboard.spaceKey.isPressed);
 				_accumulatedInput.Buttons.Set(EInputButton.Reload, keyboard.rKey.isPressed);
-				_accumulatedInput.Buttons.Set(EInputButton.Pistol, keyboard.digit1Key.isPressed || keyboard.numpad1Key.isPressed);
+                _accumulatedInput.Buttons.Set(EInputButton.Pistol, keyboard.digit1Key.isPressed || keyboard.numpad1Key.isPressed);
 				_accumulatedInput.Buttons.Set(EInputButton.Rifle, keyboard.digit2Key.isPressed || keyboard.numpad2Key.isPressed);
 				_accumulatedInput.Buttons.Set(EInputButton.Shotgun, keyboard.digit3Key.isPressed || keyboard.numpad3Key.isPressed);
 				_accumulatedInput.Buttons.Set(EInputButton.Spray, keyboard.fKey.isPressed);

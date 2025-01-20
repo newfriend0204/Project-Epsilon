@@ -82,7 +82,7 @@ namespace ProjectEpsilon {
 			if (_fireCooldown.ExpiredOrNotRunning(Runner) == false)
 				return;
 
-			if (ClipAmmo <= 0) {
+            if (ClipAmmo <= 0) {
 				PlayEmptyClipSound(justPressed);
 				return;
 			}
@@ -93,8 +93,13 @@ namespace ProjectEpsilon {
 				var projectileDirection = fireDirection;
 
 				if (Dispersion > 0f) {
-					var dispersionRotation = Quaternion.Euler(Random.insideUnitSphere * Dispersion);
-					projectileDirection = dispersionRotation * fireDirection;
+					if (GetComponentInParent<Player>().isAiming) {
+                        var dispersionRotation = Quaternion.Euler(Random.insideUnitSphere * Dispersion / 10 * 4);
+                        projectileDirection = dispersionRotation * fireDirection;
+                    } else {
+						var dispersionRotation = Quaternion.Euler(Random.insideUnitSphere * Dispersion);
+                        projectileDirection = dispersionRotation * fireDirection;
+                    }
 				}
 
 				FireProjectile(firePosition, projectileDirection);
@@ -170,7 +175,13 @@ namespace ProjectEpsilon {
 				Reload();
 			}
 
-			if (IsReloading && _fireCooldown.ExpiredOrNotRunning(Runner)) {
+            if (Input.GetMouseButtonDown(1)) {
+                EnterADS();
+            } else if (Input.GetMouseButtonUp(1)) {
+                ExitADS();
+            }
+
+            if (IsReloading && _fireCooldown.ExpiredOrNotRunning(Runner)) {
 				IsReloading = false;
 
 				int reloadAmmo = MaxClipAmmo - ClipAmmo;
@@ -252,7 +263,12 @@ namespace ProjectEpsilon {
 			_muzzleEffectInstance.SetActive(false);
 			_muzzleEffectInstance.SetActive(true);
 
-			Animator.SetTrigger("Fire");
+
+            if (GetComponentInParent<Player>().isAiming) {
+                Animator.SetTrigger("FireADS");
+            } else {
+                Animator.SetTrigger("Fire");
+            }
 
 			GetComponentInParent<Player>().PlayFireEffect();
 		}
@@ -292,9 +308,17 @@ namespace ProjectEpsilon {
 			}
 		}
 
-		private struct ProjectileData : INetworkStruct {
-			public Vector3     HitPosition;
-			public Vector3     HitNormal;
+        private void EnterADS() {
+            Animator.SetTrigger("enterADS");
+        }
+
+        private void ExitADS() {
+            Animator.SetTrigger("exitADS");
+        }
+
+        private struct ProjectileData : INetworkStruct {
+			public Vector3 HitPosition;
+			public Vector3 HitNormal;
 			public NetworkBool ShowHitEffect;
 		}
 	}
