@@ -93,9 +93,15 @@ namespace ProjectEpsilon {
 				RefreshCamera();
 			}
 
-			float saveSpeed = 6.0f;
+            if (Mouse.current.rightButton.isPressed) {
+                isAiming = true;
+            } else {
+                isAiming = false;
+            }
+
+            float saveSpeed = 6.0f;
 			if (isAiming) {
-				saveSpeed -= 0.5f;
+				saveSpeed -= 1.0f;
 			}
 			MoveSpeed = saveSpeed;
 
@@ -139,7 +145,7 @@ namespace ProjectEpsilon {
 			if (HasInputAuthority == false)
 				return;
 
-			RefreshCamera();
+            RefreshCamera();
 		}
 
 		private void ProcessInput(NetworkedInput input) {
@@ -167,12 +173,6 @@ namespace ProjectEpsilon {
 				Health.StopImmortality();
 			} else if (input.Buttons.IsSet(EInputButton.Reload)) {
 				Weapons.Reload();
-			}
-
-			if (Mouse.current.rightButton.isPressed) {
-				isAiming = true;
-			} else {
-				isAiming = false;
 			}
 
 			if (input.Buttons.WasPressed(_previousButtons, EInputButton.Pistol)) {
