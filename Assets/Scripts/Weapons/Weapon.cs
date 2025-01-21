@@ -127,7 +127,8 @@ namespace ProjectEpsilon {
             }
 
             IsReloading = true;
-			_fireCooldown = TickTimer.CreateFromSeconds(Runner, ReloadTime);
+			ExitADS();
+            _fireCooldown = TickTimer.CreateFromSeconds(Runner, ReloadTime);
 		}
 
 		public void AddAmmo(int amount) {
@@ -175,12 +176,6 @@ namespace ProjectEpsilon {
 				Reload();
 			}
 
-            if (Input.GetMouseButtonDown(1)) {
-                EnterADS();
-            } else if (Input.GetMouseButtonUp(1)) {
-                ExitADS();
-            }
-
             if (IsReloading && _fireCooldown.ExpiredOrNotRunning(Runner)) {
 				IsReloading = false;
 
@@ -205,7 +200,15 @@ namespace ProjectEpsilon {
 			}
 		}
 
-		public override void Render() {
+        private void Update() {
+            if (Input.GetMouseButtonDown(1)) {
+                EnterADS();
+            } else if (Input.GetMouseButtonUp(1)) {
+                ExitADS();
+            }
+        }
+
+        public override void Render() {
 			if (_visibleFireCount < _fireCount) {
 				PlayFireEffect();
 			}
@@ -310,10 +313,12 @@ namespace ProjectEpsilon {
 
         private void EnterADS() {
             Animator.SetTrigger("enterADS");
+			Debug.Log("enterADS");
         }
 
         private void ExitADS() {
             Animator.SetTrigger("exitADS");
+			Debug.Log("exitADS");
         }
 
         private struct ProjectileData : INetworkStruct {

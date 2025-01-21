@@ -93,15 +93,9 @@ namespace ProjectEpsilon {
 				RefreshCamera();
 			}
 
-            if (Mouse.current.rightButton.isPressed) {
-                isAiming = true;
-            } else {
-                isAiming = false;
-            }
-
             float saveSpeed = 6.0f;
 			if (isAiming) {
-				saveSpeed -= 1.0f;
+				saveSpeed -= 4.0f;
 			}
 			MoveSpeed = saveSpeed;
 
@@ -141,7 +135,17 @@ namespace ProjectEpsilon {
 			_visibleJumpCount = _jumpCount;
 		}
 
-		private void LateUpdate() {
+        private void Update() {
+            if (Mouse.current.rightButton.isPressed) {
+                isAiming = true;
+            } else {
+                isAiming = false;
+            }
+
+			Debug.Log(isAiming);
+        }
+
+        private void LateUpdate() {
 			if (HasInputAuthority == false)
 				return;
 
@@ -226,8 +230,7 @@ namespace ProjectEpsilon {
 
 			velocity.y = 0f;
 
-			if (velocity.sqrMagnitude > 1f)
-			{
+			if (velocity.sqrMagnitude > 1f) {
 				velocity.Normalize();
 			}
 
