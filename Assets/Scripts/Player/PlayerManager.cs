@@ -5,8 +5,8 @@ using UnityEngine;
 
 namespace ProjectEpsilon {
     public static class PlayerManager {
-		private static List<PlayerRef> _tempSpawnPlayers   = new List<PlayerRef>();
-		private static List<Player>    _tempSpawnedPlayers = new List<Player>();
+		private static List<PlayerRef> _tempSpawnPlayers = new List<PlayerRef>();
+		private static List<Player> _tempSpawnedPlayers = new List<Player>();
 
 		public static void UpdatePlayerConnections(NetworkRunner runner, Action<PlayerRef> spawnPlayer, Action<PlayerRef, Player> despawnPlayer) {
 			_tempSpawnPlayers.Clear();

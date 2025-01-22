@@ -2289,6 +2289,7 @@ MonoBehaviour:
   FirstPersonRoot: {fileID: 4260200998989714414}
   ThirdPersonRoot: {fileID: 1703827389568588886}
   SprayPrefab: {fileID: 5001271651808748919, guid: b9abe105d5282b64682ef15dace9ba19, type: 3}
+  cam: {fileID: 6830563917783714441}
   UpGravity: 18
   DownGravity: 25
   GroundAcceleration: 55
@@ -6222,6 +6223,10 @@ PrefabInstance:
     - target: {fileID: 4637429470311701132, guid: cf150820817f9a34e8695424a767c7eb, type: 3}
       propertyPath: m_Layer
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4704520172053565365, guid: cf150820817f9a34e8695424a767c7eb, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5032498128167175699, guid: cf150820817f9a34e8695424a767c7eb, type: 3}
       propertyPath: m_Layer

@@ -4,10 +4,10 @@ using UnityEngine;
 
 namespace ProjectEpsilon {
     public class Footsteps : NetworkBehaviour {
-		public SimpleKCC   KCC;
+		public SimpleKCC KCC;
 		public AudioClip[] FootstepClips;
 		public AudioSource FootstepSource;
-		public float       FootstepDuration = 0.5f;
+		public float FootstepDuration = 0.5f;
 
 		private float _footstepCooldown;
 		private bool _wasGrounded;

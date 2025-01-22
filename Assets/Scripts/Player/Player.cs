@@ -3,6 +3,8 @@ using Fusion;
 using Fusion.Addons.SimpleKCC;
 using UnityEngine.InputSystem;
 using Cinemachine;
+using System.Collections;
+using Unity.VisualScripting;
 
 namespace ProjectEpsilon {
     [DefaultExecutionOrder(-5)]
@@ -23,8 +25,9 @@ namespace ProjectEpsilon {
 		public GameObject FirstPersonRoot;
 		public GameObject ThirdPersonRoot;
 		public NetworkObject SprayPrefab;
+		public CinemachineVirtualCamera cam;
 
-		[Header("Movement")]
+        [Header("Movement")]
 		public float UpGravity = 15f;
 		public float DownGravity = 25f;
 		public float GroundAcceleration = 55f;
@@ -40,8 +43,9 @@ namespace ProjectEpsilon {
 		private Vector3 _moveVelocity { get; set; }
 
 		internal bool isAiming = false;
+		internal bool isMoving = false;
 
-		private int _visibleJumpCount;
+        private int _visibleJumpCount;
 
 		private SceneObjects _sceneObjects;
 
@@ -62,10 +66,10 @@ namespace ProjectEpsilon {
 				var virtualCameras = GetComponentsInChildren<CinemachineVirtualCamera>(true);
 				for (int i = 0; i < virtualCameras.Length; i++) {
 					virtualCameras[i].enabled = false;
-				}
+                }
 			}
 
-			_sceneObjects = Runner.GetSingleton<SceneObjects>();
+            _sceneObjects = Runner.GetSingleton<SceneObjects>();
 		}
 
 		public override void FixedUpdateNetwork() {
@@ -95,7 +99,7 @@ namespace ProjectEpsilon {
 
             float saveSpeed = 6.0f;
 			if (isAiming) {
-				saveSpeed -= 4.0f;
+				saveSpeed -= 1.0f;
 			}
 			MoveSpeed = saveSpeed;
 
@@ -134,16 +138,6 @@ namespace ProjectEpsilon {
 
 			_visibleJumpCount = _jumpCount;
 		}
-
-        private void Update() {
-            if (Mouse.current.rightButton.isPressed) {
-                isAiming = true;
-            } else {
-                isAiming = false;
-            }
-
-			Debug.Log(isAiming);
-        }
 
         private void LateUpdate() {
 			if (HasInputAuthority == false)
@@ -203,10 +197,12 @@ namespace ProjectEpsilon {
 
 			if (desiredMoveVelocity == Vector3.zero) {
 				acceleration = KCC.IsGrounded == true ? GroundDeceleration : AirDeceleration;
-			}
+                isMoving = false;
+            }
 			else {
 				acceleration = KCC.IsGrounded == true ? GroundAcceleration : AirAcceleration;
-			}
+				isMoving = true;
+            }
 
 			_moveVelocity = Vector3.Lerp(_moveVelocity, desiredMoveVelocity, acceleration * Runner.DeltaTime);
 			KCC.Move(_moveVelocity, jumpImpulse);
@@ -236,5 +232,23 @@ namespace ProjectEpsilon {
 
 			return transform.InverseTransformVector(velocity);
 		}
-	}
+
+		public void ZoomIn() {
+			StartCoroutine(ChangeFOV(45, 0.07f));
+        }
+
+		public void ZoomOut() {
+            StartCoroutine(ChangeFOV(60, 0.07f));
+        }
+
+        IEnumerator ChangeFOV(float endFOV, float duration) {
+            float startFOV = cam.m_Lens.FieldOfView;
+            float time = 0;
+            while (time < duration) {
+                cam.m_Lens.FieldOfView = Mathf.Lerp(startFOV, endFOV, time / duration);
+                yield return null;
+                time += Time.deltaTime;
+            }
+        }
+    }
 }

@@ -127,7 +127,10 @@ namespace ProjectEpsilon {
             }
 
             IsReloading = true;
-			ExitADS();
+
+			if (GetComponentInParent<Player>().isAiming == true) {
+				ExitADS();
+			}
             _fireCooldown = TickTimer.CreateFromSeconds(Runner, ReloadTime);
 		}
 
@@ -179,7 +182,9 @@ namespace ProjectEpsilon {
             if (IsReloading && _fireCooldown.ExpiredOrNotRunning(Runner)) {
 				IsReloading = false;
 
-				int reloadAmmo = MaxClipAmmo - ClipAmmo;
+				Animator.ResetTrigger("exitADS");
+
+                int reloadAmmo = MaxClipAmmo - ClipAmmo;
 				reloadAmmo = Mathf.Min(reloadAmmo, RemainingAmmo);
 				
 				if (Type == EWeaponType.Shotgun) {
@@ -206,6 +211,12 @@ namespace ProjectEpsilon {
             } else if (Input.GetMouseButtonUp(1)) {
                 ExitADS();
             }
+
+			if (GetComponentInParent<Player>().isMoving) {
+				Animator.SetBool("isMoving", true);
+			} else {
+				Animator.SetBool("isMoving", false);
+			}
         }
 
         public override void Render() {
@@ -313,12 +324,15 @@ namespace ProjectEpsilon {
 
         private void EnterADS() {
             Animator.SetTrigger("enterADS");
-			Debug.Log("enterADS");
+			GetComponentInParent<Player>().isAiming = true;
+			GetComponentInParent<Player>().ZoomIn();
+            Animator.ResetTrigger("exitADS");
         }
 
         private void ExitADS() {
             Animator.SetTrigger("exitADS");
-			Debug.Log("exitADS");
+			GetComponentInParent<Player>().isAiming = false;
+			GetComponentInParent<Player>().ZoomOut();
         }
 
         private struct ProjectileData : INetworkStruct {
