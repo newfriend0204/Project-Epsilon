@@ -13,6 +13,7 @@ namespace ProjectEpsilon {
 		Shotgun,
 		Spray,
 		Aim,
+		Crouch,
 	}
 
 	public struct NetworkedInput : INetworkInput {
@@ -103,7 +104,8 @@ namespace ProjectEpsilon {
 				_accumulatedInput.Buttons.Set(EInputButton.Rifle, keyboard.digit2Key.isPressed || keyboard.numpad2Key.isPressed);
 				_accumulatedInput.Buttons.Set(EInputButton.Shotgun, keyboard.digit3Key.isPressed || keyboard.numpad3Key.isPressed);
 				_accumulatedInput.Buttons.Set(EInputButton.Spray, keyboard.fKey.isPressed);
-			}
+                _accumulatedInput.Buttons.Set(EInputButton.Crouch, keyboard.cKey.isPressed);
+            }
 		}
 
 		private void OnInput(NetworkRunner runner, NetworkInput networkInput) {

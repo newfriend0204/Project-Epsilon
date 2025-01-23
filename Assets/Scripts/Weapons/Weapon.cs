@@ -91,15 +91,20 @@ namespace ProjectEpsilon {
 
 			for (int i = 0; i < ProjectilesPerShot; i++) {
 				var projectileDirection = fireDirection;
-
-				if (Dispersion > 0f) {
-					if (GetComponentInParent<Player>().isAiming) {
-                        var dispersionRotation = Quaternion.Euler(Random.insideUnitSphere * Dispersion / 10 * 4);
-                        projectileDirection = dispersionRotation * fireDirection;
-                    } else {
-						var dispersionRotation = Quaternion.Euler(Random.insideUnitSphere * Dispersion);
-                        projectileDirection = dispersionRotation * fireDirection;
-                    }
+				float saveDispersion = Dispersion;
+                if (GetComponentInParent<Player>().isAiming) {
+                    saveDispersion -= Dispersion / 10 * 4;
+                }
+                if (GetComponentInParent<Player>().isSneaking) {
+                    saveDispersion -= Dispersion / 10 * 1;
+                }
+                if (GetComponentInParent<Player>().isCrouching) {
+                    saveDispersion -= Dispersion / 10 * 3;
+                }
+                Quaternion dispersion = Quaternion.Euler(Random.insideUnitSphere * saveDispersion);
+                if (Dispersion > 0f) {
+					var dispersionRotation = dispersion;
+                    projectileDirection = dispersionRotation * fireDirection;
 				}
 
 				FireProjectile(firePosition, projectileDirection);
@@ -194,14 +199,19 @@ namespace ProjectEpsilon {
 				ClipAmmo += reloadAmmo;
 				RemainingAmmo -= reloadAmmo;
 
-				if (Type == EWeaponType.Shotgun && ClipAmmo != MaxClipAmmo) {
-                    Animator.SetBool("ReloadEnd", false);
-                    Reload();
-				} else if (Type == EWeaponType.Shotgun && ClipAmmo == MaxClipAmmo) {
-					Animator.SetBool("ReloadEnd", true);
+				if (Type == EWeaponType.Shotgun) {
+					if (ClipAmmo != MaxClipAmmo) {
+						Animator.SetBool("ReloadEnd", false);
+						Reload();
+					} else if (ClipAmmo == MaxClipAmmo) {
+						Animator.SetBool("ReloadEnd", true);
+					}
+					if (RemainingAmmo == 0) {
+						Animator.SetBool("ReloadEnd", true);
+					}
 				}
 
-				_fireCooldown = TickTimer.CreateFromSeconds(Runner, 0.5f);
+                _fireCooldown = TickTimer.CreateFromSeconds(Runner, 0.5f);
 			}
 		}
 
@@ -217,6 +227,19 @@ namespace ProjectEpsilon {
 			} else {
 				Animator.SetBool("isMoving", false);
 			}
+
+			if (Input.GetKey(KeyCode.LeftShift)) {
+				GetComponentInParent<Player>().isSneaking = true;
+            } else {
+				GetComponentInParent<Player>().isSneaking = false;
+            }
+
+			if (Input.GetKey(KeyCode.LeftControl) && GetComponentInParent<Player>().isAiming == false && GetComponentInParent<Player>().isCrouching == false) {
+				GetComponentInParent<Player>().isRunning = true;
+            } else {
+				GetComponentInParent<Player>().isRunning = false;
+
+            }
         }
 
         public override void Render() {

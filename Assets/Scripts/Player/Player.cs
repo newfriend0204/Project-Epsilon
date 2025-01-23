@@ -21,7 +21,7 @@ namespace ProjectEpsilon {
 		public float JumpForce = 10f;
 		public AudioSource JumpSound;
 		public AudioClip[] JumpClips;
-		public Transform CameraHandle;
+		public GameObject CameraHandle;
 		public GameObject FirstPersonRoot;
 		public GameObject ThirdPersonRoot;
 		public NetworkObject SprayPrefab;
@@ -44,6 +44,9 @@ namespace ProjectEpsilon {
 
 		internal bool isAiming = false;
 		internal bool isMoving = false;
+		internal bool isCrouching = false;
+		internal bool isSneaking = false;
+		internal bool isRunning = false;
 
         private int _visibleJumpCount;
 
@@ -97,9 +100,18 @@ namespace ProjectEpsilon {
 				RefreshCamera();
 			}
 
-            float saveSpeed = 6.0f;
+            float saveSpeed = 5.0f;
 			if (isAiming) {
-				saveSpeed -= 1.0f;
+				saveSpeed -= 0.5f;
+			}
+			if (isCrouching) {
+				saveSpeed -= 1.5f;
+			}
+			if (isSneaking) {
+				saveSpeed -= 2.3f;
+			}
+			if (isRunning) {
+				saveSpeed += 3.0f;
 			}
 			MoveSpeed = saveSpeed;
 
@@ -115,6 +127,7 @@ namespace ProjectEpsilon {
 			Animator.SetBool("IsAlive", Health.IsAlive);
 			Animator.SetBool("IsGrounded", KCC.IsGrounded);
 			Animator.SetBool("IsReloading", Weapons.CurrentWeapon.IsReloading);
+			Animator.SetBool("IsCrouching", isCrouching);
 			Animator.SetFloat("MoveX", moveVelocity.x, 0.05f, Time.deltaTime);
 			Animator.SetFloat("MoveZ", moveVelocity.z, 0.05f, Time.deltaTime);
 			Animator.SetFloat("MoveSpeed", moveVelocity.magnitude);
@@ -122,10 +135,13 @@ namespace ProjectEpsilon {
 
 			if (Health.IsAlive == false) {
 
-				int upperBodyLayerIndex = Animator.GetLayerIndex("UpperBody");
-				Animator.SetLayerWeight(upperBodyLayerIndex, Mathf.Max(0f, Animator.GetLayerWeight(upperBodyLayerIndex) - Time.deltaTime));
+                int upperBodyLayerIndex = Animator.GetLayerIndex("UpperBody");
+                Animator.SetLayerWeight(upperBodyLayerIndex, Mathf.Max(0f, Animator.GetLayerWeight(upperBodyLayerIndex) - Time.deltaTime));
 
-				int lookLayerIndex = Animator.GetLayerIndex("Look");
+				int lowerBodyLayerIndex = Animator.GetLayerIndex("LowerBody");
+                Animator.SetLayerWeight(lowerBodyLayerIndex, Mathf.Max(0f, Animator.GetLayerWeight(lowerBodyLayerIndex) - Time.deltaTime));
+
+                int lookLayerIndex = Animator.GetLayerIndex("Look");
 				Animator.SetLayerWeight(lookLayerIndex, Mathf.Max(0f, Animator.GetLayerWeight(lookLayerIndex) - Time.deltaTime));
 			}
 
@@ -165,7 +181,16 @@ namespace ProjectEpsilon {
 				_jumpCount++;
 			}
 
-			if (input.Buttons.IsSet(EInputButton.Fire)) {
+            if (input.Buttons.WasPressed(_previousButtons, EInputButton.Crouch)) {
+				isCrouching = !isCrouching;
+				if (isCrouching) {
+					StartCoroutine(MoveCamera(new Vector3(0f, 1.2f, 0f)));
+				} else {
+                    StartCoroutine(MoveCamera(new Vector3(0f, 1.678634f, 0f)));
+                }
+            }
+
+            if (input.Buttons.IsSet(EInputButton.Fire)) {
 				bool justPressed = input.Buttons.WasPressed(_previousButtons, EInputButton.Fire);
 				Weapons.Fire(justPressed);
 				Health.StopImmortality();
@@ -183,7 +208,7 @@ namespace ProjectEpsilon {
 			}
 
 			if (input.Buttons.WasPressed(_previousButtons, EInputButton.Spray) && HasStateAuthority) {
-				if (Runner.GetPhysicsScene().Raycast(CameraHandle.position, KCC.LookDirection, out var hit, 2.5f, LayerMask.GetMask("Default"), QueryTriggerInteraction.Ignore)) {
+				if (Runner.GetPhysicsScene().Raycast(CameraHandle.transform.position, KCC.LookDirection, out var hit, 2.5f, LayerMask.GetMask("Default"), QueryTriggerInteraction.Ignore)) {
 					var sprayOrientation = hit.normal.y > 0.9f ? KCC.TransformRotation : Quaternion.identity;
 					Runner.Spawn(SprayPrefab, hit.point, sprayOrientation * Quaternion.LookRotation(-hit.normal));
 				}
@@ -210,7 +235,7 @@ namespace ProjectEpsilon {
 
 		private void RefreshCamera() {
 			Vector2 pitchRotation = KCC.GetLookRotation(true, false);
-			CameraHandle.localRotation = Quaternion.Euler(pitchRotation);
+			CameraHandle.transform.localRotation = Quaternion.Euler(pitchRotation);
 		}
 
 		private void SetFirstPersonVisuals(bool firstPerson) {
@@ -249,6 +274,20 @@ namespace ProjectEpsilon {
                 yield return null;
                 time += Time.deltaTime;
             }
+        }
+
+        IEnumerator MoveCamera(Vector3 targetPosition) {
+            Vector3 startPosition = CameraHandle.transform.localPosition;
+            float duration = 0.1f;
+            float elapsedTime = 0f;
+
+            while (elapsedTime < duration) {
+                CameraHandle.transform.localPosition = Vector3.Lerp(startPosition, targetPosition, elapsedTime / duration);
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+
+            CameraHandle.transform.localPosition = targetPosition;
         }
     }
 }
