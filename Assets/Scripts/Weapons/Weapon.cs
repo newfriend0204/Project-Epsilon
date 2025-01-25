@@ -223,9 +223,9 @@ namespace ProjectEpsilon {
             }
 
 			if (GetComponentInParent<Player>().isMoving) {
-				Animator.SetBool("isMoving", true);
+				Animator.SetBool("IsMoving", true);
 			} else {
-				Animator.SetBool("isMoving", false);
+				Animator.SetBool("IsMoving", false);
 			}
 
 			if (Input.GetKey(KeyCode.LeftShift)) {
@@ -234,12 +234,15 @@ namespace ProjectEpsilon {
 				GetComponentInParent<Player>().isSneaking = false;
             }
 
-			if (Input.GetKey(KeyCode.LeftControl) && GetComponentInParent<Player>().isAiming == false && GetComponentInParent<Player>().isCrouching == false) {
+			if (Input.GetKey(KeyCode.LeftControl) && GetComponentInParent<Player>().isCrouching == false) {
 				GetComponentInParent<Player>().isRunning = true;
             } else {
 				GetComponentInParent<Player>().isRunning = false;
-
             }
+
+			if (!GetComponentInParent<Player>().isMoving)
+				GetComponentInParent<Player>().isRunning = false;
+            Animator.SetBool("IsRunning", GetComponentInParent<Player>().isRunning);
         }
 
         public override void Render() {

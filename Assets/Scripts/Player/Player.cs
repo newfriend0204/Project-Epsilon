@@ -49,6 +49,7 @@ namespace ProjectEpsilon {
 		internal bool isRunning = false;
 
         private int _visibleJumpCount;
+		private float _saveSpeed;
 
 		private SceneObjects _sceneObjects;
 
@@ -100,21 +101,19 @@ namespace ProjectEpsilon {
 				RefreshCamera();
 			}
 
-            float saveSpeed = 5.0f;
+            _saveSpeed = MoveSpeed;
 			if (isAiming) {
-				saveSpeed -= 0.5f;
+				_saveSpeed -= MoveSpeed / 10 * 1;
 			}
 			if (isCrouching) {
-				saveSpeed -= 1.5f;
-			}
+				_saveSpeed -= MoveSpeed / 10 * 3;
+            }
 			if (isSneaking) {
-				saveSpeed -= 2.3f;
-			}
+				_saveSpeed -= MoveSpeed / 10 * 5;
+            }
 			if (isRunning) {
-				saveSpeed += 3.0f;
-			}
-			MoveSpeed = saveSpeed;
-
+				_saveSpeed += MoveSpeed / 10 * 15;
+            }
 		}
 
 		public override void Render() {
@@ -174,7 +173,7 @@ namespace ProjectEpsilon {
 				jumpImpulse = JumpForce;
 			}
 
-			MovePlayer(inputDirection * MoveSpeed, jumpImpulse);
+			MovePlayer(inputDirection * _saveSpeed, jumpImpulse);
 			RefreshCamera();
 
 			if (KCC.HasJumped) {
@@ -185,8 +184,10 @@ namespace ProjectEpsilon {
 				isCrouching = !isCrouching;
 				if (isCrouching) {
 					StartCoroutine(MoveCamera(new Vector3(0f, 1.2f, 0f)));
+					KCC.SetHeight(1.2f);
 				} else {
                     StartCoroutine(MoveCamera(new Vector3(0f, 1.678634f, 0f)));
+                    KCC.SetHeight(1.8f);
                 }
             }
 
