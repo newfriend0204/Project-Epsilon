@@ -46,8 +46,13 @@ namespace ProjectEpsilon {
 		    if (newWeapon == _pendingWeapon)
 			    return;
 
-		    if (CurrentWeapon.IsReloading)
-				return;
+		    if (CurrentWeapon.IsReloading) {
+                if (CurrentWeapon.IsReloading) {
+                    CurrentWeapon._fireCooldown = TickTimer.None;
+                    CurrentWeapon.IsReloading = false;
+                    CurrentWeapon.ReloadingSound.Stop();
+                }
+            }
 
 		    _pendingWeapon = newWeapon;
 		    _switchTimer = TickTimer.CreateFromSeconds(Runner, WeaponSwitchTime);
@@ -110,9 +115,11 @@ namespace ProjectEpsilon {
 			    if (weapon == CurrentWeapon) {
 					currentWeaponID = i;
 					weapon.ToggleVisibility(true);
+					weapon.GetComponent<Weapon>().enabled = true;
 			    } else {
 					weapon.ToggleVisibility(false);
-				}
+                    weapon.GetComponent<Weapon>().enabled = false;
+                }
 		    }
 
 		    _visibleWeapon = CurrentWeapon;

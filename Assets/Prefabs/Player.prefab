@@ -922,13 +922,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3417968666225378946}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.678634, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.7372763, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5953457501803415890}
   - {fileID: 7085806987371351361}
+  - {fileID: 5953457501803415890}
   m_Father: {fileID: 3834324505224384244}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3445783319735038512
@@ -6037,6 +6037,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2414522684100043775, guid: ac5b79de104c04dfc84c9d444dcfe967, type: 3}
       propertyPath: Dispersion
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414522684100043775, guid: ac5b79de104c04dfc84c9d444dcfe967, type: 3}
+      propertyPath: recoilAmountX
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414522684100043775, guid: ac5b79de104c04dfc84c9d444dcfe967, type: 3}
+      propertyPath: recoilAmountY
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414522684100043775, guid: ac5b79de104c04dfc84c9d444dcfe967, type: 3}
+      propertyPath: recoilDuration
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2414522684100043775, guid: ac5b79de104c04dfc84c9d444dcfe967, type: 3}

@@ -48,7 +48,7 @@ namespace ProjectEpsilon {
 		public AudioSource ReloadingSound;
 		public AudioSource EmptyClipSound;
 
-		public bool HasAmmo => ClipAmmo > 0 || RemainingAmmo > 0;
+        public bool HasAmmo => ClipAmmo > 0 || RemainingAmmo > 0;
 
 		[Networked]
 		public NetworkBool IsCollected { get; set; }
@@ -62,7 +62,7 @@ namespace ProjectEpsilon {
 		[Networked]
 		private int _fireCount { get; set; }
 		[Networked]
-		private TickTimer _fireCooldown { get; set; }
+		internal TickTimer _fireCooldown { get; set; }
 		[Networked, Capacity(32)]
 		private NetworkArray<ProjectileData> _projectileData { get; }
 
@@ -72,12 +72,14 @@ namespace ProjectEpsilon {
 		private GameObject _muzzleEffectInstance;
 		private SceneObjects _sceneObjects;
 
-		public void Fire(Vector3 firePosition, Vector3 fireDirection, bool justPressed) {
+        public void Fire(Vector3 firePosition, Vector3 fireDirection, bool justPressed) {
 			if (IsCollected == false)
 				return;
 			if (justPressed == false && IsAutomatic == false)
 				return;
 			if (IsReloading)
+				return;
+			if (GetComponentInParent<Player>().isRunning)
 				return;
 			if (_fireCooldown.ExpiredOrNotRunning(Runner) == false)
 				return;
@@ -112,7 +114,7 @@ namespace ProjectEpsilon {
 
 			_fireCooldown = TickTimer.CreateFromTicks(Runner, _fireTicks);
 			ClipAmmo--;
-		}
+        }
 
 		public void Reload() {
 			if (IsCollected == false)
@@ -143,9 +145,9 @@ namespace ProjectEpsilon {
 			RemainingAmmo += amount;
 		}
 
-		public void ToggleVisibility(bool isVisible) {
+		public void ToggleVisibility(bool isVisible) { 
 			FirstPersonVisual.SetActive(isVisible);
-			ThirdPersonVisual.SetActive(isVisible);
+			FirstPersonVisual.GetComponent<Animator>().enabled = isVisible;
 
 			if (_muzzleEffectInstance != null) {
 				_muzzleEffectInstance.SetActive(false);
@@ -174,7 +176,7 @@ namespace ProjectEpsilon {
 			_muzzleEffectInstance.SetActive(false);
 
 			_sceneObjects = Runner.GetSingleton<SceneObjects>();
-		}
+        }
 
 		public override void FixedUpdateNetwork() {
 			if (IsCollected == false)
@@ -217,8 +219,11 @@ namespace ProjectEpsilon {
 
         private void Update() {
             if (Input.GetMouseButtonDown(1)) {
-                EnterADS();
-            } else if (Input.GetMouseButtonUp(1)) {
+                _fireCooldown = TickTimer.None;
+                IsReloading = false;
+                ReloadingSound.Stop();
+				EnterADS();
+            } else if (Input.GetMouseButtonUp(1) && !IsReloading) {
                 ExitADS();
             }
 
@@ -234,8 +239,13 @@ namespace ProjectEpsilon {
 				GetComponentInParent<Player>().isSneaking = false;
             }
 
-			if (Input.GetKey(KeyCode.LeftControl) && GetComponentInParent<Player>().isCrouching == false) {
+			if (Input.GetKey(KeyCode.LeftControl) && !GetComponentInParent<Player>().isCrouching && !GetComponentInParent<Player>().isAiming) {
 				GetComponentInParent<Player>().isRunning = true;
+				if (IsReloading) {
+					_fireCooldown = TickTimer.None;
+					IsReloading = false;
+					ReloadingSound.Stop();
+				}
             } else {
 				GetComponentInParent<Player>().isRunning = false;
             }
@@ -303,14 +313,13 @@ namespace ProjectEpsilon {
 			_muzzleEffectInstance.SetActive(false);
 			_muzzleEffectInstance.SetActive(true);
 
-
             if (GetComponentInParent<Player>().isAiming) {
                 Animator.SetTrigger("FireADS");
             } else {
                 Animator.SetTrigger("Fire");
             }
 
-			GetComponentInParent<Player>().PlayFireEffect();
+            GetComponentInParent<Player>().PlayFireEffect();
 		}
 
 		private void ApplyDamage(Hitbox enemyHitbox, Vector3 position, Vector3 direction) {
