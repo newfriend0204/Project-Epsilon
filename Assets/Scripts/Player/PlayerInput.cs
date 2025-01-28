@@ -8,10 +8,9 @@ namespace ProjectEpsilon {
 		Jump,
 		Fire,
 		Reload,
-		Pistol,
-		Rifle,
-		Shotgun,
-		Spray,
+        Sidearm,
+        Primary,
+        Spray,
 		Aim,
 		Crouch,
 	}
@@ -100,9 +99,8 @@ namespace ProjectEpsilon {
 
 				_accumulatedInput.Buttons.Set(EInputButton.Jump, keyboard.spaceKey.isPressed);
 				_accumulatedInput.Buttons.Set(EInputButton.Reload, keyboard.rKey.isPressed);
-                _accumulatedInput.Buttons.Set(EInputButton.Pistol, keyboard.digit1Key.isPressed || keyboard.numpad1Key.isPressed);
-				_accumulatedInput.Buttons.Set(EInputButton.Rifle, keyboard.digit2Key.isPressed || keyboard.numpad2Key.isPressed);
-				_accumulatedInput.Buttons.Set(EInputButton.Shotgun, keyboard.digit3Key.isPressed || keyboard.numpad3Key.isPressed);
+                _accumulatedInput.Buttons.Set(EInputButton.Sidearm, keyboard.digit1Key.isPressed || keyboard.numpad1Key.isPressed);
+				_accumulatedInput.Buttons.Set(EInputButton.Primary, keyboard.digit2Key.isPressed || keyboard.numpad2Key.isPressed);
 				_accumulatedInput.Buttons.Set(EInputButton.Spray, keyboard.fKey.isPressed);
                 _accumulatedInput.Buttons.Set(EInputButton.Crouch, keyboard.cKey.isPressed);
             }

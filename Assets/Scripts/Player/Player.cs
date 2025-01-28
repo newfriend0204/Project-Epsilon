@@ -50,11 +50,10 @@ namespace ProjectEpsilon {
 
         private int _visibleJumpCount;
         private float _saveSpeed;
+        private Vector3 _originalPosition = new Vector3(0f, 1.2f, 0f);
+        private Vector3 _crounchPosition = new Vector3(0f, 1.678634f, 0f);
 
         private SceneObjects _sceneObjects;
-
-        private float _cumulativeTilt = 0f; // 누적된 카메라 기울기 (절대값)
-        private float _tiltSpeed = 10f;     // 클릭 시 추가 기울기 크기
 
         public void PlayFireEffect() {
             if (Mathf.Abs(GetAnimationMoveVelocity().x) > 0.2f)
@@ -127,7 +126,8 @@ namespace ProjectEpsilon {
             Animator.SetFloat("LocomotionTime", Time.time * 2f);
             Animator.SetBool("IsAlive", Health.IsAlive);
             Animator.SetBool("IsGrounded", KCC.IsGrounded);
-            Animator.SetBool("IsReloading", Weapons.CurrentWeapon.IsReloading);
+            if (Weapons.CurrentWeapon != null)
+                Animator.SetBool("IsReloading", Weapons.CurrentWeapon.IsReloading);
             Animator.SetBool("IsCrouching", isCrouching);
             Animator.SetFloat("MoveX", moveVelocity.x, 0.05f, Time.deltaTime);
             Animator.SetFloat("MoveZ", moveVelocity.z, 0.05f, Time.deltaTime);
@@ -185,10 +185,10 @@ namespace ProjectEpsilon {
             if (input.Buttons.WasPressed(_previousButtons, EInputButton.Crouch)) {
                 isCrouching = !isCrouching;
                 if (isCrouching) {
-                    StartCoroutine(MoveCamera(new Vector3(0f, 1.2f, 0f)));
+                    StartCoroutine(MoveCamera(_originalPosition));
                     KCC.SetHeight(1.2f);
                 } else {
-                    StartCoroutine(MoveCamera(new Vector3(0f, 1.678634f, 0f)));
+                    StartCoroutine(MoveCamera(_crounchPosition));
                     KCC.SetHeight(1.8f);
                 }
             }
@@ -201,12 +201,10 @@ namespace ProjectEpsilon {
                 Weapons.Reload();
             }
 
-            if (input.Buttons.WasPressed(_previousButtons, EInputButton.Pistol)) {
-                Weapons.SwitchWeapon(EWeaponType.Pistol);
-            } else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Rifle)) {
-                Weapons.SwitchWeapon(EWeaponType.Rifle);
-            } else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Shotgun)) {
-                Weapons.SwitchWeapon(EWeaponType.Shotgun);
+            if (input.Buttons.WasPressed(_previousButtons, EInputButton.Sidearm)) {
+                Weapons.SwitchWeapon(1);
+            } else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Primary)) {
+                Weapons.SwitchWeapon(2);
             }
 
             if (input.Buttons.WasPressed(_previousButtons, EInputButton.Spray) && HasStateAuthority) {
@@ -216,55 +214,41 @@ namespace ProjectEpsilon {
                 }
             }
 
-            if (input.Buttons.IsSet(EInputButton.Fire)) {
-                StartCoroutine(TiltCamera(-10f, 0.1f));
-            }
-
-            if (input.Buttons.WasPressed(_previousButtons, EInputButton.Crouch)) {
-                isCrouching = !isCrouching;
-                if (isCrouching) {
-                    StartCoroutine(MoveCamera(new Vector3(0f, 1.2f, 0f)));
-                    KCC.SetHeight(1.2f);
-                } else {
-                    StartCoroutine(MoveCamera(new Vector3(0f, 1.678634f, 0f)));
-                    KCC.SetHeight(1.8f);
-                }
-            }
-
-            if (input.Buttons.IsSet(EInputButton.Fire)) {
-                StartCoroutine(TiltCamera(-_tiltSpeed, 0.1f)); // -10도씩 아래로 부드럽게 이동
-            }
-
             _previousButtons = input.Buttons;
         }
 
-        private void RefreshCamera() {
-            // KCC에서 현재 가져온 회전 값
-            Vector2 lookRotation = KCC.GetLookRotation(true, false);
-
-            // 현재 회전에 누적된 추가 기울기를 반영
-            float finalTilt = Mathf.Clamp(lookRotation.x + _cumulativeTilt, -89f, 89f);
-            CameraHandle.transform.localRotation = Quaternion.Euler(finalTilt, 0f, 0f);
+        public void KickBack(float intensity, float duration) {
+            StartCoroutine(KickBackCamera(intensity, duration));
         }
 
-        private IEnumerator TiltCamera(float tiltAmount, float duration) {
-            // 시작값은 현재 누적 기울기
-            float startTilt = _cumulativeTilt;
-            float targetTilt = _cumulativeTilt + tiltAmount; // 누적 기울기에 새 값을 추가
+        IEnumerator KickBackCamera(float intensity, float duration) {
+            Vector3 originalPosition = new Vector3(0, 0, 0);
+            if (isCrouching)
+                originalPosition = _originalPosition;
+            else
+                originalPosition = _crounchPosition;
             float elapsedTime = 0f;
 
             while (elapsedTime < duration) {
-                // 누적 기울기를 부드럽게 변경
-                _cumulativeTilt = Mathf.Lerp(startTilt, targetTilt, elapsedTime / duration);
-                elapsedTime += Time.deltaTime;
+                float xOffset = Random.Range(-1f, 1f) * intensity;
+                float yOffset = Random.Range(-1f, 1f) * intensity;
 
-                // 카메라 업데이트
-                RefreshCamera();
+                CameraHandle.transform.localPosition = new Vector3(
+                    originalPosition.x + xOffset,
+                    originalPosition.y + yOffset,
+                    originalPosition.z
+                );
+
+                elapsedTime += Time.deltaTime;
                 yield return null;
             }
 
-            // 최종적으로 정확히 목표 각도로 설정
-            _cumulativeTilt = targetTilt;
+            CameraHandle.transform.localPosition = originalPosition;
+        }
+
+        private void RefreshCamera() {
+            Vector2 lookRotation = KCC.GetLookRotation(true, false);
+            CameraHandle.transform.localRotation = Quaternion.Euler(lookRotation.x, 0f, 0f);
         }
 
         private void MovePlayer(Vector3 desiredMoveVelocity = default, float jumpImpulse = default) {

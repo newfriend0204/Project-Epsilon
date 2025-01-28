@@ -21,6 +21,11 @@ namespace ProjectEpsilon {
 	    private Weapon _pendingWeapon { get; set; }
 
 	    private Weapon _visibleWeapon;
+		private bool _isCollectedPrimary = false;
+		private bool _isCollectedSidearm = false;
+		private EWeaponName _currentPrimary;
+		private EWeaponName _currentSidearm;
+		private EWeaponName _currentWeapon;
 
 	    public void Fire(bool justPressed) {
 			if (CurrentWeapon == null || IsSwitching)
@@ -36,57 +41,93 @@ namespace ProjectEpsilon {
 		    CurrentWeapon.Reload();
 	    }
 
-	    public void SwitchWeapon(EWeaponType weaponType) {
-			var newWeapon = GetWeapon(weaponType);
-
-		    if (newWeapon == null || newWeapon.IsCollected == false)
+	    public void SwitchWeapon(int slot) {
+			var newWeapon = GetWeapon(_currentWeapon);
+			if (slot == 1) {
+				newWeapon = GetWeapon(_currentSidearm);
+				if (!_isCollectedSidearm)
+					return;
+			} else {
+				newWeapon = GetWeapon(_currentPrimary);
+				if (!_isCollectedPrimary)
+					return;
+			}
+			if (newWeapon == null) {
 				return;
-		    if (newWeapon == CurrentWeapon && _pendingWeapon == null)
-			    return;
-		    if (newWeapon == _pendingWeapon)
-			    return;
+			}
+			if (newWeapon == CurrentWeapon && _pendingWeapon == null) {
+				return;
+			}
+			if (newWeapon == _pendingWeapon) {
+				return;
+			}
+			if (CurrentWeapon != null) {
+				if (CurrentWeapon.IsReloading) {
+					CurrentWeapon._fireCooldown = TickTimer.None;
+					CurrentWeapon.IsReloading = false;
+					CurrentWeapon.ReloadingSound.Stop();
+				}
+			}
+			if (GetComponentInParent<Player>().isAiming) {
+				CurrentWeapon.ExitADS();
+			}
 
-		    if (CurrentWeapon.IsReloading) {
-                if (CurrentWeapon.IsReloading) {
-                    CurrentWeapon._fireCooldown = TickTimer.None;
-                    CurrentWeapon.IsReloading = false;
-                    CurrentWeapon.ReloadingSound.Stop();
-                }
-            }
+			_pendingWeapon = newWeapon;
+			_switchTimer = TickTimer.CreateFromSeconds(Runner, WeaponSwitchTime);
 
-		    _pendingWeapon = newWeapon;
-		    _switchTimer = TickTimer.CreateFromSeconds(Runner, WeaponSwitchTime);
-
-		    if (HasInputAuthority && Runner.IsForward)
-		    {
-			    CurrentWeapon.Animator.SetTrigger("Hide");
-			    SwitchSound.Play();
-		    }
+			if (HasInputAuthority && Runner.IsForward) {
+				CurrentWeapon.Animator.SetTrigger("Hide");
+				SwitchSound.Play();
+			}
 	    }
 
-	    public bool PickupWeapon(EWeaponType weaponType) {
-		    if (CurrentWeapon.IsReloading)
-				return false;
+	    public bool PickupWeapon(EWeaponName weaponType) {
+			if (CurrentWeapon != null) {
+				if (CurrentWeapon.IsReloading)
+					return false;
+			}
 
 			var weapon = GetWeapon(weaponType);
 			if (weapon == null)
 				return false;
 
+            if (weaponType == EWeaponName.M1911) {
+                _currentWeapon = EWeaponName.M1911;
+                _isCollectedSidearm = true;
+                _currentSidearm = EWeaponName.M1911;
+                SwitchWeapon(1);
+            }
+            if (weaponType == EWeaponName.SMG) {
+                _currentWeapon = EWeaponName.SMG;
+                _isCollectedSidearm = true;
+                _currentSidearm = EWeaponName.SMG;
+                SwitchWeapon(1);
+            }
+            if (weaponType == EWeaponName.AK47) {
+                _currentWeapon = EWeaponName.AK47;
+                _isCollectedPrimary = true;
+				_currentPrimary = EWeaponName.AK47;
+                SwitchWeapon(2);
+            }
+            if (weaponType == EWeaponName.RemingtonM870) {
+                _currentWeapon = EWeaponName.RemingtonM870;
+                _isCollectedPrimary = true;
+				_currentPrimary = EWeaponName.RemingtonM870;
+                SwitchWeapon(2);
+            }
+
 			if (weapon.IsCollected) {
 				weapon.AddAmmo(weapon.StartAmmo - weapon.RemainingAmmo);
-			}
-			else {
-				weapon.IsCollected = true;
-			}
-
-			SwitchWeapon(weaponType);
+			} else {
+                weapon.IsCollected = true;
+            }
 
 			return true;
 	    }
 
-	    public Weapon GetWeapon(EWeaponType weaponType) {
+	    public Weapon GetWeapon(EWeaponName weaponType) {
 			for (int i = 0; i < AllWeapons.Length; ++i) {
-				if (AllWeapons[i].Type == weaponType)
+				if (AllWeapons[i].WeaponName == weaponType)
 					return AllWeapons[i];
 			}
 
@@ -94,11 +135,7 @@ namespace ProjectEpsilon {
 	    }
 
 	    public override void Spawned() {
-		    if (HasStateAuthority) {
-			    CurrentWeapon = AllWeapons[0];
-			    CurrentWeapon.IsCollected = true;
-		    }
-	    }
+		}
 
 	    public override void FixedUpdateNetwork() {
 		    TryActivatePendingWeapon();
@@ -131,12 +168,12 @@ namespace ProjectEpsilon {
 		    AllWeapons = GetComponentsInChildren<Weapon>();
 	    }
 
-	    private void TryActivatePendingWeapon() {
-		    if (IsSwitching == false || _pendingWeapon == null)
-			    return;
+		private void TryActivatePendingWeapon() {
+			if (IsSwitching == false || _pendingWeapon == null)
+				return;
 
-		    if (_switchTimer.RemainingTime(Runner) > WeaponSwitchTime * 0.5f)
-			    return;
+			if (_switchTimer.RemainingTime(Runner) > WeaponSwitchTime * 0.5f)
+				return;
 
 		    CurrentWeapon = _pendingWeapon;
 		    _pendingWeapon = null;

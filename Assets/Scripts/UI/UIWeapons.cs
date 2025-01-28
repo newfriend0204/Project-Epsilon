@@ -6,14 +6,14 @@ namespace ProjectEpsilon {
 
     public class UIWeapons : MonoBehaviour
 	{
-	    public Image           WeaponIcon;
-	    public Image           WeaponIconShadow;
+	    public Image WeaponIcon;
+	    public Image WeaponIconShadow;
 	    public TextMeshProUGUI WeaponName;
 		public TextMeshProUGUI ClipAmmo;
 		public TextMeshProUGUI RemainingAmmo;
-	    public Image           AmmoProgress;
-	    public GameObject      NoAmmoGroup;
-	    public CanvasGroup[]   WeaponThumbnails;
+	    public Image AmmoProgress;
+	    public GameObject NoAmmoGroup;
+	    public CanvasGroup[] WeaponThumbnails;
 
 	    private Weapon _weapon;
 	    private int _lastClipAmmo;

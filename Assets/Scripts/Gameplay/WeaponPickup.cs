@@ -3,12 +3,12 @@ using UnityEngine;
 
 namespace ProjectEpsilon {
     public class WeaponPickup : NetworkBehaviour {
-		public EWeaponType Type;
-		public float       Radius = 1f;
-		public float       Cooldown = 30f;
-		public LayerMask   LayerMask;
-		public GameObject  ActiveObject;
-		public GameObject  InactiveObject;
+		public EWeaponName Type;
+		public float Radius = 1f;
+		public float Cooldown = 30f;
+		public LayerMask LayerMask;
+		public GameObject ActiveObject;
+		public GameObject InactiveObject;
 
 		public bool IsActive => _activationTimer.ExpiredOrNotRunning(Runner);
 

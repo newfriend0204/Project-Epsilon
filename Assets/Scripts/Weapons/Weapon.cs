@@ -10,8 +10,16 @@ namespace ProjectEpsilon {
 		Shotgun,
 	}
 
+	public enum EWeaponName {
+		M1911,
+		SMG,
+		AK47,
+		RemingtonM870,
+	}
+
 	public class Weapon : NetworkBehaviour {
 		public EWeaponType Type;
+		public EWeaponName WeaponName;
 
 		[Header("Fire Setup")]
 		public bool IsAutomatic = true;
@@ -42,8 +50,10 @@ namespace ProjectEpsilon {
 		public Transform ThirdPersonMuzzleTransform;
 		public GameObject MuzzleEffectPrefab;
 		public ProjectileVisual ProjectileVisualPrefab;
+		public float KickBackIntensity;
+		public float KickBackDuration;
 
-		[Header("Sounds")]
+        [Header("Sounds")]
 		public AudioSource FireSound;
 		public AudioSource ReloadingSound;
 		public AudioSource EmptyClipSound;
@@ -77,12 +87,16 @@ namespace ProjectEpsilon {
 				return;
 			if (justPressed == false && IsAutomatic == false)
 				return;
-			if (IsReloading)
-				return;
 			if (GetComponentInParent<Player>().isRunning)
 				return;
-			if (_fireCooldown.ExpiredOrNotRunning(Runner) == false)
+			if (_fireCooldown.ExpiredOrNotRunning(Runner) == false && !IsReloading)
 				return;
+
+			if (IsReloading && ClipAmmo > 0) {
+                _fireCooldown = TickTimer.None;
+                IsReloading = false;
+                ReloadingSound.Stop();
+            }
 
             if (ClipAmmo <= 0) {
 				PlayEmptyClipSound(justPressed);
@@ -182,10 +196,6 @@ namespace ProjectEpsilon {
 			if (IsCollected == false)
 				return;
 
-			if (ClipAmmo == 0) {
-				Reload();
-			}
-
             if (IsReloading && _fireCooldown.ExpiredOrNotRunning(Runner)) {
 				IsReloading = false;
 
@@ -253,6 +263,15 @@ namespace ProjectEpsilon {
 			if (!GetComponentInParent<Player>().isMoving)
 				GetComponentInParent<Player>().isRunning = false;
             Animator.SetBool("IsRunning", GetComponentInParent<Player>().isRunning);
+
+			float _saveSpeed = 1;
+			if (GetComponentInParent<Player>().isSneaking) {
+				_saveSpeed -= 0.5f;
+			}
+            if (GetComponentInParent<Player>().isCrouching) {
+                _saveSpeed -= 0.1f;
+            }
+            Animator.SetFloat("speed", _saveSpeed);
         }
 
         public override void Render() {
@@ -320,7 +339,11 @@ namespace ProjectEpsilon {
             }
 
             GetComponentInParent<Player>().PlayFireEffect();
-		}
+			if (GetComponentInParent<Player>().isAiming)
+				GetComponentInParent<Player>().KickBack(KickBackIntensity / 2, KickBackDuration);
+			else
+                GetComponentInParent<Player>().KickBack(KickBackIntensity, KickBackDuration);
+        }
 
 		private void ApplyDamage(Hitbox enemyHitbox, Vector3 position, Vector3 direction) {
 			var enemyHealth = enemyHitbox.Root.GetComponent<Health>();
@@ -357,14 +380,14 @@ namespace ProjectEpsilon {
 			}
 		}
 
-        private void EnterADS() {
+        public void EnterADS() {
             Animator.SetTrigger("enterADS");
 			GetComponentInParent<Player>().isAiming = true;
 			GetComponentInParent<Player>().ZoomIn();
             Animator.ResetTrigger("exitADS");
         }
 
-        private void ExitADS() {
+        public void ExitADS() {
             Animator.SetTrigger("exitADS");
 			GetComponentInParent<Player>().isAiming = false;
 			GetComponentInParent<Player>().ZoomOut();
