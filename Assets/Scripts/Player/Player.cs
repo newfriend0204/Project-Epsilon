@@ -47,6 +47,7 @@ namespace ProjectEpsilon {
         internal bool isCrouching = false;
         internal bool isSneaking = false;
         internal bool isRunning = false;
+        internal bool isSearching = false;
 
         private int _visibleJumpCount;
         private float _saveSpeed;
@@ -201,16 +202,24 @@ namespace ProjectEpsilon {
                 Weapons.Reload();
             }
 
-            if (input.Buttons.WasPressed(_previousButtons, EInputButton.Sidearm)) {
+            if (input.Buttons.WasPressed(_previousButtons, EInputButton.Search)) {
+                Weapons.SwitchWeapon(0);
+            } else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Sidearm)) {
                 Weapons.SwitchWeapon(1);
             } else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Primary)) {
                 Weapons.SwitchWeapon(2);
             }
 
-            if (input.Buttons.WasPressed(_previousButtons, EInputButton.Spray) && HasStateAuthority) {
-                if (Runner.GetPhysicsScene().Raycast(CameraHandle.transform.position, KCC.LookDirection, out var hit, 2.5f, LayerMask.GetMask("Default"), QueryTriggerInteraction.Ignore)) {
-                    var sprayOrientation = hit.normal.y > 0.9f ? KCC.TransformRotation : Quaternion.identity;
-                    Runner.Spawn(SprayPrefab, hit.point, sprayOrientation * Quaternion.LookRotation(-hit.normal));
+            if (input.Buttons.WasPressed(_previousButtons, EInputButton.Interact) && HasStateAuthority) {
+                if (Runner.GetPhysicsScene().Raycast(CameraHandle.transform.position, KCC.LookDirection, out var hit, 2.5f, LayerMask.GetMask("Item"), QueryTriggerInteraction.Ignore)) {
+                    switch (hit.collider.gameObject.name) {
+                        case "M1911Collider":
+                        case "SMGCollider":
+                        case "AK47Collider":
+                        case "RemingtonM870Collider":
+                            hit.collider.gameObject.GetComponentInParent<WeaponPickup>().AcquireWeapon(gameObject);
+                            break;
+                    }
                 }
             }
 

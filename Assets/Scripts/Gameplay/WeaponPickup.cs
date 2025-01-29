@@ -4,11 +4,11 @@ using UnityEngine;
 namespace ProjectEpsilon {
     public class WeaponPickup : NetworkBehaviour {
 		public EWeaponName Type;
-		public float Radius = 1f;
 		public float Cooldown = 30f;
 		public LayerMask LayerMask;
 		public GameObject ActiveObject;
 		public GameObject InactiveObject;
+		public Outline OutlineScript;
 
 		public bool IsActive => _activationTimer.ExpiredOrNotRunning(Runner);
 
@@ -25,15 +25,23 @@ namespace ProjectEpsilon {
 		public override void FixedUpdateNetwork() {
 			if (IsActive == false)
 				return;
+        }
 
-			int collisions = Runner.GetPhysicsScene().OverlapSphere(transform.position + Vector3.up, Radius, _colliders, LayerMask, QueryTriggerInteraction.Ignore);
-			for (int i = 0; i < collisions; i++) {
-				var weapons = _colliders[i].GetComponentInParent<Weapons>();
-				if (weapons != null && weapons.PickupWeapon(Type)) {
-					_activationTimer = TickTimer.CreateFromSeconds(Runner, Cooldown);
-					break;
+		void Update() {
+			if (HasStateAuthority && FindObjectOfType<Player>().isSearching) {
+				Player _playerobject = FindObjectOfType<Player>();
+				float distance = Vector3.Distance(transform.position, _playerobject.transform.position);
+
+				if (_playerobject.isSearching) {
+					if (distance <= 15f)
+						OutlineScript.enabled = true;
+					else
+                        OutlineScript.enabled = false;
 				}
 			}
+			else {
+                OutlineScript.enabled = false;
+            }
 		}
 
 		public override void Render() {
@@ -41,8 +49,11 @@ namespace ProjectEpsilon {
 			InactiveObject.SetActive(IsActive == false);
 		}
 
-		private void OnDrawGizmos() {
-			Gizmos.DrawWireSphere(transform.position + Vector3.up, Radius);
-		}
+		public void AcquireWeapon(GameObject player) {
+            var weapons = player.GetComponentInParent<Weapons>();
+            if (weapons != null && weapons.PickupWeapon(Type)) {
+                _activationTimer = TickTimer.CreateFromSeconds(Runner, Cooldown);
+            }
+        }
 	}
 }

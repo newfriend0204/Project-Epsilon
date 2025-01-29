@@ -26,6 +26,7 @@ namespace ProjectEpsilon {
 		private EWeaponName _currentPrimary;
 		private EWeaponName _currentSidearm;
 		private EWeaponName _currentWeapon;
+		private EWeaponName _previousSearchWeapon;
 
 	    public void Fire(bool justPressed) {
 			if (CurrentWeapon == null || IsSwitching)
@@ -43,11 +44,15 @@ namespace ProjectEpsilon {
 
 	    public void SwitchWeapon(int slot) {
 			var newWeapon = GetWeapon(_currentWeapon);
-			if (slot == 1) {
+            if (slot == 0) {
+                newWeapon = GetWeapon(EWeaponName.Search);
+				if (_previousSearchWeapon != EWeaponName.Search && CurrentWeapon != GetWeapon(EWeaponName.Search))
+					_previousSearchWeapon = CurrentWeapon.WeaponName;
+            } else if (slot == 1) {
 				newWeapon = GetWeapon(_currentSidearm);
 				if (!_isCollectedSidearm)
 					return;
-			} else {
+			} else if (slot == 2) {
 				newWeapon = GetWeapon(_currentPrimary);
 				if (!_isCollectedPrimary)
 					return;
@@ -56,10 +61,14 @@ namespace ProjectEpsilon {
 				return;
 			}
 			if (newWeapon == CurrentWeapon && _pendingWeapon == null) {
-				return;
+                if (CurrentWeapon == GetWeapon(EWeaponName.Search) && _previousSearchWeapon != EWeaponName.Search) {
+					newWeapon = GetWeapon(_previousSearchWeapon);
+				} else {
+					return;
+				}
 			}
 			if (newWeapon == _pendingWeapon) {
-				return;
+                return;
 			}
 			if (CurrentWeapon != null) {
 				if (CurrentWeapon.IsReloading) {
@@ -135,11 +144,16 @@ namespace ProjectEpsilon {
 	    }
 
 	    public override void Spawned() {
-		}
+            if (HasStateAuthority) {
+                CurrentWeapon = AllWeapons[0];
+                CurrentWeapon.IsCollected = true;
+				_isCollectedSidearm = true;
+            }
+        }
 
 	    public override void FixedUpdateNetwork() {
 		    TryActivatePendingWeapon();
-	    }
+        }
 
 	    public override void Render() {
 		    if (_visibleWeapon == CurrentWeapon)
@@ -161,6 +175,8 @@ namespace ProjectEpsilon {
 
 		    _visibleWeapon = CurrentWeapon;
 
+			if (CurrentWeapon.Type == EWeaponType.Search)
+				currentWeaponID = -1;
 			Animator.SetFloat("WeaponID", currentWeaponID);
 	    }
 

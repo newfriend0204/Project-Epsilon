@@ -4,10 +4,10 @@ using UnityEngine.Serialization;
 
 namespace ProjectEpsilon {
     public enum EWeaponType {
-		None,
 		Pistol,
 		Rifle,
 		Shotgun,
+		Search,
 	}
 
 	public enum EWeaponName {
@@ -15,6 +15,7 @@ namespace ProjectEpsilon {
 		SMG,
 		AK47,
 		RemingtonM870,
+		Search,
 	}
 
 	public class Weapon : NetworkBehaviour {
@@ -91,8 +92,10 @@ namespace ProjectEpsilon {
 				return;
 			if (_fireCooldown.ExpiredOrNotRunning(Runner) == false && !IsReloading)
 				return;
+			if (Type == EWeaponType.Search)
+				return;
 
-			if (IsReloading && ClipAmmo > 0) {
+            if (IsReloading && ClipAmmo > 0) {
                 _fireCooldown = TickTimer.None;
                 IsReloading = false;
                 ReloadingSound.Stop();
@@ -141,8 +144,10 @@ namespace ProjectEpsilon {
 				return;
 			if (_fireCooldown.ExpiredOrNotRunning(Runner) == false)
 				return;
+            if (Type == EWeaponType.Search)
+                return;
 
-			if (Type == EWeaponType.Shotgun) {
+            if (Type == EWeaponType.Shotgun) {
                 Animator.SetTrigger("ReturnReload");
                 ReloadingSound.Play();
             }
@@ -228,12 +233,12 @@ namespace ProjectEpsilon {
 		}
 
         private void Update() {
-            if (Input.GetMouseButtonDown(1)) {
+            if (Input.GetMouseButtonDown(1) && Type != EWeaponType.Search) {
                 _fireCooldown = TickTimer.None;
                 IsReloading = false;
                 ReloadingSound.Stop();
 				EnterADS();
-            } else if (Input.GetMouseButtonUp(1) && !IsReloading) {
+            } else if (Input.GetMouseButtonUp(1) && !IsReloading && Type != EWeaponType.Search) {
                 ExitADS();
             }
 
@@ -260,11 +265,25 @@ namespace ProjectEpsilon {
 				GetComponentInParent<Player>().isRunning = false;
             }
 
-			if (!GetComponentInParent<Player>().isMoving)
+			if (!GetComponentInParent<Player>().isMoving) {
 				GetComponentInParent<Player>().isRunning = false;
+			}
             Animator.SetBool("IsRunning", GetComponentInParent<Player>().isRunning);
 
-			float _saveSpeed = 1;
+			if (_muzzleEffectInstance != null) {
+				if (!_muzzleEffectInstance.GetComponent<ParticleSystem>().isPlaying) {
+					_muzzleEffectInstance.SetActive(false);
+				}
+			}
+
+			if (Type == EWeaponType.Search) {
+				GetComponentInParent<Player>().isSearching = true;
+            } else {
+				GetComponentInParent<Player>().isSearching = false;
+
+            }
+
+            float _saveSpeed = 1;
 			if (GetComponentInParent<Player>().isSneaking) {
 				_saveSpeed -= 0.5f;
 			}
@@ -329,8 +348,8 @@ namespace ProjectEpsilon {
 				FireSound.PlayOneShot(FireSound.clip);
 			}
 
-			_muzzleEffectInstance.SetActive(false);
 			_muzzleEffectInstance.SetActive(true);
+			_muzzleEffectInstance.GetComponent<ParticleSystem>().Play();
 
             if (GetComponentInParent<Player>().isAiming) {
                 Animator.SetTrigger("FireADS");

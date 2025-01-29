@@ -10,9 +10,10 @@ namespace ProjectEpsilon {
 		Reload,
         Sidearm,
         Primary,
-        Spray,
+        Interact,
 		Aim,
 		Crouch,
+		Search,
 	}
 
 	public struct NetworkedInput : INetworkInput {
@@ -97,12 +98,13 @@ namespace ProjectEpsilon {
 
 				_accumulatedInput.MoveDirection = moveDirection.normalized;
 
-				_accumulatedInput.Buttons.Set(EInputButton.Jump, keyboard.spaceKey.isPressed);
+				_accumulatedInput.Buttons.Set(EInputButton.Jump, keyboard.tKey.isPressed);
 				_accumulatedInput.Buttons.Set(EInputButton.Reload, keyboard.rKey.isPressed);
                 _accumulatedInput.Buttons.Set(EInputButton.Sidearm, keyboard.digit1Key.isPressed || keyboard.numpad1Key.isPressed);
 				_accumulatedInput.Buttons.Set(EInputButton.Primary, keyboard.digit2Key.isPressed || keyboard.numpad2Key.isPressed);
-				_accumulatedInput.Buttons.Set(EInputButton.Spray, keyboard.fKey.isPressed);
+				_accumulatedInput.Buttons.Set(EInputButton.Interact, keyboard.fKey.isPressed);
                 _accumulatedInput.Buttons.Set(EInputButton.Crouch, keyboard.cKey.isPressed);
+                _accumulatedInput.Buttons.Set(EInputButton.Search, keyboard.spaceKey.isPressed);
             }
 		}
 

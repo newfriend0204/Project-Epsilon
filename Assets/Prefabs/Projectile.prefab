@@ -267,6 +267,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Speed: 180
   MaxDistance: 100
-  LifeTimeAfterHit: 2
+  LifeTimeAfterHit: 20
   ProjectileObject: {fileID: 1844908429441213532}
-  HitEffectPrefab: {fileID: 108086, guid: 547c2e12da8d4214098216299e70a3ba, type: 3}
+  HitEffectPrefab: {fileID: 1000010844420130, guid: 4edabb1c0dde62743b137378c7d22980, type: 3}
