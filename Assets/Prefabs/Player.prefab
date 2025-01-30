@@ -639,7 +639,7 @@ MonoBehaviour:
     m_Bits: 65
   MaxHitDistance: 100
   MaxClipAmmo: 30
-  StartAmmo: 60
+  StartAmmo: 30
   ReloadTime: 1.8
   Icon: {fileID: 21300000, guid: 6fda819836ba343469894117cb6c4826, type: 3}
   Name: AK47
@@ -650,8 +650,6 @@ MonoBehaviour:
   ThirdPersonMuzzleTransform: {fileID: 5124637454006023334}
   MuzzleEffectPrefab: {fileID: 1000010254994808, guid: 9defeac88977c0d448aa4541073ee9e4, type: 3}
   ProjectileVisualPrefab: {fileID: 7491510959155936860, guid: 5041eeb12cd5049cea0ffc96bb0676f5, type: 3}
-  KickBackIntensity: 0.1
-  KickBackDuration: 0.02
   FireSound: {fileID: 1432252065331508557}
   ReloadingSound: {fileID: 7976769663067954015}
   EmptyClipSound: {fileID: 7577767043446467932}
@@ -660,7 +658,6 @@ MonoBehaviour:
   _IsReloading:
     _value: 0
   _ClipAmmo: 0
-  _RemainingAmmo: 0
 --- !u!1 &1190835071092387197
 GameObject:
   m_ObjectHideFlags: 0
@@ -1738,8 +1735,6 @@ MonoBehaviour:
   ThirdPersonMuzzleTransform: {fileID: 5124637454006023334}
   MuzzleEffectPrefab: {fileID: 1000010254994808, guid: 9defeac88977c0d448aa4541073ee9e4, type: 3}
   ProjectileVisualPrefab: {fileID: 7491510959155936860, guid: 5041eeb12cd5049cea0ffc96bb0676f5, type: 3}
-  KickBackIntensity: 9999
-  KickBackDuration: 9999
   FireSound: {fileID: 7540617399662243351}
   ReloadingSound: {fileID: 194937495691504383}
   EmptyClipSound: {fileID: 2156818942211538270}
@@ -1748,7 +1743,6 @@ MonoBehaviour:
   _IsReloading:
     _value: 0
   _ClipAmmo: 0
-  _RemainingAmmo: 0
 --- !u!1 &2005765762465058579
 GameObject:
   m_ObjectHideFlags: 0
@@ -2483,7 +2477,7 @@ MonoBehaviour:
     m_Bits: 65
   MaxHitDistance: 100
   MaxClipAmmo: 12
-  StartAmmo: 99999
+  StartAmmo: 12
   ReloadTime: 1
   Icon: {fileID: 21300000, guid: 2b1578f02fe41ab449d1d1f4b571613f, type: 3}
   Name: M1911
@@ -2494,8 +2488,6 @@ MonoBehaviour:
   ThirdPersonMuzzleTransform: {fileID: 1811013645989995498}
   MuzzleEffectPrefab: {fileID: 1000010254994808, guid: 9defeac88977c0d448aa4541073ee9e4, type: 3}
   ProjectileVisualPrefab: {fileID: 7491510959155936860, guid: 5041eeb12cd5049cea0ffc96bb0676f5, type: 3}
-  KickBackIntensity: 0.05
-  KickBackDuration: 0.05
   FireSound: {fileID: 4207594411574840203}
   ReloadingSound: {fileID: 7678558494356040344}
   EmptyClipSound: {fileID: 253264026651134671}
@@ -2504,7 +2496,6 @@ MonoBehaviour:
   _IsReloading:
     _value: 0
   _ClipAmmo: 0
-  _RemainingAmmo: 0
 --- !u!1 &2711588277557647066
 GameObject:
   m_ObjectHideFlags: 0
@@ -3074,7 +3065,7 @@ MonoBehaviour:
     m_Bits: 65
   MaxHitDistance: 100
   MaxClipAmmo: 16
-  StartAmmo: 32
+  StartAmmo: 16
   ReloadTime: 2.2
   Icon: {fileID: 21300000, guid: 6fda819836ba343469894117cb6c4826, type: 3}
   Name: SMG
@@ -3085,8 +3076,6 @@ MonoBehaviour:
   ThirdPersonMuzzleTransform: {fileID: 933950685261396452}
   MuzzleEffectPrefab: {fileID: 1000010254994808, guid: 9defeac88977c0d448aa4541073ee9e4, type: 3}
   ProjectileVisualPrefab: {fileID: 7491510959155936860, guid: 5041eeb12cd5049cea0ffc96bb0676f5, type: 3}
-  KickBackIntensity: 0.3
-  KickBackDuration: 0.02
   FireSound: {fileID: 3827577614104950749}
   ReloadingSound: {fileID: 5209826508664084943}
   EmptyClipSound: {fileID: 5753219741910626252}
@@ -3095,7 +3084,6 @@ MonoBehaviour:
   _IsReloading:
     _value: 0
   _ClipAmmo: 0
-  _RemainingAmmo: 0
 --- !u!1 &3147348754744504545
 GameObject:
   m_ObjectHideFlags: 0
@@ -7240,7 +7228,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: -973724649278464913, guid: bfbc8b07bd216478eb5fca35a6fe51e2, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.4
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -9309,7 +9297,7 @@ MonoBehaviour:
     m_Bits: 65
   MaxHitDistance: 50
   MaxClipAmmo: 7
-  StartAmmo: 14
+  StartAmmo: 7
   ReloadTime: 0.2
   Icon: {fileID: 21300000, guid: 02e8ade0ffca705409493fdd2537e1f6, type: 3}
   Name: RemingtonM870
@@ -9320,8 +9308,6 @@ MonoBehaviour:
   ThirdPersonMuzzleTransform: {fileID: 254220421748882738}
   MuzzleEffectPrefab: {fileID: 1000010254994808, guid: 9defeac88977c0d448aa4541073ee9e4, type: 3}
   ProjectileVisualPrefab: {fileID: 7491510959155936860, guid: 5041eeb12cd5049cea0ffc96bb0676f5, type: 3}
-  KickBackIntensity: 0.15
-  KickBackDuration: 0.5
   FireSound: {fileID: 7540617399662243351}
   ReloadingSound: {fileID: 2156818942211538270}
   EmptyClipSound: {fileID: 194937495691504383}
@@ -9330,7 +9316,6 @@ MonoBehaviour:
   _IsReloading:
     _value: 0
   _ClipAmmo: 0
-  _RemainingAmmo: 0
 --- !u!1 &8637394700497094636
 GameObject:
   m_ObjectHideFlags: 0

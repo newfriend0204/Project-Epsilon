@@ -1,4 +1,5 @@
 using Fusion;
+using Fusion.Addons.SimpleKCC;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -51,15 +52,13 @@ namespace ProjectEpsilon {
 		public Transform ThirdPersonMuzzleTransform;
 		public GameObject MuzzleEffectPrefab;
 		public ProjectileVisual ProjectileVisualPrefab;
-		public float KickBackIntensity;
-		public float KickBackDuration;
 
         [Header("Sounds")]
 		public AudioSource FireSound;
 		public AudioSource ReloadingSound;
 		public AudioSource EmptyClipSound;
 
-        public bool HasAmmo => ClipAmmo > 0 || RemainingAmmo > 0;
+		public bool HasAmmo => ClipAmmo > 0 || _allAmmo > 0;//|| RemainingAmmo > 0;
 
 		[Networked]
 		public NetworkBool IsCollected { get; set; }
@@ -67,8 +66,9 @@ namespace ProjectEpsilon {
 		public NetworkBool IsReloading { get; set; }
 		[Networked]
 		public int ClipAmmo { get; set; }
-		[Networked]
-		public int RemainingAmmo { get; set; }
+		private int _allAmmo;
+		//[Networked]
+		//public int RemainingAmmo { get; set; }
 
 		[Networked]
 		private int _fireCount { get; set; }
@@ -88,12 +88,13 @@ namespace ProjectEpsilon {
 				return;
 			if (justPressed == false && IsAutomatic == false)
 				return;
-			if (GetComponentInParent<Player>().isRunning)
-				return;
 			if (_fireCooldown.ExpiredOrNotRunning(Runner) == false && !IsReloading)
 				return;
 			if (Type == EWeaponType.Search)
 				return;
+            if (GetComponentInParent<Player>().isRunning) {
+				return;
+            }
 
             if (IsReloading && ClipAmmo > 0) {
                 _fireCooldown = TickTimer.None;
@@ -110,17 +111,17 @@ namespace ProjectEpsilon {
 
 			for (int i = 0; i < ProjectilesPerShot; i++) {
 				var projectileDirection = fireDirection;
-				float saveDispersion = Dispersion;
+				float _saveDispersion = Dispersion;
                 if (GetComponentInParent<Player>().isAiming) {
-                    saveDispersion -= Dispersion / 10 * 4;
+                    _saveDispersion -= Dispersion / 10 * 4;
                 }
                 if (GetComponentInParent<Player>().isSneaking) {
-                    saveDispersion -= Dispersion / 10 * 1;
+                    _saveDispersion -= Dispersion / 10 * 1;
                 }
                 if (GetComponentInParent<Player>().isCrouching) {
-                    saveDispersion -= Dispersion / 10 * 3;
+                    _saveDispersion -= Dispersion / 10 * 3;
                 }
-                Quaternion dispersion = Quaternion.Euler(Random.insideUnitSphere * saveDispersion);
+                Quaternion dispersion = Quaternion.Euler(Random.insideUnitSphere * _saveDispersion);
                 if (Dispersion > 0f) {
 					var dispersionRotation = dispersion;
                     projectileDirection = dispersionRotation * fireDirection;
@@ -138,8 +139,8 @@ namespace ProjectEpsilon {
 				return;
 			if (ClipAmmo >= MaxClipAmmo)
 				return;
-			if (RemainingAmmo <= 0)
-				return;
+			//if (RemainingAmmo <= 0)
+			//	return;
 			if (IsReloading)
 				return;
 			if (_fireCooldown.ExpiredOrNotRunning(Runner) == false)
@@ -160,9 +161,22 @@ namespace ProjectEpsilon {
             _fireCooldown = TickTimer.CreateFromSeconds(Runner, ReloadTime);
 		}
 
-		public void AddAmmo(int amount) {
-			RemainingAmmo += amount;
-		}
+		//public void AddAmmo(int amount) {
+  //          switch (WeaponName) {
+  //              case EWeaponName.M1911:
+  //                  GetComponentInParent<Player>().bullet9mm += amount;
+  //                  break;
+  //              case EWeaponName.SMG:
+  //                  GetComponentInParent<Player>().bullet9mm += amount;
+  //                  break;
+  //              case EWeaponName.AK47:
+  //                  GetComponentInParent<Player>().bullet5_56mm += amount;
+  //                  break;
+  //              case EWeaponName.RemingtonM870:
+  //                  GetComponentInParent<Player>().bulletShell += amount;
+  //                  break;
+  //          }
+		//}
 
 		public void ToggleVisibility(bool isVisible) { 
 			FirstPersonVisual.SetActive(isVisible);
@@ -183,7 +197,22 @@ namespace ProjectEpsilon {
 		public override void Spawned() {
 			if (HasStateAuthority) {
 				ClipAmmo = Mathf.Clamp(StartAmmo, 0, MaxClipAmmo);
-				RemainingAmmo = StartAmmo - ClipAmmo;
+                int _remainingAmmo = 0;
+                switch (WeaponName) {
+                    case EWeaponName.M1911:
+                        _remainingAmmo = GetComponentInParent<Player>().bullet9mm;
+                        break;
+                    case EWeaponName.SMG:
+                        _remainingAmmo = GetComponentInParent<Player>().bullet9mm;
+                        break;
+                    case EWeaponName.AK47:
+                        _remainingAmmo = GetComponentInParent<Player>().bullet5_56mm;
+                        break;
+                    case EWeaponName.RemingtonM870:
+                        _remainingAmmo = GetComponentInParent<Player>().bulletShell;
+                        break;
+                }
+                _remainingAmmo = StartAmmo - ClipAmmo;
 			}
 
 			_visibleFireCount = _fireCount;
@@ -207,14 +236,42 @@ namespace ProjectEpsilon {
 				Animator.ResetTrigger("exitADS");
 
                 int reloadAmmo = MaxClipAmmo - ClipAmmo;
-				reloadAmmo = Mathf.Min(reloadAmmo, RemainingAmmo);
+				int _remainingAmmo = 0;
+                switch (WeaponName) {
+                    case EWeaponName.M1911:
+						_remainingAmmo = GetComponentInParent<Player>().bullet9mm;
+                        break;
+                    case EWeaponName.SMG:
+                        _remainingAmmo = GetComponentInParent<Player>().bullet9mm;
+                        break;
+                    case EWeaponName.AK47:
+                        _remainingAmmo = GetComponentInParent<Player>().bullet5_56mm;
+                        break;
+                    case EWeaponName.RemingtonM870:
+                        _remainingAmmo = GetComponentInParent<Player>().bulletShell;
+                        break;
+                }
+                reloadAmmo = Mathf.Min(reloadAmmo, _remainingAmmo);
 				
 				if (Type == EWeaponType.Shotgun) {
 					reloadAmmo = 1;
 				}
 
 				ClipAmmo += reloadAmmo;
-				RemainingAmmo -= reloadAmmo;
+                switch (WeaponName) {
+                    case EWeaponName.M1911:
+                        GetComponentInParent<Player>().bullet9mm -= reloadAmmo;
+                        break;
+                    case EWeaponName.SMG:
+                        GetComponentInParent<Player>().bullet9mm -= reloadAmmo;
+                        break;
+                    case EWeaponName.AK47:
+                        GetComponentInParent<Player>().bullet5_56mm -= reloadAmmo;
+                        break;
+                    case EWeaponName.RemingtonM870:
+                        GetComponentInParent<Player>().bulletShell -= reloadAmmo;
+                        break;
+                }
 
 				if (Type == EWeaponType.Shotgun) {
 					if (ClipAmmo != MaxClipAmmo) {
@@ -223,7 +280,7 @@ namespace ProjectEpsilon {
 					} else if (ClipAmmo == MaxClipAmmo) {
 						Animator.SetBool("ReloadEnd", true);
 					}
-					if (RemainingAmmo == 0) {
+					if (GetComponentInParent<Player>().bulletShell == 0) {
 						Animator.SetBool("ReloadEnd", true);
 					}
 				}
@@ -254,7 +311,17 @@ namespace ProjectEpsilon {
 				GetComponentInParent<Player>().isSneaking = false;
             }
 
-			if (Input.GetKey(KeyCode.LeftControl) && !GetComponentInParent<Player>().isCrouching && !GetComponentInParent<Player>().isAiming) {
+			if (Input.GetKey(KeyCode.LeftControl) && !GetComponentInParent<Player>().isAiming) {
+				if (GetComponentInParent<Player>().isCrouching) {
+                    GetComponentInParent<Player>().isCrouching = !GetComponentInParent<Player>().isCrouching;
+                    if (GetComponentInParent<Player>().isCrouching) {
+                        StartCoroutine(GetComponentInParent<Player>().MoveCamera(GetComponentInParent<Player>().originalPosition));
+                        GetComponentInParent<Player>().KCC.SetHeight(1.2f);
+                    } else {
+                        StartCoroutine(GetComponentInParent<Player>().MoveCamera(GetComponentInParent<Player>().crounchPosition));
+                        GetComponentInParent<Player>().KCC.SetHeight(1.8f);
+                    }
+                }
 				GetComponentInParent<Player>().isRunning = true;
 				if (IsReloading) {
 					_fireCooldown = TickTimer.None;
@@ -290,7 +357,22 @@ namespace ProjectEpsilon {
             if (GetComponentInParent<Player>().isCrouching) {
                 _saveSpeed -= 0.1f;
             }
-            Animator.SetFloat("speed", _saveSpeed);
+			Animator.SetFloat("speed", _saveSpeed);
+
+			switch (WeaponName) {
+				case EWeaponName.M1911:
+					_allAmmo = GetComponentInParent<Player>().bullet9mm;
+					break;
+				case EWeaponName.SMG:
+                    _allAmmo = GetComponentInParent<Player>().bullet9mm;
+					break;
+                case EWeaponName.AK47:
+                    _allAmmo = GetComponentInParent<Player>().bullet5_56mm;
+                    break;
+                case EWeaponName.RemingtonM870:
+                    _allAmmo = GetComponentInParent<Player>().bulletShell;
+                    break;
+            }
         }
 
         public override void Render() {
@@ -358,11 +440,7 @@ namespace ProjectEpsilon {
             }
 
             GetComponentInParent<Player>().PlayFireEffect();
-			if (GetComponentInParent<Player>().isAiming)
-				GetComponentInParent<Player>().KickBack(KickBackIntensity / 2, KickBackDuration);
-			else
-                GetComponentInParent<Player>().KickBack(KickBackIntensity, KickBackDuration);
-        }
+		}
 
 		private void ApplyDamage(Hitbox enemyHitbox, Vector3 position, Vector3 direction) {
 			var enemyHealth = enemyHitbox.Root.GetComponent<Health>();

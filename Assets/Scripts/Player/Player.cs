@@ -1,10 +1,8 @@
 using UnityEngine;
 using Fusion;
 using Fusion.Addons.SimpleKCC;
-using UnityEngine.InputSystem;
 using Cinemachine;
 using System.Collections;
-using Unity.VisualScripting;
 
 namespace ProjectEpsilon {
     [DefaultExecutionOrder(-5)]
@@ -49,10 +47,17 @@ namespace ProjectEpsilon {
         internal bool isRunning = false;
         internal bool isSearching = false;
 
+        [Networked]
+        internal int bullet9mm { get; set; }
+        [Networked]
+        internal int bullet5_56mm { get; set; }
+        [Networked]
+        internal int bulletShell { get; set; }
+
         private int _visibleJumpCount;
         private float _saveSpeed;
-        private Vector3 _originalPosition = new Vector3(0f, 1.2f, 0f);
-        private Vector3 _crounchPosition = new Vector3(0f, 1.678634f, 0f);
+        internal Vector3 originalPosition = new Vector3(0f, 1.2f, 0f);
+        internal Vector3 crounchPosition = new Vector3(0f, 1.678634f, 0f);
 
         private SceneObjects _sceneObjects;
 
@@ -162,6 +167,9 @@ namespace ProjectEpsilon {
                 return;
 
             RefreshCamera();
+            Debug.Log("9mm≈∫æ‡: " + bullet9mm);
+            Debug.Log("5.56mm≈∫æ‡: " + bullet5_56mm);
+            Debug.Log("Ω© ≈∫æ‡" + bulletShell);
         }
 
         private void ProcessInput(NetworkedInput input) {
@@ -186,10 +194,10 @@ namespace ProjectEpsilon {
             if (input.Buttons.WasPressed(_previousButtons, EInputButton.Crouch)) {
                 isCrouching = !isCrouching;
                 if (isCrouching) {
-                    StartCoroutine(MoveCamera(_originalPosition));
+                    StartCoroutine(MoveCamera(originalPosition));
                     KCC.SetHeight(1.2f);
                 } else {
-                    StartCoroutine(MoveCamera(_crounchPosition));
+                    StartCoroutine(MoveCamera(crounchPosition));
                     KCC.SetHeight(1.8f);
                 }
             }
@@ -224,35 +232,6 @@ namespace ProjectEpsilon {
             }
 
             _previousButtons = input.Buttons;
-        }
-
-        public void KickBack(float intensity, float duration) {
-            StartCoroutine(KickBackCamera(intensity, duration));
-        }
-
-        IEnumerator KickBackCamera(float intensity, float duration) {
-            Vector3 originalPosition = new Vector3(0, 0, 0);
-            if (isCrouching)
-                originalPosition = _originalPosition;
-            else
-                originalPosition = _crounchPosition;
-            float elapsedTime = 0f;
-
-            while (elapsedTime < duration) {
-                float xOffset = Random.Range(-1f, 1f) * intensity;
-                float yOffset = Random.Range(-1f, 1f) * intensity;
-
-                CameraHandle.transform.localPosition = new Vector3(
-                    originalPosition.x + xOffset,
-                    originalPosition.y + yOffset,
-                    originalPosition.z
-                );
-
-                elapsedTime += Time.deltaTime;
-                yield return null;
-            }
-
-            CameraHandle.transform.localPosition = originalPosition;
         }
 
         private void RefreshCamera() {
@@ -313,7 +292,7 @@ namespace ProjectEpsilon {
             }
         }
 
-        IEnumerator MoveCamera(Vector3 targetPosition) {
+        public IEnumerator MoveCamera(Vector3 targetPosition) {
             Vector3 startPosition = CameraHandle.transform.localPosition;
             float duration = 0.1f;
             float elapsedTime = 0f;

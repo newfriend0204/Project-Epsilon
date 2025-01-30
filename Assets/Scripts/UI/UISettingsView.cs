@@ -6,8 +6,8 @@ using UnityEngine.UI;
 namespace ProjectEpsilon {
     public class UISettingsView : MonoBehaviour
 	{
-		public Slider          Volume;
-		public Slider          Sensitivity;
+		public Slider Volume;
+		public Slider Sensitivity;
 		public TextMeshProUGUI SensitivityValue;
 
 		public void LoadSettings() {

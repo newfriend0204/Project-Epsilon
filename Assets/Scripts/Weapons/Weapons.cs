@@ -125,14 +125,27 @@ namespace ProjectEpsilon {
                 SwitchWeapon(2);
             }
 
-			if (weapon.IsCollected) {
-				weapon.AddAmmo(weapon.StartAmmo - weapon.RemainingAmmo);
-			} else {
-                weapon.IsCollected = true;
-            }
-
-			return true;
-	    }
+			//if (weapon.IsCollected) {
+				switch (weaponType) {
+					case EWeaponName.M1911:
+						GetComponentInParent<Player>().bullet9mm += weapon.StartAmmo;
+						break;
+					case EWeaponName.SMG:
+						GetComponentInParent<Player>().bullet9mm += weapon.StartAmmo;
+						break;
+					case EWeaponName.AK47:
+						GetComponentInParent<Player>().bullet5_56mm += weapon.StartAmmo;
+						break;
+					case EWeaponName.RemingtonM870:
+						GetComponentInParent<Player>().bulletShell += weapon.StartAmmo;
+						break;
+						//weapon.AddAmmo(weapon.StartAmmo - weapon.RemainingAmmo);
+				}
+			//} else {
+			//	weapon.IsCollected = true;
+			//}
+            return true;
+        }
 
 	    public Weapon GetWeapon(EWeaponName weaponType) {
 			for (int i = 0; i < AllWeapons.Length; ++i) {

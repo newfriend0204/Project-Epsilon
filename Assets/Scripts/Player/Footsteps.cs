@@ -11,13 +11,10 @@ namespace ProjectEpsilon {
 
 		private float _footstepCooldown;
 		private bool _wasGrounded;
+		private float _currentDuration;
 
 		public override void Spawned() {
 			_wasGrounded = true;
-
-			if (HasInputAuthority) {
-				FootstepSource.volume -= 0.1f;
-			}
 		}
 
 		public override void Render() {
@@ -35,7 +32,29 @@ namespace ProjectEpsilon {
 			if (KCC.RealSpeed < 0.5f)
 				return;
 
-			if (_footstepCooldown <= 0f) {
+            float _saveVolume = HasInputAuthority ? 0.15f : 0.6f;
+			float _saveMax = _saveVolume;
+            float _saveDuration = FootstepDuration;
+            if (GetComponentInParent<Player>().isCrouching) {
+                _saveVolume -= _saveMax / 10 * 2.5f;
+                _saveDuration += 0.05f;
+			}
+            if (GetComponentInParent<Player>().isSneaking) {
+                _saveVolume -= _saveMax / 10 * 3.5f;
+                _saveDuration += 0.1f;
+            }
+            if (GetComponentInParent<Player>().isAiming) {
+                _saveVolume -= _saveMax / 10 * 1;
+                _saveDuration += 0.01f;
+            }
+            if (GetComponentInParent<Player>().isRunning) {
+                _saveVolume += _saveMax / 10 * 5;
+                _saveDuration -= 0.05f;
+            }
+            FootstepSource.volume = _saveVolume;
+			_currentDuration = _saveDuration;
+
+            if (_footstepCooldown <= 0f) {
 				PlayFootstep();
 			}
 		}
@@ -44,7 +63,7 @@ namespace ProjectEpsilon {
 			var clip = FootstepClips[Random.Range(0, FootstepClips.Length)];
 			FootstepSource.PlayOneShot(clip);
 
-			_footstepCooldown = FootstepDuration;
+			_footstepCooldown = _currentDuration;
 		}
 	}
 }

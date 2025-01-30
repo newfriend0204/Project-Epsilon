@@ -32,16 +32,16 @@ namespace ProjectEpsilon {
 
 		    UpdateAmmoProgress();
 
-		    if (_weapon.ClipAmmo == _lastClipAmmo && _weapon.RemainingAmmo == _lastRemainingAmmo)
-			    return;
+		    //if (_weapon.ClipAmmo == _lastClipAmmo && _weapon.RemainingAmmo == _lastRemainingAmmo)
+			   // return;
 
-		    ClipAmmo.text = _weapon.ClipAmmo.ToString();
-		    RemainingAmmo.text = _weapon.RemainingAmmo < 1000 ? _weapon.RemainingAmmo.ToString() : "-";
+		    //ClipAmmo.text = _weapon.ClipAmmo.ToString();
+		    //RemainingAmmo.text = _weapon.RemainingAmmo < 1000 ? _weapon.RemainingAmmo.ToString() : "-";
 
-		    NoAmmoGroup.SetActive(_weapon.ClipAmmo == 0 && _weapon.RemainingAmmo == 0);
+		    //NoAmmoGroup.SetActive(_weapon.ClipAmmo == 0 && _weapon.RemainingAmmo == 0);
 
-		    _lastClipAmmo = _weapon.ClipAmmo;
-		    _lastRemainingAmmo = _weapon.RemainingAmmo;
+		    //_lastClipAmmo = _weapon.ClipAmmo;
+		    //_lastRemainingAmmo = _weapon.RemainingAmmo;
 	    }
 
 	    private void SetWeapon(Weapon weapon) {
