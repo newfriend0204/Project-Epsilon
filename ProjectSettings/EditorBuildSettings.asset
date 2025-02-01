@@ -5,14 +5,11 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
-    path: Assets/Scenes/GameScene.unity
-    guid: 8abab4acb27ca2f44a2cecb9644ec6d4
   - enabled: 0
     path: Assets/Scenes/Startup.unity
     guid: 0d3b40ecff110444e9d1162e4759a437
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/Deathmatch.unity
-    guid: eda0b8fb7e8c03642a26d0c819eb1630
+    guid: 1c703de7b7eea1148abdabe6d47e090a
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 36150db0ceb0fd647ac9f9ed56f13517, type: 2}
