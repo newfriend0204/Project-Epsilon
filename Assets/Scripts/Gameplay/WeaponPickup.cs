@@ -8,9 +8,10 @@ namespace ProjectEpsilon {
 		public LayerMask LayerMask;
 		public GameObject ActiveObject;
 		public GameObject InactiveObject;
-		public Outline OutlineScript;
+        public GameObject InfoObject;
+        public Outline OutlineScript;
 
-		public bool IsActive => _activationTimer.ExpiredOrNotRunning(Runner);
+        public bool IsActive => _activationTimer.ExpiredOrNotRunning(Runner);
 
 		[Networked]
 		private TickTimer _activationTimer { get; set; }
@@ -29,18 +30,26 @@ namespace ProjectEpsilon {
 
 		void Update() {
 			if (HasStateAuthority && FindObjectOfType<Player>().isSearching) {
-				Player _playerobject = FindObjectOfType<Player>();
-				float distance = Vector3.Distance(transform.position, _playerobject.transform.position);
+				Player _playerObject = FindObjectOfType<Player>();
+				float distance = Vector3.Distance(transform.position, _playerObject.transform.position);
 
-				if (_playerobject.isSearching) {
-					if (distance <= 15f)
-						OutlineScript.enabled = true;
-					else
+                Vector3 direction = new Vector3(_playerObject.transform.position.x, _playerObject.transform.position.y + 1.737276f, _playerObject.transform.position.z) - transform.position;
+                Quaternion rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(0, 180, 0);
+                InfoObject.transform.rotation = Quaternion.Slerp(InfoObject.transform.rotation, rotation, Time.deltaTime * 5f);
+
+                if (_playerObject.isSearching) {
+                    if (distance <= 15f) {
+                        InfoObject.SetActive(true);
+                        OutlineScript.enabled = true;
+                    } else {
+                        InfoObject.SetActive(false);
                         OutlineScript.enabled = false;
-				}
-			}
+                    }
+                }
+            }
 			else {
                 OutlineScript.enabled = false;
+                InfoObject.SetActive(false);
             }
 		}
 

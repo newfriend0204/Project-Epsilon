@@ -48,11 +48,11 @@ namespace ProjectEpsilon {
         internal bool isSearching = false;
 
         [Networked]
-        internal int bullet45ACP { get; set; }
+        internal int ammo45ACP { get; set; }
         [Networked]
-        internal int bullet7_62mm { get; set; }
+        internal int ammo7_62mm { get; set; }
         [Networked]
-        internal int bullet12Gauge { get; set; }
+        internal int ammo12Gauge { get; set; }
 
         private int _visibleJumpCount;
         private float _saveSpeed;
@@ -167,9 +167,9 @@ namespace ProjectEpsilon {
                 return;
 
             RefreshCamera();
-            Debug.Log("9mm≈∫æ‡: " + bullet45ACP);
-            Debug.Log("7.62mm≈∫æ‡: " + bullet7_62mm);
-            Debug.Log("12∞‘¿Ã¡ˆ ≈∫æ‡" + bullet12Gauge);
+            Debug.Log("9mm≈∫æ‡: " + ammo45ACP);
+            Debug.Log("7.62mm≈∫æ‡: " + ammo7_62mm);
+            Debug.Log("12∞‘¿Ã¡ˆ ≈∫æ‡" + ammo12Gauge);
         }
 
         private void ProcessInput(NetworkedInput input) {
@@ -227,9 +227,9 @@ namespace ProjectEpsilon {
                         case "RemingtonM870Collider":
                             hit.collider.gameObject.GetComponentInParent<WeaponPickup>().AcquireWeapon(gameObject);
                             break;
-                        case "Bullet45ACPCollider":
-                        case "Bullet7_62mmCollider":
-                        case "Bullet12GaugeCollider":
+                        case "Ammo45ACPCollider":
+                        case "Ammo7_62mmCollider":
+                        case "Ammo12GaugeCollider":
                             hit.collider.gameObject.GetComponentInParent<AmmoPickup>().AcquireAmmo(gameObject);
                             break;
                     }

@@ -45,8 +45,9 @@ namespace ProjectEpsilon {
 		[FormerlySerializedAs("WeaponVisual")]
 		public GameObject FirstPersonVisual;
 		public GameObject ThirdPersonVisual;
+        public GameObject TestSearchScreen;
 
-		[Header("Fire Effect")]
+        [Header("Fire Effect")]
 		[FormerlySerializedAs("MuzzleTransform")]
 		public Transform FirstPersonMuzzleTransform;
 		public Transform ThirdPersonMuzzleTransform;
@@ -58,7 +59,7 @@ namespace ProjectEpsilon {
 		public AudioSource ReloadingSound;
 		public AudioSource EmptyClipSound;
 
-		public bool HasAmmo => ClipAmmo > 0 || _allAmmo > 0;//|| RemainingAmmo > 0;
+		public bool HasAmmo => ClipAmmo > 0 || _allAmmo > 0;
 
 		[Networked]
 		public NetworkBool IsCollected { get; set; }
@@ -67,8 +68,6 @@ namespace ProjectEpsilon {
 		[Networked]
 		public int ClipAmmo { get; set; }
 		private int _allAmmo;
-		//[Networked]
-		//public int RemainingAmmo { get; set; }
 
 		[Networked]
 		private int _fireCount { get; set; }
@@ -141,8 +140,6 @@ namespace ProjectEpsilon {
 				return;
 			if (_allAmmo <= 0)
 				return;
-			//if (RemainingAmmo <= 0)
-			//	return;
 			if (IsReloading)
 				return;
 			if (_fireCooldown.ExpiredOrNotRunning(Runner) == false)
@@ -162,23 +159,6 @@ namespace ProjectEpsilon {
 			}
             _fireCooldown = TickTimer.CreateFromSeconds(Runner, ReloadTime);
 		}
-
-		//public void AddAmmo(int amount) {
-  //          switch (WeaponName) {
-  //              case EWeaponName.M1911:
-  //                  GetComponentInParent<Player>().bullet9mm += amount;
-  //                  break;
-  //              case EWeaponName.SMG:
-  //                  GetComponentInParent<Player>().bullet9mm += amount;
-  //                  break;
-  //              case EWeaponName.AK47:
-  //                  GetComponentInParent<Player>().bullet7_62mm += amount;
-  //                  break;
-  //              case EWeaponName.RemingtonM870:
-  //                  GetComponentInParent<Player>().bullet12Gauge += amount;
-  //                  break;
-  //          }
-		//}
 
 		public void ToggleVisibility(bool isVisible) { 
 			FirstPersonVisual.SetActive(isVisible);
@@ -202,20 +182,24 @@ namespace ProjectEpsilon {
                 int _remainingAmmo = 0;
                 switch (WeaponName) {
                     case EWeaponName.M1911:
-                        _remainingAmmo = GetComponentInParent<Player>().bullet45ACP;
+                        _remainingAmmo = GetComponentInParent<Player>().ammo45ACP;
                         break;
                     case EWeaponName.SMG:
-                        _remainingAmmo = GetComponentInParent<Player>().bullet45ACP;
+                        _remainingAmmo = GetComponentInParent<Player>().ammo45ACP;
                         break;
                     case EWeaponName.AK47:
-                        _remainingAmmo = GetComponentInParent<Player>().bullet7_62mm;
+                        _remainingAmmo = GetComponentInParent<Player>().ammo7_62mm;
                         break;
                     case EWeaponName.RemingtonM870:
-                        _remainingAmmo = GetComponentInParent<Player>().bullet12Gauge;
+                        _remainingAmmo = GetComponentInParent<Player>().ammo12Gauge;
                         break;
                 }
                 _remainingAmmo = StartAmmo - ClipAmmo;
-			}
+
+                Transform parentTransform = GameObject.Find("GameUI").transform;
+                TestSearchScreen = TestFindChildByName(parentTransform, "TestSearchScreen");
+                Debug.Log(TestSearchScreen);
+            }
 
 			_visibleFireCount = _fireCount;
 
@@ -228,7 +212,16 @@ namespace ProjectEpsilon {
 			_sceneObjects = Runner.GetSingleton<SceneObjects>();
         }
 
-		public override void FixedUpdateNetwork() {
+        GameObject TestFindChildByName(Transform parent, string name) {
+            foreach (Transform child in parent) {
+                if (child.name == name) {
+                    return child.gameObject;
+                }
+            }
+            return null;
+        }
+
+        public override void FixedUpdateNetwork() {
 			if (IsCollected == false)
 				return;
 
@@ -241,16 +234,16 @@ namespace ProjectEpsilon {
 				int _remainingAmmo = 0;
                 switch (WeaponName) {
                     case EWeaponName.M1911:
-						_remainingAmmo = GetComponentInParent<Player>().bullet45ACP;
+						_remainingAmmo = GetComponentInParent<Player>().ammo45ACP;
                         break;
                     case EWeaponName.SMG:
-                        _remainingAmmo = GetComponentInParent<Player>().bullet45ACP;
+                        _remainingAmmo = GetComponentInParent<Player>().ammo45ACP;
                         break;
                     case EWeaponName.AK47:
-                        _remainingAmmo = GetComponentInParent<Player>().bullet7_62mm;
+                        _remainingAmmo = GetComponentInParent<Player>().ammo7_62mm;
                         break;
                     case EWeaponName.RemingtonM870:
-                        _remainingAmmo = GetComponentInParent<Player>().bullet12Gauge;
+                        _remainingAmmo = GetComponentInParent<Player>().ammo12Gauge;
                         break;
                 }
                 reloadAmmo = Mathf.Min(reloadAmmo, _remainingAmmo);
@@ -262,16 +255,16 @@ namespace ProjectEpsilon {
 				ClipAmmo += reloadAmmo;
                 switch (WeaponName) {
                     case EWeaponName.M1911:
-                        GetComponentInParent<Player>().bullet45ACP -= reloadAmmo;
+                        GetComponentInParent<Player>().ammo45ACP -= reloadAmmo;
                         break;
                     case EWeaponName.SMG:
-                        GetComponentInParent<Player>().bullet45ACP -= reloadAmmo;
+                        GetComponentInParent<Player>().ammo45ACP -= reloadAmmo;
                         break;
                     case EWeaponName.AK47:
-                        GetComponentInParent<Player>().bullet7_62mm -= reloadAmmo;
+                        GetComponentInParent<Player>().ammo7_62mm -= reloadAmmo;
                         break;
                     case EWeaponName.RemingtonM870:
-                        GetComponentInParent<Player>().bullet12Gauge -= reloadAmmo;
+                        GetComponentInParent<Player>().ammo12Gauge -= reloadAmmo;
                         break;
                 }
 
@@ -282,7 +275,7 @@ namespace ProjectEpsilon {
 					} else if (ClipAmmo == MaxClipAmmo) {
 						Animator.SetBool("ReloadEnd", true);
 					}
-					if (GetComponentInParent<Player>().bullet12Gauge == 0) {
+					if (GetComponentInParent<Player>().ammo12Gauge == 0) {
 						Animator.SetBool("ReloadEnd", true);
 					}
 				}
@@ -347,9 +340,12 @@ namespace ProjectEpsilon {
 
 			if (Type == EWeaponType.Search) {
 				GetComponentInParent<Player>().isSearching = true;
+				if (TestSearchScreen != null)
+					TestSearchScreen.SetActive(true);
             } else {
 				GetComponentInParent<Player>().isSearching = false;
-
+                if (TestSearchScreen != null)
+                    TestSearchScreen.SetActive(false);
             }
 
             float _saveSpeed = 1;
@@ -363,16 +359,16 @@ namespace ProjectEpsilon {
 
 			switch (WeaponName) {
 				case EWeaponName.M1911:
-					_allAmmo = GetComponentInParent<Player>().bullet45ACP;
+					_allAmmo = GetComponentInParent<Player>().ammo45ACP;
 					break;
 				case EWeaponName.SMG:
-                    _allAmmo = GetComponentInParent<Player>().bullet45ACP;
+                    _allAmmo = GetComponentInParent<Player>().ammo45ACP;
 					break;
                 case EWeaponName.AK47:
-                    _allAmmo = GetComponentInParent<Player>().bullet7_62mm;
+                    _allAmmo = GetComponentInParent<Player>().ammo7_62mm;
                     break;
                 case EWeaponName.RemingtonM870:
-                    _allAmmo = GetComponentInParent<Player>().bullet12Gauge;
+                    _allAmmo = GetComponentInParent<Player>().ammo12Gauge;
                     break;
             }
 

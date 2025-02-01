@@ -14,6 +14,7 @@ namespace ProjectEpsilon {
         public LayerMask LayerMask;
         public GameObject ActiveObject;
         public GameObject InactiveObject;
+        public GameObject InfoObject;
         public Outline OutlineScript;
 
         public bool IsActive => _activationTimer.ExpiredOrNotRunning(Runner);
@@ -35,17 +36,25 @@ namespace ProjectEpsilon {
 
         void Update() {
             if (HasStateAuthority && FindObjectOfType<Player>().isSearching) {
-                Player _playerobject = FindObjectOfType<Player>();
-                float distance = Vector3.Distance(transform.position, _playerobject.transform.position);
+                Player _playerObject = FindObjectOfType<Player>();
+                float distance = Vector3.Distance(transform.position, _playerObject.transform.position);
 
-                if (_playerobject.isSearching) {
-                    if (distance <= 15f)
+                Vector3 direction = new Vector3(_playerObject.transform.position.x, _playerObject.transform.position.y + 1.737276f, _playerObject.transform.position.z) - transform.position;
+                Quaternion rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(0, 180, 0);
+                InfoObject.transform.rotation = Quaternion.Slerp(InfoObject.transform.rotation, rotation, Time.deltaTime * 5f);
+
+                if (_playerObject.isSearching) {
+                    if (distance <= 15f) {
+                        InfoObject.SetActive(true);
                         OutlineScript.enabled = true;
-                    else
+                    } else {
+                        InfoObject.SetActive(false);
                         OutlineScript.enabled = false;
+                    }
                 }
             } else {
                 OutlineScript.enabled = false;
+                InfoObject.SetActive(false);
             }
         }
 
@@ -58,15 +67,16 @@ namespace ProjectEpsilon {
             var ammos = player.GetComponentInParent<Player>();
             switch (Bullet) {
                 case BulletName.bullet45ACP:
-                    ammos.bullet45ACP += Random.Range(10, 21);
+                    ammos.ammo45ACP += Random.Range(10, 21);
                     break;
                 case BulletName.bullet7_62mm:
-                    ammos.bullet7_62mm += Random.Range(15, 31);
+                    ammos.ammo7_62mm += Random.Range(15, 31);
                     break;
                 case BulletName.bullet12Gauge:
-                    ammos.bullet12Gauge += Random.Range(5, 11);
+                    ammos.ammo12Gauge += Random.Range(5, 11);
                     break;
             }
+            _activationTimer = TickTimer.CreateFromSeconds(Runner, Cooldown);
         }
     }
 }

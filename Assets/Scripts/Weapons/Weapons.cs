@@ -125,26 +125,12 @@ namespace ProjectEpsilon {
                 SwitchWeapon(2);
             }
 
-			//if (weapon.IsCollected) {
-				switch (weaponType) {
-					case EWeaponName.M1911:
-						GetComponentInParent<Player>().bullet45ACP += weapon.StartAmmo;
-						break;
-					case EWeaponName.SMG:
-						GetComponentInParent<Player>().bullet45ACP += weapon.StartAmmo;
-						break;
-					case EWeaponName.AK47:
-						GetComponentInParent<Player>().bullet7_62mm += weapon.StartAmmo;
-						break;
-					case EWeaponName.RemingtonM870:
-						GetComponentInParent<Player>().bullet12Gauge += weapon.StartAmmo;
-						break;
-						//weapon.AddAmmo(weapon.StartAmmo - weapon.RemainingAmmo);
-				}
-			//} else {
-			//	weapon.IsCollected = true;
-			//}
-            return true;
+			if (weapon.IsCollected) {
+                weapon.ClipAmmo = weapon.StartAmmo;
+            } else {
+				weapon.IsCollected = true;
+			}
+			return true;
         }
 
 	    public Weapon GetWeapon(EWeaponName weaponType) {
