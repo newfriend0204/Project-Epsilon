@@ -7,18 +7,24 @@ namespace ProjectEpsilon {
 	    public Transform FireTransform;
 	    public float WeaponSwitchTime = 1f;
 	    public AudioSource SwitchSound;
+		public AudioSource SearchSound;
+		public AudioClip SearchStartSound;
+		public AudioClip SearchEndSound;
 
-	    public bool IsSwitching => _switchTimer.ExpiredOrNotRunning(Runner) == false;
+
+        public bool IsSwitching => _switchTimer.ExpiredOrNotRunning(Runner) == false;
 
 	    [Networked, HideInInspector]
 	    public Weapon CurrentWeapon { get; set; }
 	    [HideInInspector]
 	    public Weapon[] AllWeapons;
 
-	    [Networked]
-	    private TickTimer _switchTimer { get; set; }
-	    [Networked]
-	    private Weapon _pendingWeapon { get; set; }
+        [Networked]
+        private TickTimer _switchTimer { get; set; }
+        [Networked]
+        internal TickTimer weaponTimer { get; set; }
+        [Networked]
+	    internal Weapon _pendingWeapon { get; set; }
 
 	    private Weapon _visibleWeapon;
 		private bool _isCollectedPrimary = false;
@@ -81,10 +87,20 @@ namespace ProjectEpsilon {
 				CurrentWeapon.ExitADS();
 			}
 
-			_pendingWeapon = newWeapon;
-			_switchTimer = TickTimer.CreateFromSeconds(Runner, WeaponSwitchTime);
+            if (CurrentWeapon.WeaponName == EWeaponName.Search) {
+                SearchSound.clip = SearchEndSound;
+                SearchSound.Play();
+            }
+            if (newWeapon.WeaponName == EWeaponName.Search) {
+                SearchSound.clip = SearchStartSound;
+                SearchSound.Play();
+            }
 
-			if (HasInputAuthority && Runner.IsForward) {
+            _pendingWeapon = newWeapon;
+            _switchTimer = TickTimer.CreateFromSeconds(Runner, WeaponSwitchTime);
+            weaponTimer = TickTimer.CreateFromSeconds(Runner, WeaponSwitchTime + 0.1f);
+
+            if (HasInputAuthority && Runner.IsForward) {
 				CurrentWeapon.Animator.SetTrigger("Hide");
 				SwitchSound.Play();
 			}

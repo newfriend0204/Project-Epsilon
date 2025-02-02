@@ -58,6 +58,8 @@ namespace ProjectEpsilon {
         private float _saveSpeed;
         internal Vector3 originalPosition = new Vector3(0f, 1.2f, 0f);
         internal Vector3 crounchPosition = new Vector3(0f, 1.678634f, 0f);
+        internal bool isInteracting = false;
+        private float _interactionTime = 0f;
 
         private SceneObjects _sceneObjects;
 
@@ -167,9 +169,6 @@ namespace ProjectEpsilon {
                 return;
 
             RefreshCamera();
-            Debug.Log("9mm≈∫æ‡: " + ammo45ACP);
-            Debug.Log("7.62mm≈∫æ‡: " + ammo7_62mm);
-            Debug.Log("12∞‘¿Ã¡ˆ ≈∫æ‡" + ammo12Gauge);
         }
 
         private void ProcessInput(NetworkedInput input) {
@@ -218,22 +217,39 @@ namespace ProjectEpsilon {
                 Weapons.SwitchWeapon(2);
             }
 
-            if (input.Buttons.WasPressed(_previousButtons, EInputButton.Interact) && HasStateAuthority) {
-                if (Runner.GetPhysicsScene().Raycast(CameraHandle.transform.position, KCC.LookDirection, out var hit, 2.5f, LayerMask.GetMask("Item"), QueryTriggerInteraction.Ignore)) {
-                    switch (hit.collider.gameObject.name) {
-                        case "M1911Collider":
-                        case "SMGCollider":
-                        case "AK47Collider":
-                        case "RemingtonM870Collider":
-                            hit.collider.gameObject.GetComponentInParent<WeaponPickup>().AcquireWeapon(gameObject);
-                            break;
-                        case "Ammo45ACPCollider":
-                        case "Ammo7_62mmCollider":
-                        case "Ammo12GaugeCollider":
-                            hit.collider.gameObject.GetComponentInParent<AmmoPickup>().AcquireAmmo(gameObject);
-                            break;
+            if (Runner.GetPhysicsScene().Raycast(CameraHandle.transform.position, KCC.LookDirection, out var hit, 2.5f, LayerMask.GetMask("Item"), QueryTriggerInteraction.Ignore)) {
+                if (input.Buttons.WasPressed(_previousButtons, EInputButton.Interact) && HasStateAuthority) {
+                    _interactionTime = 0f;
+                    isInteracting = true;
+                }
+                if (isInteracting) {
+                    _interactionTime += Time.deltaTime;
+
+                    if (_interactionTime >= 0.5f) {
+                        switch (hit.collider.gameObject.name) {
+                            case "M1911Collider":
+                            case "SMGCollider":
+                            case "AK47Collider":
+                            case "RemingtonM870Collider":
+                                hit.collider.gameObject.GetComponentInParent<WeaponPickup>().AcquireWeapon(gameObject);
+                                break;
+                            case "Ammo45ACPCollider":
+                            case "Ammo7_62mmCollider":
+                            case "Ammo12GaugeCollider":
+                                hit.collider.gameObject.GetComponentInParent<AmmoPickup>().AcquireAmmo(gameObject);
+                                break;
+                        }
+                        isInteracting = false;
                     }
                 }
+            } else {
+                isInteracting = false;
+                _interactionTime = 0f;
+            }
+
+            if (input.Buttons.WasReleased(_previousButtons, EInputButton.Interact)) {
+                isInteracting = false;
+                _interactionTime = 0f;
             }
 
             _previousButtons = input.Buttons;

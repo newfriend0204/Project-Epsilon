@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace ProjectEpsilon {
     public class Health : NetworkBehaviour {
-		public float      MaxHealth = 100f;
-		public float      ImmortalDurationAfterSpawn = 2f;
+		public float MaxHealth = 100f;
+		public float ImmortalDurationAfterSpawn = 2f;
 		public GameObject ImmortalityIndicator;
 		public GameObject HitEffectPrefab;
 

@@ -1,5 +1,6 @@
 using Fusion;
 using Fusion.Addons.SimpleKCC;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -44,7 +45,8 @@ namespace ProjectEpsilon {
 		public Animator Animator;
 		[FormerlySerializedAs("WeaponVisual")]
 		public GameObject FirstPersonVisual;
-		public GameObject ThirdPersonVisual;
+        public GameObject ThirdPersonVisual;
+        public GameObject PickupVisual;
         public GameObject TestSearchScreen;
 
         [Header("Fire Effect")]
@@ -53,6 +55,8 @@ namespace ProjectEpsilon {
 		public Transform ThirdPersonMuzzleTransform;
 		public GameObject MuzzleEffectPrefab;
 		public ProjectileVisual ProjectileVisualPrefab;
+        public GameObject CartridgePosition;
+        public GameObject CartridgePrefab;
 
         [Header("Sounds")]
 		public AudioSource FireSound;
@@ -129,11 +133,25 @@ namespace ProjectEpsilon {
 				FireProjectile(firePosition, projectileDirection);
 			}
 
-			_fireCooldown = TickTimer.CreateFromTicks(Runner, _fireTicks);
+            GameObject _cartridge = Instantiate(CartridgePrefab, CartridgePosition.transform.position, CartridgePosition.transform.rotation);
+            ParticleSystem particleSystem = _cartridge.GetComponentInChildren<ParticleSystem>();
+			float _particleDelay = 0;
+            IEnumerator PlayParticleWithDelay() {
+                yield return new WaitForSeconds(_particleDelay);
+                particleSystem.Play();
+            }
+            if (WeaponName == EWeaponName.RemingtonM870) {
+				_particleDelay = 0.5f;
+            }
+			if (PlayParticleWithDelay() != null)
+				StartCoroutine(PlayParticleWithDelay());
+            Destroy(_cartridge, 2f);
+
+            _fireCooldown = TickTimer.CreateFromTicks(Runner, _fireTicks);
 			ClipAmmo--;
         }
 
-		public void Reload() {
+        public void Reload() {
 			if (IsCollected == false)
 				return;
 			if (ClipAmmo >= MaxClipAmmo)
@@ -163,6 +181,7 @@ namespace ProjectEpsilon {
 		public void ToggleVisibility(bool isVisible) { 
 			FirstPersonVisual.SetActive(isVisible);
 			FirstPersonVisual.GetComponent<Animator>().enabled = isVisible;
+			ThirdPersonVisual.SetActive(isVisible);
 
 			if (_muzzleEffectInstance != null) {
 				_muzzleEffectInstance.SetActive(false);
@@ -225,6 +244,12 @@ namespace ProjectEpsilon {
 			if (IsCollected == false)
 				return;
 
+            if (ClipAmmo == 0) {
+				if (GetComponentInParent<Player>().isAiming)
+					ExitADS();
+                Reload();
+            }
+
             if (IsReloading && _fireCooldown.ExpiredOrNotRunning(Runner)) {
 				IsReloading = false;
 
@@ -285,7 +310,7 @@ namespace ProjectEpsilon {
 		}
 
         private void Update() {
-            if (Input.GetMouseButtonDown(1) && Type != EWeaponType.Search) {
+            if (Input.GetMouseButtonDown(1) && Type != EWeaponType.Search && ClipAmmo > 0) {
                 _fireCooldown = TickTimer.None;
                 IsReloading = false;
                 ReloadingSound.Stop();
@@ -372,7 +397,19 @@ namespace ProjectEpsilon {
                     break;
             }
 
-			Debug.Log("ÇöÀç ÃÑ: " + gameObject.name + " Åº¾à ¼ö: " + ClipAmmo);
+            if (!GetComponentInParent<Weapons>().weaponTimer.ExpiredOrNotRunning(Runner)) {
+                _fireCooldown = TickTimer.None;
+                IsReloading = false;
+                ReloadingSound.Stop();
+            }
+
+			if (GetComponentInParent<Player>().isInteracting) {
+				FirstPersonVisual.SetActive(false);
+				PickupVisual.SetActive(true);
+			} else {
+                FirstPersonVisual.SetActive(true);
+                PickupVisual.SetActive(false);
+            }
         }
 
         public override void Render() {

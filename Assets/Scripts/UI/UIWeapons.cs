@@ -3,9 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace ProjectEpsilon {
-
-    public class UIWeapons : MonoBehaviour
-	{
+    public class UIWeapons : MonoBehaviour {
 	    public Image WeaponIcon;
 	    public Image WeaponIconShadow;
 	    public TextMeshProUGUI WeaponName;
