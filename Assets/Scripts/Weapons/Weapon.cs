@@ -63,7 +63,7 @@ namespace ProjectEpsilon {
 		public AudioSource ReloadingSound;
 		public AudioSource EmptyClipSound;
 
-		public bool HasAmmo => ClipAmmo > 0 || _allAmmo > 0;
+		public bool HasAmmo => ClipAmmo > 0 || allAmmo > 0;
 
 		[Networked]
 		public NetworkBool IsCollected { get; set; }
@@ -71,7 +71,7 @@ namespace ProjectEpsilon {
 		public NetworkBool IsReloading { get; set; }
 		[Networked]
 		public int ClipAmmo { get; set; }
-		private int _allAmmo;
+		internal int allAmmo;
 
 		[Networked]
 		private int _fireCount { get; set; }
@@ -156,7 +156,7 @@ namespace ProjectEpsilon {
 				return;
 			if (ClipAmmo >= MaxClipAmmo)
 				return;
-			if (_allAmmo <= 0)
+			if (allAmmo <= 0)
 				return;
 			if (IsReloading)
 				return;
@@ -384,16 +384,16 @@ namespace ProjectEpsilon {
 
 			switch (WeaponName) {
 				case EWeaponName.M1911:
-					_allAmmo = GetComponentInParent<Player>().ammo45ACP;
+					allAmmo = GetComponentInParent<Player>().ammo45ACP;
 					break;
 				case EWeaponName.SMG:
-                    _allAmmo = GetComponentInParent<Player>().ammo45ACP;
+                    allAmmo = GetComponentInParent<Player>().ammo45ACP;
 					break;
                 case EWeaponName.AK47:
-                    _allAmmo = GetComponentInParent<Player>().ammo7_62mm;
+                    allAmmo = GetComponentInParent<Player>().ammo7_62mm;
                     break;
                 case EWeaponName.RemingtonM870:
-                    _allAmmo = GetComponentInParent<Player>().ammo12Gauge;
+                    allAmmo = GetComponentInParent<Player>().ammo12Gauge;
                     break;
             }
 

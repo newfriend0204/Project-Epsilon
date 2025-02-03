@@ -29,10 +29,10 @@ namespace ProjectEpsilon {
 	    private Weapon _visibleWeapon;
 		private bool _isCollectedPrimary = false;
 		private bool _isCollectedSidearm = false;
-		private EWeaponName _currentPrimary;
-		private EWeaponName _currentSidearm;
-		private EWeaponName _currentWeapon;
-		private EWeaponName _previousSearchWeapon;
+        internal EWeaponName previousSearchWeapon;
+        internal EWeaponName currentPrimary;
+        internal EWeaponName currentSidearm;
+        internal EWeaponName currentWeapon;
 
 	    public void Fire(bool justPressed) {
 			if (CurrentWeapon == null || IsSwitching)
@@ -49,17 +49,17 @@ namespace ProjectEpsilon {
 	    }
 
 	    public void SwitchWeapon(int slot) {
-			var newWeapon = GetWeapon(_currentWeapon);
+			var newWeapon = GetWeapon(currentWeapon);
             if (slot == 0) {
                 newWeapon = GetWeapon(EWeaponName.Search);
-				if (_previousSearchWeapon != EWeaponName.Search && CurrentWeapon != GetWeapon(EWeaponName.Search))
-					_previousSearchWeapon = CurrentWeapon.WeaponName;
+				if (previousSearchWeapon != EWeaponName.Search && CurrentWeapon != GetWeapon(EWeaponName.Search))
+					previousSearchWeapon = CurrentWeapon.WeaponName;
             } else if (slot == 1) {
-				newWeapon = GetWeapon(_currentSidearm);
+				newWeapon = GetWeapon(currentSidearm);
 				if (!_isCollectedSidearm)
 					return;
 			} else if (slot == 2) {
-				newWeapon = GetWeapon(_currentPrimary);
+				newWeapon = GetWeapon(currentPrimary);
 				if (!_isCollectedPrimary)
 					return;
 			}
@@ -67,8 +67,8 @@ namespace ProjectEpsilon {
 				return;
 			}
 			if (newWeapon == CurrentWeapon && _pendingWeapon == null) {
-                if (CurrentWeapon == GetWeapon(EWeaponName.Search) && _previousSearchWeapon != EWeaponName.Search) {
-					newWeapon = GetWeapon(_previousSearchWeapon);
+                if (CurrentWeapon == GetWeapon(EWeaponName.Search) && previousSearchWeapon != EWeaponName.Search) {
+					newWeapon = GetWeapon(previousSearchWeapon);
 				} else {
 					return;
 				}
@@ -117,27 +117,27 @@ namespace ProjectEpsilon {
 				return false;
 
             if (weaponType == EWeaponName.M1911) {
-                _currentWeapon = EWeaponName.M1911;
+                currentWeapon = EWeaponName.M1911;
                 _isCollectedSidearm = true;
-                _currentSidearm = EWeaponName.M1911;
+                currentSidearm = EWeaponName.M1911;
                 SwitchWeapon(1);
             }
             if (weaponType == EWeaponName.SMG) {
-                _currentWeapon = EWeaponName.SMG;
+                currentWeapon = EWeaponName.SMG;
                 _isCollectedSidearm = true;
-                _currentSidearm = EWeaponName.SMG;
+                currentSidearm = EWeaponName.SMG;
                 SwitchWeapon(1);
             }
             if (weaponType == EWeaponName.AK47) {
-                _currentWeapon = EWeaponName.AK47;
+                currentWeapon = EWeaponName.AK47;
                 _isCollectedPrimary = true;
-				_currentPrimary = EWeaponName.AK47;
+				currentPrimary = EWeaponName.AK47;
                 SwitchWeapon(2);
             }
             if (weaponType == EWeaponName.RemingtonM870) {
-                _currentWeapon = EWeaponName.RemingtonM870;
+                currentWeapon = EWeaponName.RemingtonM870;
                 _isCollectedPrimary = true;
-				_currentPrimary = EWeaponName.RemingtonM870;
+				currentPrimary = EWeaponName.RemingtonM870;
                 SwitchWeapon(2);
             }
 
@@ -163,6 +163,7 @@ namespace ProjectEpsilon {
                 CurrentWeapon = AllWeapons[0];
                 CurrentWeapon.IsCollected = true;
 				_isCollectedSidearm = true;
+				currentWeapon = EWeaponName.M1911;
             }
         }
 
@@ -207,6 +208,7 @@ namespace ProjectEpsilon {
 				return;
 
 		    CurrentWeapon = _pendingWeapon;
+			currentWeapon = CurrentWeapon.WeaponName;
 		    _pendingWeapon = null;
 
 		    CurrentWeapon.gameObject.SetActive(true);

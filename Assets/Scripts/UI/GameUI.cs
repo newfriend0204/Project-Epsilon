@@ -6,17 +6,17 @@ using UnityEngine.SceneManagement;
 namespace ProjectEpsilon {
     public class GameUI : MonoBehaviour
 	{
-		public Gameplay       Gameplay;
+		public Gameplay Gameplay;
 		[HideInInspector]
-		public NetworkRunner  Runner;
+		public NetworkRunner Runner;
 
-		public UIPlayerView   PlayerView;
+		public UIPlayerView PlayerView;
 		public UIGameplayView GameplayView;
 		public UIGameOverView GameOverView;
-		public GameObject     ScoreboardView;
-		public GameObject     MenuView;
+		public GameObject ScoreboardView;
+		public GameObject MenuView;
 		public UISettingsView SettingsView;
-		public GameObject     DisconnectedView;
+		public GameObject DisconnectedView;
 
 		public void OnRunnerShutdown(NetworkRunner runner, ShutdownReason reason) {
 			if (GameOverView.gameObject.activeSelf)

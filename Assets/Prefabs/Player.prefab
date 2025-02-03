@@ -1758,8 +1758,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   MaxHitDistance: 0
-  MaxClipAmmo: 0
-  StartAmmo: 0
+  MaxClipAmmo: 1
+  StartAmmo: 1
   ReloadTime: 9999
   Icon: {fileID: 21300000, guid: 3e6601a3ada91d64089559b222d8d6b9, type: 3}
   Name: Search
