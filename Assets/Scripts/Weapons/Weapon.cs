@@ -47,7 +47,6 @@ namespace ProjectEpsilon {
 		public GameObject FirstPersonVisual;
         public GameObject ThirdPersonVisual;
         public GameObject PickupVisual;
-        public GameObject TestSearchScreen;
 
         [Header("Fire Effect")]
 		[FormerlySerializedAs("MuzzleTransform")]
@@ -133,7 +132,7 @@ namespace ProjectEpsilon {
 				FireProjectile(firePosition, projectileDirection);
 			}
 
-            GameObject _cartridge = Instantiate(CartridgePrefab, CartridgePosition.transform.position, CartridgePosition.transform.rotation);
+            GameObject _cartridge = Instantiate(CartridgePrefab, CartridgePosition.transform.position, CartridgePosition.transform.rotation, FirstPersonVisual.transform);
             ParticleSystem particleSystem = _cartridge.GetComponentInChildren<ParticleSystem>();
 			float _particleDelay = 0;
             IEnumerator PlayParticleWithDelay() {
@@ -165,7 +164,7 @@ namespace ProjectEpsilon {
             if (Type == EWeaponType.Search)
                 return;
 
-            if (Type == EWeaponType.Shotgun) {
+            if (Type == EWeaponType.Shotgun && ClipAmmo < MaxClipAmmo - 1) {
                 Animator.SetTrigger("ReturnReload");
                 ReloadingSound.Play();
             }
@@ -214,10 +213,6 @@ namespace ProjectEpsilon {
                         break;
                 }
                 _remainingAmmo = StartAmmo - ClipAmmo;
-
-                Transform parentTransform = GameObject.Find("GameUI").transform;
-                TestSearchScreen = TestFindChildByName(parentTransform, "TestSearchScreen");
-                Debug.Log(TestSearchScreen);
             }
 
 			_visibleFireCount = _fireCount;
@@ -231,15 +226,6 @@ namespace ProjectEpsilon {
 			_sceneObjects = Runner.GetSingleton<SceneObjects>();
         }
 
-        GameObject TestFindChildByName(Transform parent, string name) {
-            foreach (Transform child in parent) {
-                if (child.name == name) {
-                    return child.gameObject;
-                }
-            }
-            return null;
-        }
-
         public override void FixedUpdateNetwork() {
 			if (IsCollected == false)
 				return;
@@ -251,9 +237,8 @@ namespace ProjectEpsilon {
             }
 
             if (IsReloading && _fireCooldown.ExpiredOrNotRunning(Runner)) {
-				IsReloading = false;
-
-				Animator.ResetTrigger("exitADS");
+                Animator.ResetTrigger("exitADS");
+                IsReloading = false;
 
                 int reloadAmmo = MaxClipAmmo - ClipAmmo;
 				int _remainingAmmo = 0;
@@ -274,26 +259,6 @@ namespace ProjectEpsilon {
                 reloadAmmo = Mathf.Min(reloadAmmo, _remainingAmmo);
 				
 				if (Type == EWeaponType.Shotgun) {
-					reloadAmmo = 1;
-				}
-
-				ClipAmmo += reloadAmmo;
-                switch (WeaponName) {
-                    case EWeaponName.M1911:
-                        GetComponentInParent<Player>().ammo45ACP -= reloadAmmo;
-                        break;
-                    case EWeaponName.SMG:
-                        GetComponentInParent<Player>().ammo45ACP -= reloadAmmo;
-                        break;
-                    case EWeaponName.AK47:
-                        GetComponentInParent<Player>().ammo7_62mm -= reloadAmmo;
-                        break;
-                    case EWeaponName.RemingtonM870:
-                        GetComponentInParent<Player>().ammo12Gauge -= reloadAmmo;
-                        break;
-                }
-
-				if (Type == EWeaponType.Shotgun) {
 					if (ClipAmmo != MaxClipAmmo) {
 						Animator.SetBool("ReloadEnd", false);
 						Reload();
@@ -302,6 +267,28 @@ namespace ProjectEpsilon {
 					}
 					if (GetComponentInParent<Player>().ammo12Gauge == 0) {
 						Animator.SetBool("ReloadEnd", true);
+					}
+				}
+
+				if (Type == EWeaponType.Shotgun) {
+					reloadAmmo = 1;
+				}
+
+				if (ClipAmmo < MaxClipAmmo && allAmmo > 0) {
+					ClipAmmo += reloadAmmo;
+					switch (WeaponName) {
+						case EWeaponName.M1911:
+							GetComponentInParent<Player>().ammo45ACP -= reloadAmmo;
+							break;
+						case EWeaponName.SMG:
+							GetComponentInParent<Player>().ammo45ACP -= reloadAmmo;
+							break;
+						case EWeaponName.AK47:
+							GetComponentInParent<Player>().ammo7_62mm -= reloadAmmo;
+							break;
+						case EWeaponName.RemingtonM870:
+							GetComponentInParent<Player>().ammo12Gauge -= reloadAmmo;
+							break;
 					}
 				}
 
@@ -365,12 +352,8 @@ namespace ProjectEpsilon {
 
 			if (Type == EWeaponType.Search) {
 				GetComponentInParent<Player>().isSearching = true;
-				if (TestSearchScreen != null)
-					TestSearchScreen.SetActive(true);
             } else {
 				GetComponentInParent<Player>().isSearching = false;
-                if (TestSearchScreen != null)
-                    TestSearchScreen.SetActive(false);
             }
 
             float _saveSpeed = 1;
