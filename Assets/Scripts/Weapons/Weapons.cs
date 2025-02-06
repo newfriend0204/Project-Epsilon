@@ -122,10 +122,10 @@ namespace ProjectEpsilon {
                 currentSidearm = EWeaponName.M1911;
                 SwitchWeapon(1);
             }
-            if (weaponType == EWeaponName.SMG) {
-                currentWeapon = EWeaponName.SMG;
+            if (weaponType == EWeaponName.SMG11) {
+                currentWeapon = EWeaponName.SMG11;
                 _isCollectedSidearm = true;
-                currentSidearm = EWeaponName.SMG;
+                currentSidearm = EWeaponName.SMG11;
                 SwitchWeapon(1);
             }
             if (weaponType == EWeaponName.AK47) {
@@ -164,6 +164,7 @@ namespace ProjectEpsilon {
                 CurrentWeapon.IsCollected = true;
 				_isCollectedSidearm = true;
 				currentWeapon = EWeaponName.M1911;
+				currentSidearm = EWeaponName.M1911;
             }
         }
 

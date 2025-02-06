@@ -25,6 +25,7 @@ namespace ProjectEpsilon {
     [DefaultExecutionOrder(-10)]
     public sealed class PlayerInput : NetworkBehaviour, IBeforeUpdate {
         public static float LookSensitivity;
+        public static float LookZoomSensitivity;
 
         private NetworkedInput _accumulatedInput;
         private Vector2Accumulator _lookRotationAccumulator = new Vector2Accumulator(0.02f, true);
@@ -74,7 +75,7 @@ namespace ProjectEpsilon {
 
                 var lookRotationDelta = new Vector2(-mouseDelta.y, mouseDelta.x);
                 if (GetComponent<Player>().isAiming) {
-                    lookRotationDelta *= LookSensitivity / 90f;
+                    lookRotationDelta *= LookSensitivity / (60f + (60f * (100 - LookZoomSensitivity) / 100));
                 } else {
                     lookRotationDelta *= LookSensitivity / 60f;
                 }

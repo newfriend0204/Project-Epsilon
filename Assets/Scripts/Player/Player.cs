@@ -228,7 +228,7 @@ namespace ProjectEpsilon {
                     if (_interactionTime >= 0.5f) {
                         switch (hit.collider.gameObject.name) {
                             case "M1911Collider":
-                            case "SMGCollider":
+                            case "SMG11Collider":
                             case "AK47Collider":
                             case "RemingtonM870Collider":
                                 hit.collider.gameObject.GetComponentInParent<WeaponPickup>().AcquireWeapon(gameObject);

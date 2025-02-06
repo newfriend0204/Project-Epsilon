@@ -647,7 +647,6 @@ MonoBehaviour:
   FirstPersonVisual: {fileID: 8478678714097604336}
   ThirdPersonVisual: {fileID: 805807458141056149}
   PickupVisual: {fileID: 1737269853526371796}
-  TestSearchScreen: {fileID: 0}
   FirstPersonMuzzleTransform: {fileID: 6338969889476344365}
   ThirdPersonMuzzleTransform: {fileID: 5124637454006023334}
   MuzzleEffectPrefab: {fileID: 1000010254994808, guid: 9defeac88977c0d448aa4541073ee9e4, type: 3}
@@ -1767,7 +1766,6 @@ MonoBehaviour:
   FirstPersonVisual: {fileID: 1743686386292255751}
   ThirdPersonVisual: {fileID: 7424415921390424661}
   PickupVisual: {fileID: 1737269853526371796}
-  TestSearchScreen: {fileID: 0}
   FirstPersonMuzzleTransform: {fileID: 6338969889476344365}
   ThirdPersonMuzzleTransform: {fileID: 5124637454006023334}
   MuzzleEffectPrefab: {fileID: 1000010254994808, guid: 9defeac88977c0d448aa4541073ee9e4, type: 3}
@@ -2524,7 +2522,6 @@ MonoBehaviour:
   FirstPersonVisual: {fileID: 598741929949552826}
   ThirdPersonVisual: {fileID: 8537660460544793650}
   PickupVisual: {fileID: 1737269853526371796}
-  TestSearchScreen: {fileID: 0}
   FirstPersonMuzzleTransform: {fileID: 8896512166221093357}
   ThirdPersonMuzzleTransform: {fileID: 1811013645989995498}
   MuzzleEffectPrefab: {fileID: 1000010254994808, guid: 9defeac88977c0d448aa4541073ee9e4, type: 3}
@@ -3060,7 +3057,7 @@ GameObject:
   - component: {fileID: 5400625035742699159}
   - component: {fileID: 6879523494240440232}
   m_Layer: 6
-  m_Name: SMG
+  m_Name: SMG11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3116,7 +3113,6 @@ MonoBehaviour:
   FirstPersonVisual: {fileID: 8603549378284738053}
   ThirdPersonVisual: {fileID: 8432801352862964997}
   PickupVisual: {fileID: 1737269853526371796}
-  TestSearchScreen: {fileID: 0}
   FirstPersonMuzzleTransform: {fileID: 4663567342571787783}
   ThirdPersonMuzzleTransform: {fileID: 933950685261396452}
   MuzzleEffectPrefab: {fileID: 1000010254994808, guid: 9defeac88977c0d448aa4541073ee9e4, type: 3}
@@ -9464,7 +9460,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7715450031109746900}
   m_Layer: 0
-  m_Name: SMG
+  m_Name: SMG11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9655,7 +9651,6 @@ MonoBehaviour:
   FirstPersonVisual: {fileID: 6174734567284293402}
   ThirdPersonVisual: {fileID: 7217984150128046864}
   PickupVisual: {fileID: 1737269853526371796}
-  TestSearchScreen: {fileID: 0}
   FirstPersonMuzzleTransform: {fileID: 2776805498006775036}
   ThirdPersonMuzzleTransform: {fileID: 254220421748882738}
   MuzzleEffectPrefab: {fileID: 1000010254994808, guid: 9defeac88977c0d448aa4541073ee9e4, type: 3}
@@ -20127,7 +20122,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 64ff5ac5f53a4b2408d0c6bcc634ce3d, type: 3}
       propertyPath: m_Name
-      value: Hand_SMG
+      value: Hand_SMG11
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 64ff5ac5f53a4b2408d0c6bcc634ce3d, type: 3}
       propertyPath: m_Layer

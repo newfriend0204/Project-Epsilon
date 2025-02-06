@@ -3,17 +3,20 @@
 namespace ProjectEpsilon {
     public class UICrosshair : MonoBehaviour {
 		[Header("Hit UI")]
-		public GameObject  RegularHit;
-		public GameObject  CriticalHit;
-		public GameObject  FatalHit;
+		public GameObject RegularHit;
+		public GameObject CriticalHit;
+		public GameObject FatalHit;
+        public GameObject LeftCrossHair;
+        public GameObject RightCrossHair;
+        public GameObject TopCrossHair;
+        public GameObject BottomCrossHair;
 
-		[Header("Hit Sounds")]
+        [Header("Hit Sounds")]
 		public AudioSource RegularHitSound;
 		public AudioSource CriticalHitSound;
 		public AudioSource FatalHitSound;
 
-		public void ShowHit(bool isFatal, bool isCritical)
-		{
+		public void ShowHit(bool isFatal, bool isCritical) {
 			var hitObject = isFatal ? FatalHit : (isCritical ? CriticalHit : RegularHit);
 
 			hitObject.SetActive(false);

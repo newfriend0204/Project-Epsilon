@@ -6,7 +6,7 @@ namespace ProjectEpsilon {
     public class UIScoreboard : MonoBehaviour {
 		public TextMeshProUGUI TotalPlayersText;
 		public UIScoreboardRow Row;
-		public float           DisconnectedPlayerAlpha = 0.4f;
+		public float DisconnectedPlayerAlpha = 0.4f;
 
 		List<UIScoreboardRow> _rows = new(32);
 		List<PlayerData> _players = new(32);
@@ -41,7 +41,7 @@ namespace ProjectEpsilon {
 
 			_players.Sort((a, b) => a.StatisticPosition.CompareTo(b.StatisticPosition));
 
-			TotalPlayersText.text = $"PLAYERS ({_players.Count})";
+			TotalPlayersText.text = $"플레이어 ({_players.Count})";
 			PrepareRows(_players.Count);
 			UpdateRows();
 		}

@@ -14,7 +14,7 @@ namespace ProjectEpsilon {
 
 	public enum EWeaponName {
 		M1911,
-		SMG,
+		SMG11,
 		AK47,
 		RemingtonM870,
 		Search,
@@ -82,7 +82,8 @@ namespace ProjectEpsilon {
 		private int _fireTicks;
 		private int _visibleFireCount;
 		private bool _reloadingVisible;
-		private GameObject _muzzleEffectInstance;
+		private float _saveDispersion;
+        private GameObject _muzzleEffectInstance;
 		private SceneObjects _sceneObjects;
 
         public void Fire(Vector3 firePosition, Vector3 fireDirection, bool justPressed) {
@@ -113,16 +114,6 @@ namespace ProjectEpsilon {
 
 			for (int i = 0; i < ProjectilesPerShot; i++) {
 				var projectileDirection = fireDirection;
-				float _saveDispersion = Dispersion;
-                if (GetComponentInParent<Player>().isAiming) {
-                    _saveDispersion -= Dispersion / 10 * 4;
-                }
-                if (GetComponentInParent<Player>().isSneaking) {
-                    _saveDispersion -= Dispersion / 10 * 1;
-                }
-                if (GetComponentInParent<Player>().isCrouching) {
-                    _saveDispersion -= Dispersion / 10 * 3;
-                }
                 Quaternion dispersion = Quaternion.Euler(Random.insideUnitSphere * _saveDispersion);
                 if (Dispersion > 0f) {
 					var dispersionRotation = dispersion;
@@ -202,7 +193,7 @@ namespace ProjectEpsilon {
                     case EWeaponName.M1911:
                         _remainingAmmo = GetComponentInParent<Player>().ammo45ACP;
                         break;
-                    case EWeaponName.SMG:
+                    case EWeaponName.SMG11:
                         _remainingAmmo = GetComponentInParent<Player>().ammo45ACP;
                         break;
                     case EWeaponName.AK47:
@@ -246,7 +237,7 @@ namespace ProjectEpsilon {
                     case EWeaponName.M1911:
 						_remainingAmmo = GetComponentInParent<Player>().ammo45ACP;
                         break;
-                    case EWeaponName.SMG:
+                    case EWeaponName.SMG11:
                         _remainingAmmo = GetComponentInParent<Player>().ammo45ACP;
                         break;
                     case EWeaponName.AK47:
@@ -280,7 +271,7 @@ namespace ProjectEpsilon {
 						case EWeaponName.M1911:
 							GetComponentInParent<Player>().ammo45ACP -= reloadAmmo;
 							break;
-						case EWeaponName.SMG:
+						case EWeaponName.SMG11:
 							GetComponentInParent<Player>().ammo45ACP -= reloadAmmo;
 							break;
 						case EWeaponName.AK47:
@@ -369,7 +360,7 @@ namespace ProjectEpsilon {
 				case EWeaponName.M1911:
 					allAmmo = GetComponentInParent<Player>().ammo45ACP;
 					break;
-				case EWeaponName.SMG:
+				case EWeaponName.SMG11:
                     allAmmo = GetComponentInParent<Player>().ammo45ACP;
 					break;
                 case EWeaponName.AK47:
@@ -393,6 +384,22 @@ namespace ProjectEpsilon {
                 FirstPersonVisual.SetActive(true);
                 PickupVisual.SetActive(false);
             }
+
+            _saveDispersion = Dispersion;
+            if (GetComponentInParent<Player>().isAiming) {
+                _saveDispersion -= Dispersion / 10 * 4;
+            }
+            if (GetComponentInParent<Player>().isSneaking) {
+                _saveDispersion -= Dispersion / 10 * 1;
+            }
+            if (GetComponentInParent<Player>().isCrouching) {
+                _saveDispersion -= Dispersion / 10 * 3;
+            }
+
+            _sceneObjects.GameUI.PlayerView.Crosshair.TopCrossHair.transform.localPosition = new Vector3(0, _saveDispersion * 10);
+            _sceneObjects.GameUI.PlayerView.Crosshair.BottomCrossHair.transform.localPosition = new Vector3(0, -_saveDispersion * 10);
+            _sceneObjects.GameUI.PlayerView.Crosshair.LeftCrossHair.transform.localPosition = new Vector3(_saveDispersion * 10, 0);
+            _sceneObjects.GameUI.PlayerView.Crosshair.RightCrossHair.transform.localPosition = new Vector3(-_saveDispersion * 10, 0);
         }
 
         public override void Render() {
