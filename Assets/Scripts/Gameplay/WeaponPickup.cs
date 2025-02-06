@@ -10,6 +10,7 @@ namespace ProjectEpsilon {
 		public GameObject InactiveObject;
         public GameObject InfoObject;
         public Outline OutlineScript;
+        public AudioSource SearchFound;
 
         public bool IsActive => _activationTimer.ExpiredOrNotRunning(Runner);
 
@@ -17,8 +18,9 @@ namespace ProjectEpsilon {
 		private TickTimer _activationTimer { get; set; }
 
 		private static Collider[] _colliders = new Collider[8];
+        private bool _isSearched = false;
 
-		public override void Spawned() {
+        public override void Spawned() {
 			ActiveObject.SetActive(IsActive);
 			InactiveObject.SetActive(IsActive == false);
 		}
@@ -39,15 +41,22 @@ namespace ProjectEpsilon {
 
                 if (_playerObject.isSearching) {
                     if (distance <= 15f) {
+                        if (_isSearched == false) {
+                            _isSearched = true;
+                            SearchFound.transform.position = _playerObject.transform.position;
+                            SearchFound.Play();
+                        }
                         InfoObject.SetActive(true);
                         OutlineScript.enabled = true;
                     } else {
+                        _isSearched = false;
                         InfoObject.SetActive(false);
                         OutlineScript.enabled = false;
                     }
                 }
             }
 			else {
+                _isSearched = false;
                 OutlineScript.enabled = false;
                 InfoObject.SetActive(false);
             }

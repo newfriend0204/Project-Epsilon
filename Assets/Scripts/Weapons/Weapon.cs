@@ -62,6 +62,10 @@ namespace ProjectEpsilon {
 		public AudioSource ReloadingSound;
 		public AudioSource EmptyClipSound;
 
+		[Header("Switch")]
+		public float TakeOutTime = 1f;
+		public float TakeInTime = 1f;
+
 		public bool HasAmmo => ClipAmmo > 0 || allAmmo > 0;
 
 		[Networked]
@@ -98,6 +102,9 @@ namespace ProjectEpsilon {
             if (GetComponentInParent<Player>().isRunning) {
 				return;
             }
+			if (!GetComponentInParent<Weapons>().weaponTimer.ExpiredOrNotRunning(Runner)) {
+				return;
+			}
 
             if (IsReloading && ClipAmmo > 0) {
                 _fireCooldown = TickTimer.None;
@@ -343,8 +350,10 @@ namespace ProjectEpsilon {
 
 			if (Type == EWeaponType.Search) {
 				GetComponentInParent<Player>().isSearching = true;
+				ReloadingSound.PlayOneShot(ReloadingSound.GetComponent<AudioSource>().clip);
             } else {
 				GetComponentInParent<Player>().isSearching = false;
+                ReloadingSound.Stop();
             }
 
             float _saveSpeed = 1;
@@ -442,7 +451,7 @@ namespace ProjectEpsilon {
 				projectileData.HitNormal = hit.Normal;
 
 				if (hit.Hitbox != null) {
-					ApplyDamage(hit.Hitbox, hit.Point, fireDirection);
+                    ApplyDamage(hit.Hitbox, hit.Point, hit.Distance, fireDirection);
 				} else {
 					projectileData.ShowHitEffect = true;
 				}
@@ -469,7 +478,7 @@ namespace ProjectEpsilon {
             GetComponentInParent<Player>().PlayFireEffect();
 		}
 
-		private void ApplyDamage(Hitbox enemyHitbox, Vector3 position, Vector3 direction) {
+		private void ApplyDamage(Hitbox enemyHitbox, Vector3 position, float distance, Vector3 direction) {
 			var enemyHealth = enemyHitbox.Root.GetComponent<Health>();
 			if (enemyHealth == null || enemyHealth.IsAlive == false)
 				return;
@@ -482,7 +491,56 @@ namespace ProjectEpsilon {
 				damage *= 2f;
 			}
 
-			if (enemyHealth.ApplyDamage(Object.InputAuthority, damage, position, direction, Type, isCriticalHit) == false)
+			switch (GetComponent<Weapons>().currentWeapon) {
+				case EWeaponName.M1911:
+					if (distance < 10f)
+						break;
+					else if (distance < 20f)
+						damage *= 0.85f;
+					else if (distance < 30f)
+						damage *= 0.7f;
+					else if (distance < 40f)
+						damage *= 0.6f;
+					else
+						damage *= 0.5f;
+					break;
+				case EWeaponName.SMG11:
+                    if (distance < 10f)
+                        break;
+                    else if (distance < 20f)
+                        damage *= 0.85f;
+                    else if (distance < 30f)
+                        damage *= 0.7f;
+                    else if (distance < 40f)
+                        damage *= 0.6f;
+                    else
+                        damage *= 0.5f;
+                    break;
+				case EWeaponName.AK47:
+                    if (distance < 20f)
+                        break;
+                    else if (distance < 30f)
+                        damage *= 0.8f;
+                    else if (distance < 40f)
+                        damage *= 0.75f;
+                    else
+                        damage *= 0.7f;
+                    break;
+				case EWeaponName.RemingtonM870:
+                    if (distance < 5f)
+                        break;
+                    else if (distance < 10f)
+                        damage *= 0.6f;
+                    else if (distance < 15f)
+                        damage *= 0.4f;
+                    else if (distance < 20f)
+                        damage *= 0.3f;
+                    else
+                        damage *= 0.2f;
+                    break;
+			}
+
+            if (enemyHealth.ApplyDamage(Object.InputAuthority, damage, position, direction, Type, isCriticalHit) == false)
 				return;
 
 			if (HasInputAuthority && Runner.IsForward) {

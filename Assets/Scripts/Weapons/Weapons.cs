@@ -5,7 +5,6 @@ namespace ProjectEpsilon {
     public class Weapons : NetworkBehaviour {
 		public Animator Animator;
 	    public Transform FireTransform;
-	    public float WeaponSwitchTime = 1f;
 	    public AudioSource SwitchSound;
 		public AudioSource SearchSound;
 		public AudioClip SearchStartSound;
@@ -29,6 +28,8 @@ namespace ProjectEpsilon {
 	    private Weapon _visibleWeapon;
 		private bool _isCollectedPrimary = false;
 		private bool _isCollectedSidearm = false;
+		private float _saveTakeInTime;
+		private float _saveTakeOutTime;
         internal EWeaponName previousSearchWeapon;
         internal EWeaponName currentPrimary;
         internal EWeaponName currentSidearm;
@@ -97,8 +98,10 @@ namespace ProjectEpsilon {
             }
 
             _pendingWeapon = newWeapon;
-            _switchTimer = TickTimer.CreateFromSeconds(Runner, WeaponSwitchTime);
-            weaponTimer = TickTimer.CreateFromSeconds(Runner, WeaponSwitchTime + 0.1f);
+			_saveTakeInTime = CurrentWeapon.TakeInTime;
+			_saveTakeOutTime = newWeapon.TakeOutTime;
+            _switchTimer = TickTimer.CreateFromSeconds(Runner, _saveTakeInTime + _saveTakeOutTime);
+            weaponTimer = TickTimer.CreateFromSeconds(Runner, _saveTakeInTime + _saveTakeOutTime + 0.1f);
 
             if (HasInputAuthority && Runner.IsForward) {
 				CurrentWeapon.Animator.SetTrigger("Hide");
@@ -205,7 +208,7 @@ namespace ProjectEpsilon {
 			if (IsSwitching == false || _pendingWeapon == null)
 				return;
 
-			if (_switchTimer.RemainingTime(Runner) > WeaponSwitchTime * 0.5f)
+			if (_switchTimer.RemainingTime(Runner) > _saveTakeOutTime)
 				return;
 
 		    CurrentWeapon = _pendingWeapon;

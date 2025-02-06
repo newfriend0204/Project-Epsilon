@@ -123,6 +123,15 @@ namespace ProjectEpsilon {
             if (isRunning) {
                 _saveSpeed += MoveSpeed / 10 * 6;
             }
+            if (GetComponent<Weapons>().currentWeapon == GetComponent<Weapons>().currentSidearm) {
+                _saveSpeed += MoveSpeed / 10 * 0.5f;
+            }
+            if (GetComponent<Weapons>().currentWeapon == GetComponent<Weapons>().currentPrimary) {
+                _saveSpeed -= MoveSpeed / 10 * 1.5f;
+            }   
+            if (GetComponent<Weapons>().currentWeapon == EWeaponName.Search) {
+                _saveSpeed += MoveSpeed / 10 * 0.5f;
+            }
         }
 
         public override void Render() {
@@ -201,7 +210,7 @@ namespace ProjectEpsilon {
                 }
             }
 
-            if (input.Buttons.IsSet(EInputButton.Fire)) {
+            if (input.Buttons.IsSet(EInputButton.Fire) && !GetComponent<Weapons>().IsSwitching) {
                 bool justPressed = input.Buttons.WasPressed(_previousButtons, EInputButton.Fire);
                 Weapons.Fire(justPressed);
                 Health.StopImmortality();
@@ -219,6 +228,13 @@ namespace ProjectEpsilon {
 
             if (Runner.GetPhysicsScene().Raycast(CameraHandle.transform.position, KCC.LookDirection, out var hit, 2.5f, LayerMask.GetMask("Item"), QueryTriggerInteraction.Ignore)) {
                 if (input.Buttons.WasPressed(_previousButtons, EInputButton.Interact) && HasStateAuthority) {
+                    if (GetComponent<Weapons>().CurrentWeapon != null) {
+                        if (GetComponent<Weapons>().CurrentWeapon.IsReloading) {
+                            GetComponent<Weapons>().CurrentWeapon._fireCooldown = TickTimer.None;
+                            GetComponent<Weapons>().CurrentWeapon.IsReloading = false;
+                            GetComponent<Weapons>().CurrentWeapon.ReloadingSound.Stop();
+                        }
+                    }
                     _interactionTime = 0f;
                     isInteracting = true;
                 }
