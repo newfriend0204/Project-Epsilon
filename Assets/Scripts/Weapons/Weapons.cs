@@ -131,6 +131,12 @@ namespace ProjectEpsilon {
                 currentSidearm = EWeaponName.SMG11;
                 SwitchWeapon(1);
             }
+            if (weaponType == EWeaponName.SuperShorty) {
+                currentWeapon = EWeaponName.SuperShorty;
+                _isCollectedSidearm = true;
+                currentSidearm = EWeaponName.SuperShorty;
+                SwitchWeapon(1);
+            }
             if (weaponType == EWeaponName.AK47) {
                 currentWeapon = EWeaponName.AK47;
                 _isCollectedPrimary = true;
@@ -140,11 +146,11 @@ namespace ProjectEpsilon {
             if (weaponType == EWeaponName.RemingtonM870) {
                 currentWeapon = EWeaponName.RemingtonM870;
                 _isCollectedPrimary = true;
-				currentPrimary = EWeaponName.RemingtonM870;
+                currentPrimary = EWeaponName.RemingtonM870;
                 SwitchWeapon(2);
             }
 
-			if (weapon.IsCollected) {
+            if (weapon.IsCollected) {
                 weapon.ClipAmmo = weapon.StartAmmo;
             } else {
 				weapon.IsCollected = true;

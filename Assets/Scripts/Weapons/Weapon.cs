@@ -10,7 +10,7 @@ namespace ProjectEpsilon {
 		Rifle,
 		Shotgun,
 		Search,
-	}
+    }
 
 	public enum EWeaponName {
 		M1911,
@@ -18,7 +18,8 @@ namespace ProjectEpsilon {
 		AK47,
 		RemingtonM870,
 		Search,
-	}
+        SuperShorty,
+    }
 
 	public class Weapon : NetworkBehaviour {
 		public EWeaponType Type;
@@ -40,7 +41,6 @@ namespace ProjectEpsilon {
 		public float ReloadTime = 2f;
 
 		[Header("Visuals")]
-		public Sprite Icon;
 		public string Name;
 		public Animator Animator;
 		[FormerlySerializedAs("WeaponVisual")]
@@ -137,7 +137,7 @@ namespace ProjectEpsilon {
                 yield return new WaitForSeconds(_particleDelay);
                 particleSystem.Play();
             }
-            if (WeaponName == EWeaponName.RemingtonM870) {
+            if (Type == EWeaponType.Shotgun) {
 				_particleDelay = 0.5f;
             }
 			if (PlayParticleWithDelay() != null)
@@ -203,6 +203,9 @@ namespace ProjectEpsilon {
                     case EWeaponName.SMG11:
                         _remainingAmmo = GetComponentInParent<Player>().ammo45ACP;
                         break;
+                    case EWeaponName.SuperShorty:
+                        _remainingAmmo = GetComponentInParent<Player>().ammo12Gauge;
+                        break;
                     case EWeaponName.AK47:
                         _remainingAmmo = GetComponentInParent<Player>().ammo7_62mm;
                         break;
@@ -247,6 +250,9 @@ namespace ProjectEpsilon {
                     case EWeaponName.SMG11:
                         _remainingAmmo = GetComponentInParent<Player>().ammo45ACP;
                         break;
+                    case EWeaponName.SuperShorty:
+                        _remainingAmmo = GetComponentInParent<Player>().ammo12Gauge;
+                        break;
                     case EWeaponName.AK47:
                         _remainingAmmo = GetComponentInParent<Player>().ammo7_62mm;
                         break;
@@ -278,10 +284,13 @@ namespace ProjectEpsilon {
 						case EWeaponName.M1911:
 							GetComponentInParent<Player>().ammo45ACP -= reloadAmmo;
 							break;
-						case EWeaponName.SMG11:
-							GetComponentInParent<Player>().ammo45ACP -= reloadAmmo;
-							break;
-						case EWeaponName.AK47:
+                        case EWeaponName.SMG11:
+                            GetComponentInParent<Player>().ammo45ACP -= reloadAmmo;
+                            break;
+                        case EWeaponName.SuperShorty:
+                            GetComponentInParent<Player>().ammo12Gauge -= reloadAmmo;
+                            break;
+                        case EWeaponName.AK47:
 							GetComponentInParent<Player>().ammo7_62mm -= reloadAmmo;
 							break;
 						case EWeaponName.RemingtonM870:
@@ -350,10 +359,8 @@ namespace ProjectEpsilon {
 
 			if (Type == EWeaponType.Search) {
 				GetComponentInParent<Player>().isSearching = true;
-				ReloadingSound.PlayOneShot(ReloadingSound.GetComponent<AudioSource>().clip);
             } else {
 				GetComponentInParent<Player>().isSearching = false;
-                ReloadingSound.Stop();
             }
 
             float _saveSpeed = 1;
@@ -369,9 +376,12 @@ namespace ProjectEpsilon {
 				case EWeaponName.M1911:
 					allAmmo = GetComponentInParent<Player>().ammo45ACP;
 					break;
-				case EWeaponName.SMG11:
+                case EWeaponName.SMG11:
                     allAmmo = GetComponentInParent<Player>().ammo45ACP;
-					break;
+                    break;
+                case EWeaponName.SuperShorty:
+                    allAmmo = GetComponentInParent<Player>().ammo12Gauge;
+                    break;
                 case EWeaponName.AK47:
                     allAmmo = GetComponentInParent<Player>().ammo7_62mm;
                     break;
@@ -516,7 +526,19 @@ namespace ProjectEpsilon {
                     else
                         damage *= 0.5f;
                     break;
-				case EWeaponName.AK47:
+                case EWeaponName.SuperShorty:
+                    if (distance < 2f)
+                        break;
+                    else if (distance < 5f)
+                        damage *= 0.8f;
+                    else if (distance < 12f)
+                        damage *= 0.6f;
+                    else if (distance < 16f)
+                        damage *= 0.4f;
+                    else
+                        damage *= 0.1f;
+                    break;
+                case EWeaponName.AK47:
                     if (distance < 20f)
                         break;
                     else if (distance < 30f)

@@ -25,8 +25,9 @@ namespace ProjectEpsilon {
         public Image CurrentAmmoIcon;
 
         public Sprite M1911Icon;
-		public Sprite SMG11Icon;
-		public Sprite AK47Icon;
+        public Sprite SMG11Icon;
+        public Sprite SuperShortyIcon;
+        public Sprite AK47Icon;
         public Sprite RemingtonM870Icon;
         public Sprite SearchIcon;
         public Sprite Ammo45ACPIcon;
@@ -53,6 +54,9 @@ namespace ProjectEpsilon {
             } else if (weaponsScript.currentSidearm == EWeaponName.SMG11) {
                 SidearmIcon.sprite = SMG11Icon;
                 SidearmName.text = "SMG-11";
+            } else if (weaponsScript.currentSidearm == EWeaponName.SuperShorty) {
+                SidearmIcon.sprite = SuperShortyIcon;
+                SidearmName.text = "Super Shorty";
             } else {
                 SidearmIcon.sprite = TransparentIcon;
                 SidearmName.text = "";
@@ -135,6 +139,7 @@ namespace ProjectEpsilon {
                     SetAmmoTransparency(1f, Ammo7_62mm);
                     break;
                 case EWeaponName.RemingtonM870:
+                case EWeaponName.SuperShorty:
                     SetAmmoTransparency(1f, Ammo12Gauge);
                     break;
                 default:
@@ -182,6 +187,9 @@ namespace ProjectEpsilon {
                     case EWeaponName.SMG11:
                         WeaponExplain.text = "<mark>SMG-11</mark>\r\n연사력은 매우 빠르지만 탄창이 제한적인 기관권총입니다.\r\n탄약 수:<color=lightblue>16</color>         사용 탄약:<color=lightblue>.45ACP</color>    재장전 속도:<color=lightblue>2.2초</color> \r\n연사력:<color=lightblue>1400</color>                        탄퍼짐:<color=lightblue>8</color>                   위력:<color=lightblue>10</color>   \r\n\r\n<mark>특성:보조무기</mark>\r\n들고 있을때 요원 속도가 <color=green>소폭 증가</color>합니다.\r\n무기 교체 시간이 <color=green>소폭 감소</color>합니다.\r\n거리별 위력 감소가 <color=red>증가</color>합니다.\r\n거리별 위력 길이가 <color=red>감소</color>합니다.";
                         break;
+                    case EWeaponName.SuperShorty:
+                        WeaponExplain.text = "<mark>Super Shorty</mark>\r\n근거리에선 매우 강력한 성능을 발휘하지만 중거리부터는\r\n크게 위력이 떨어지는 펌프 액션 산탄총입니다.\r\n탄약 수:<color=lightblue>3</color>         사용 탄약:<color=lightblue>12게이지</color>    재장전 속도:<color=lightblue>발당 0.2초</color> \r\n연사력:<color=lightblue>75</color>                        탄퍼짐:<color=lightblue>8</color>                            위력:<color=lightblue>10</color>   \r\n\r\n<mark>특성:보조무기</mark>\r\n들고 있을때 요원 속도가 <color=green>소폭 증가</color>합니다.\r\n무기 교체 시간이 <color=green>소폭 감소</color>합니다.\r\n거리별 위력 감소가 <color=red>증가</color>합니다.\r\n거리별 위력 길이가 <color=red>감소</color>합니다.";
+                        break; ;
                     case EWeaponName.AK47:
                         WeaponExplain.text = "<mark>AK47</mark>\r\n위력은 강력하지만 연사력이 조금 낮은 돌격소총입니다.\r\n탄약 수:<color=lightblue>30</color>      사용 탄약:<color=lightblue>7.62mm</color>     재장전 속도:<color=lightblue>1.8초</color>    \r\n연사력:<color=lightblue>1400</color>                       탄퍼짐:<color=lightblue>4</color>                    위력:<color=lightblue>20</color>   \r\n\r\n<mark>특성:주무기</mark>\r\n들고 있을때 요원 속도가 <color=red>소폭 감소</color>합니다.\r\n무기 교체 시간이 <color=red>소폭 증가</color>합니다.\r\n거리별 위력 감소가 <color=green>감소</color>합니다.\r\n거리별 위력 길이가 <color=green>증가</color>합니다.";
                         break;
@@ -239,6 +247,11 @@ namespace ProjectEpsilon {
                     WeaponIcon.sprite = SMG11Icon;
                     WeaponName.text = "SMG-11";
                     CurrentAmmoIcon.sprite = Ammo45ACPIcon;
+                    break;
+                case EWeaponName.SuperShorty:
+                    WeaponIcon.sprite = SuperShortyIcon;
+                    WeaponName.text = "Super Shorty";
+                    CurrentAmmoIcon.sprite = Ammo12GaugeIcon;
                     break;
                 case EWeaponName.AK47:
                     WeaponIcon.sprite = AK47Icon;

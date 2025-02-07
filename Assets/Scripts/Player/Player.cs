@@ -18,6 +18,7 @@ namespace ProjectEpsilon {
         public float MoveSpeed = 6f;
         public float JumpForce = 10f;
         public AudioSource JumpSound;
+        public AudioSource SearchSound;
         public AudioClip[] JumpClips;
         public GameObject CameraHandle;
         public GameObject FirstPersonRoot;
@@ -108,6 +109,16 @@ namespace ProjectEpsilon {
             } else {
                 MovePlayer();
                 RefreshCamera();
+            }
+
+            if (GetComponent<Weapons>().currentWeapon == EWeaponName.Search) {
+                isSearching = true;
+                if (!SearchSound.isPlaying) {
+                    SearchSound.Play();
+                }
+            } else {
+                isSearching = false;
+                SearchSound.Stop();
             }
 
             _saveSpeed = MoveSpeed;
@@ -247,6 +258,7 @@ namespace ProjectEpsilon {
                             case "SMG11Collider":
                             case "AK47Collider":
                             case "RemingtonM870Collider":
+                            case "SuperShortyCollider":
                                 hit.collider.gameObject.GetComponentInParent<WeaponPickup>().AcquireWeapon(gameObject);
                                 break;
                             case "Ammo45ACPCollider":

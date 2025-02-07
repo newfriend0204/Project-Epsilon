@@ -56,7 +56,6 @@ namespace ProjectEpsilon {
                 }
             }
 			else {
-                _isSearched = false;
                 OutlineScript.enabled = false;
                 InfoObject.SetActive(false);
             }
