@@ -29,6 +29,7 @@ namespace ProjectEpsilon {
         public Sprite SuperShortyIcon;
         public Sprite AK47Icon;
         public Sprite RemingtonM870Icon;
+        public Sprite MP5Icon;
         public Sprite SearchIcon;
         public Sprite Ammo45ACPIcon;
         public Sprite Ammo7_62mmIcon;
@@ -67,6 +68,9 @@ namespace ProjectEpsilon {
             } else if (weaponsScript.currentPrimary == EWeaponName.RemingtonM870) {
                 PrimaryIcon.sprite = RemingtonM870Icon;
                 PrimaryName.text = "Remington M870";
+            } else if (weaponsScript.currentPrimary == EWeaponName.MP5) {
+                PrimaryIcon.sprite = MP5Icon;
+                PrimaryName.text = "MP5";
             } else {
                 PrimaryIcon.sprite = TransparentIcon;
                 PrimaryName.text = "";
@@ -191,13 +195,13 @@ namespace ProjectEpsilon {
                         WeaponExplain.text = "<mark>Super Shorty</mark>\r\n근거리에선 매우 강력한 성능을 발휘하지만 중거리부터는\r\n크게 위력이 떨어지는 펌프 액션 산탄총입니다.\r\n탄약 수:<color=lightblue>3</color>         사용 탄약:<color=lightblue>12게이지</color>    재장전 속도:<color=lightblue>발당 0.2초</color> \r\n연사력:<color=lightblue>75</color>                        탄퍼짐:<color=lightblue>8</color>                            위력:<color=lightblue>10</color>   \r\n\r\n<mark>특성:보조무기</mark>\r\n들고 있을때 요원 속도가 <color=green>소폭 증가</color>합니다.\r\n무기 교체 시간이 <color=green>소폭 감소</color>합니다.\r\n거리별 위력 감소가 <color=red>증가</color>합니다.\r\n거리별 위력 길이가 <color=red>감소</color>합니다.";
                         break; ;
                     case EWeaponName.AK47:
-                        WeaponExplain.text = "<mark>AK47</mark>\r\n위력은 강력하지만 연사력이 조금 낮은 돌격소총입니다.\r\n탄약 수:<color=lightblue>30</color>      사용 탄약:<color=lightblue>7.62mm</color>     재장전 속도:<color=lightblue>1.8초</color>    \r\n연사력:<color=lightblue>1400</color>                       탄퍼짐:<color=lightblue>4</color>                    위력:<color=lightblue>20</color>   \r\n\r\n<mark>특성:주무기</mark>\r\n들고 있을때 요원 속도가 <color=red>소폭 감소</color>합니다.\r\n무기 교체 시간이 <color=red>소폭 증가</color>합니다.\r\n거리별 위력 감소가 <color=green>감소</color>합니다.\r\n거리별 위력 길이가 <color=green>증가</color>합니다.";
+                        WeaponExplain.text = "<mark>AK47</mark>\r\n위력은 강력하지만 연사력이 조금 낮은 돌격소총입니다.\r\n탄약 수:<color=lightblue>30</color>      사용 탄약:<color=lightblue>7.62mm</color>     재장전 속도:<color=lightblue>1.8초</color>    \r\n연사력:<color=lightblue>600</color>                        탄퍼짐:<color=lightblue>4</color>                    위력:<color=lightblue>20</color>   \r\n\r\n<mark>특성:주무기</mark>\r\n들고 있을때 요원 속도가 <color=red>소폭 감소</color>합니다.\r\n무기 교체 시간이 <color=red>소폭 증가</color>합니다.\r\n거리별 위력 감소가 <color=green>감소</color>합니다.\r\n거리별 위력 길이가 <color=green>증가</color>합니다.";
                         break;
                     case EWeaponName.RemingtonM870:
                         WeaponExplain.text = "<mark>Remington M870</mark>\r\n중거리까지 든든히 교전할 수 있는 펌프 액션 산탄총입니다.\r\n탄약 수:<color=lightblue>7</color>      사용 탄약:<color=lightblue>12게이지</color>    재장전 속도:<color=lightblue>발당 0.2초</color>   \r\n연사력:<color=lightblue>75</color>                       탄퍼짐:<color=lightblue>6</color>                   위력:<color=lightblue>발당 10</color>   \r\n\r\n<mark>특성:주무기</mark>\r\n들고 있을때 요원 속도가 <color=red>소폭 감소</color>합니다.\r\n무기 교체 시간이 <color=red>소폭 증가</color>합니다.\r\n거리별 위력 감소가 <color=green>감소</color>합니다.\r\n거리별 위력 길이가 <color=green>증가</color>합니다.";
                         break;
                     case EWeaponName.MP5:
-                        WeaponExplain.text = "MP5입니다.";
+                        WeaponExplain.text = "<mark>MP5</mark>\r\n연사력이 빠르지만 위력이 조금 약간 기관탄총입니다.\r\n탄약 수:<color=lightblue>40</color>      사용 탄약:<color=lightblue>7.62mm</color>     재장전 속도:<color=lightblue>2초</color>      \r\n연사력:<color=lightblue>900</color>                       탄퍼짐:<color=lightblue>6</color>                 위력:<color=lightblue>15</color>   \r\n\r\n<mark>특성:주무기</mark>\r\n들고 있을때 요원 속도가 <color=red>소폭 감소</color>합니다.\r\n무기 교체 시간이 <color=red>소폭 증가</color>합니다.\r\n거리별 위력 감소가 <color=green>감소</color>합니다.\r\n거리별 위력 길이가 <color=green>증가</color>합니다.";
                         break;
                     case EWeaponName.Search:
                         WeaponExplain.text = "<mark>탐색</mark>\r\n근처 전투장비를 쉽게 찾을 수 있는 특수 고글입니다.\r\n최대 탐색 거리:<color=lightblue>15m</color>\r\n아이템을 찾을시 <color=lightblue>초록색 윤곽선, 혹은 초록으로 보입니다.</color>\r\n또한 전투 장비 위에 <color=lightblue>무슨 장비인지 이름이 뜹니다.</color>\r\n\r\n \r\n\r\n<mark>특성:전투 장비</mark>\r\n들고 있을때 요원 속도가 <color=green>증가</color>합니다.\r\n무기 교체 시간이 <color=green>감소</color>합니다.";
@@ -265,6 +269,11 @@ namespace ProjectEpsilon {
                     WeaponIcon.sprite = RemingtonM870Icon;
                     WeaponName.text = "Remington M870";
                     CurrentAmmoIcon.sprite = Ammo12GaugeIcon;
+                    break;
+                case EWeaponName.MP5:
+                    WeaponIcon.sprite = MP5Icon;
+                    WeaponName.text = "MP5";
+                    CurrentAmmoIcon.sprite = Ammo7_62mmIcon;
                     break;
                 case EWeaponName.Search:
                     WeaponIcon.sprite = SearchIcon;

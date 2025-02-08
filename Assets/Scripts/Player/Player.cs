@@ -257,6 +257,7 @@ namespace ProjectEpsilon {
                             case "M1911Collider":
                             case "SMG11Collider":
                             case "AK47Collider":
+                            case "MP5Collider":
                             case "RemingtonM870Collider":
                             case "SuperShortyCollider":
                                 hit.collider.gameObject.GetComponentInParent<WeaponPickup>().AcquireWeapon(gameObject);
