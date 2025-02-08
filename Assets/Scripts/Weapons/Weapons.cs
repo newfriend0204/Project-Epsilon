@@ -10,7 +10,6 @@ namespace ProjectEpsilon {
 		public AudioClip SearchStartSound;
 		public AudioClip SearchEndSound;
 
-
         public bool IsSwitching => _switchTimer.ExpiredOrNotRunning(Runner) == false;
 
 	    [Networked, HideInInspector]
@@ -147,6 +146,12 @@ namespace ProjectEpsilon {
                 currentWeapon = EWeaponName.RemingtonM870;
                 _isCollectedPrimary = true;
                 currentPrimary = EWeaponName.RemingtonM870;
+                SwitchWeapon(2);
+            }
+            if (weaponType == EWeaponName.MP5) {
+                currentWeapon = EWeaponName.MP5;
+                _isCollectedPrimary = true;
+                currentPrimary = EWeaponName.MP5;
                 SwitchWeapon(2);
             }
 

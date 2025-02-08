@@ -19,6 +19,7 @@ namespace ProjectEpsilon {
 		RemingtonM870,
 		Search,
         SuperShorty,
+		MP5,
     }
 
 	public class Weapon : NetworkBehaviour {
@@ -212,6 +213,9 @@ namespace ProjectEpsilon {
                     case EWeaponName.RemingtonM870:
                         _remainingAmmo = GetComponentInParent<Player>().ammo12Gauge;
                         break;
+                    case EWeaponName.MP5:
+                        _remainingAmmo = GetComponentInParent<Player>().ammo7_62mm;
+                        break;
                 }
                 _remainingAmmo = StartAmmo - ClipAmmo;
             }
@@ -259,6 +263,9 @@ namespace ProjectEpsilon {
                     case EWeaponName.RemingtonM870:
                         _remainingAmmo = GetComponentInParent<Player>().ammo12Gauge;
                         break;
+                    case EWeaponName.MP5:
+                        _remainingAmmo = GetComponentInParent<Player>().ammo7_62mm;
+                        break;
                 }
                 reloadAmmo = Mathf.Min(reloadAmmo, _remainingAmmo);
 				
@@ -293,10 +300,13 @@ namespace ProjectEpsilon {
                         case EWeaponName.AK47:
 							GetComponentInParent<Player>().ammo7_62mm -= reloadAmmo;
 							break;
-						case EWeaponName.RemingtonM870:
-							GetComponentInParent<Player>().ammo12Gauge -= reloadAmmo;
-							break;
-					}
+                        case EWeaponName.RemingtonM870:
+                            GetComponentInParent<Player>().ammo12Gauge -= reloadAmmo;
+                            break;
+                        case EWeaponName.MP5:
+                            GetComponentInParent<Player>().ammo7_62mm -= reloadAmmo;
+                            break;
+                    }
 				}
 
                 _fireCooldown = TickTimer.CreateFromSeconds(Runner, 0.5f);
@@ -387,6 +397,9 @@ namespace ProjectEpsilon {
                     break;
                 case EWeaponName.RemingtonM870:
                     allAmmo = GetComponentInParent<Player>().ammo12Gauge;
+                    break;
+                case EWeaponName.MP5:
+                    allAmmo = GetComponentInParent<Player>().ammo7_62mm;
                     break;
             }
 
@@ -560,7 +573,17 @@ namespace ProjectEpsilon {
                     else
                         damage *= 0.2f;
                     break;
-			}
+                case EWeaponName.MP5:
+                    if (distance < 10f)
+                        break;
+                    else if (distance < 20f)
+                        damage *= 0.8f;
+                    else if (distance < 30f)
+                        damage *= 0.75f;
+                    else
+                        damage *= 0.7f;
+                    break;
+            }
 
             if (enemyHealth.ApplyDamage(Object.InputAuthority, damage, position, direction, Type, isCriticalHit) == false)
 				return;
