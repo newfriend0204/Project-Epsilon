@@ -204,7 +204,7 @@ namespace ProjectEpsilon {
                         WeaponExplain.text = "<mark>MP5</mark>\r\n연사력이 빠르지만 위력이 조금 약간 기관탄총입니다.\r\n탄약 수:<color=lightblue>40</color>      사용 탄약:<color=lightblue>7.62mm</color>     재장전 속도:<color=lightblue>2초</color>      \r\n연사력:<color=lightblue>900</color>                       탄퍼짐:<color=lightblue>6</color>                 위력:<color=lightblue>15</color>   \r\n\r\n<mark>특성:주무기</mark>\r\n들고 있을때 요원 속도가 <color=red>소폭 감소</color>합니다.\r\n무기 교체 시간이 <color=red>소폭 증가</color>합니다.\r\n거리별 위력 감소가 <color=green>감소</color>합니다.\r\n거리별 위력 길이가 <color=green>증가</color>합니다.";
                         break;
                     case EWeaponName.Search:
-                        WeaponExplain.text = "<mark>탐색</mark>\r\n근처 전투장비를 쉽게 찾을 수 있는 특수 고글입니다.\r\n최대 탐색 거리:<color=lightblue>15m</color>\r\n아이템을 찾을시 <color=lightblue>초록색 윤곽선, 혹은 초록으로 보입니다.</color>\r\n또한 전투 장비 위에 <color=lightblue>무슨 장비인지 이름이 뜹니다.</color>\r\n\r\n \r\n\r\n<mark>특성:전투 장비</mark>\r\n들고 있을때 요원 속도가 <color=green>증가</color>합니다.\r\n무기 교체 시간이 <color=green>감소</color>합니다.";
+                        WeaponExplain.text = "<mark>탐색</mark>\r\n근처 전투장비를 쉽게 찾을 수 있는 특수 고글입니다.\r\n최대 탐색 거리:<color=lightblue>10m</color>\r\n아이템을 찾을시 <color=lightblue>초록색 윤곽선, 혹은 초록으로 보입니다.</color>\r\n또한 전투 장비 위에 <color=lightblue>무슨 장비인지 이름이 뜹니다.</color>\r\n\r\n \r\n\r\n<mark>특성:전투 장비</mark>\r\n들고 있을때 요원 속도가 <color=green>증가</color>합니다.\r\n무기 교체 시간이 <color=green>감소</color>합니다.";
                         break;
                     default:
                         break;

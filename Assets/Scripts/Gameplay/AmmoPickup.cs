@@ -2,11 +2,11 @@ using Fusion;
 using UnityEngine;
 
 namespace ProjectEpsilon {
-    public enum BulletName {
-        bullet45ACP,
-        bullet7_62mm,
-        bullet12Gauge,
-    };
+    //public enum BulletName {
+    //    bullet45ACP,
+    //    bullet7_62mm,
+    //    bullet12Gauge,
+    //};
 
     public class AmmoPickup : NetworkBehaviour {
         public BulletName Bullet;
@@ -74,13 +74,13 @@ namespace ProjectEpsilon {
         public void AcquireAmmo(GameObject player) {
             var ammos = player.GetComponentInParent<Player>();
             switch (Bullet) {
-                case BulletName.bullet45ACP:
+                case BulletName.ammo45ACP:
                     ammos.ammo45ACP += Random.Range(10, 21);
                     break;
-                case BulletName.bullet7_62mm:
+                case BulletName.ammo7_62mm:
                     ammos.ammo7_62mm += Random.Range(15, 31);
                     break;
-                case BulletName.bullet12Gauge:
+                case BulletName.ammo12Gauge:
                     ammos.ammo12Gauge += Random.Range(5, 11);
                     break;
             }

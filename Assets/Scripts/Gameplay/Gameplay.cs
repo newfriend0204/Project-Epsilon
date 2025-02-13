@@ -18,13 +18,14 @@ namespace ProjectEpsilon {
 
 	public enum EGameplayState {
 		Skirmish = 0,
-		Running  = 1,
+		Running = 1,
 		Finished = 2,
 	}
 
 	public class Gameplay : NetworkBehaviour {
 		public GameUI GameUI;
 		public Player PlayerPrefab;
+		public GameObject[] PickupPrefab;
 		public float  GameDuration = 180f;
 		public float  PlayerRespawnTime = 5f;
 		public float  DoubleDamageDuration = 30f;
@@ -44,8 +45,9 @@ namespace ProjectEpsilon {
 		private List<PlayerRef> _pendingPlayers = new(16);
 		private List<PlayerData> _tempPlayerData = new(16);
 		private List<Transform> _recentSpawnPoints = new(4);
+		private float _nextSpawnTime;
 
-		public void PlayerKilled(PlayerRef killerPlayerRef, PlayerRef victimPlayerRef, EWeaponType weaponType, bool isCriticalKill) {
+        public void PlayerKilled(PlayerRef killerPlayerRef, PlayerRef victimPlayerRef, EWeaponType weaponType, bool isCriticalKill) {
 			if (HasStateAuthority == false)
 				return;
 
@@ -75,7 +77,7 @@ namespace ProjectEpsilon {
 			if (Runner.GameMode == GameMode.Shared) {
 				throw new System.NotSupportedException("This sample doesn't support Shared Mode, please start the game as Server, Host or Client.");
 			}
-		}
+        }
 
 		public override void FixedUpdateNetwork() {
 			if (HasStateAuthority == false)
@@ -100,7 +102,7 @@ namespace ProjectEpsilon {
 					StopGameplay();
 				}
 			}
-		}
+        }
 
 		public override void Render() {
 			if (Runner.Mode == SimulationModes.Server)
@@ -199,6 +201,17 @@ namespace ProjectEpsilon {
 
 			return spawnPoint;
 		}
+
+		private Transform GetPickupPoint() {
+            Transform pickupPoint = default;
+
+            var pickupPoints = Runner.SimulationUnityScene.GetComponents<PickupPoint>(false);
+            for (int i = 0, offset = Random.Range(0, pickupPoints.Length); i < pickupPoints.Length; i++) {
+                pickupPoint = pickupPoints[(offset + i) % pickupPoints.Length].transform;
+            }
+
+            return pickupPoint;
+        }
 
 		private void StartGameplay() {
 			StopAllCoroutines();

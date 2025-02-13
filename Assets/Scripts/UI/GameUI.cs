@@ -4,8 +4,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 namespace ProjectEpsilon {
-    public class GameUI : MonoBehaviour
-	{
+    public class GameUI : MonoBehaviour {
 		public Gameplay Gameplay;
 		[HideInInspector]
 		public NetworkRunner Runner;

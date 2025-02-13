@@ -126,22 +126,22 @@ namespace ProjectEpsilon {
                 _saveSpeed -= MoveSpeed / 10 * 1;
             }
             if (isCrouching) {
-                _saveSpeed -= MoveSpeed / 10 * 3;
+                _saveSpeed -= MoveSpeed / 10 * 2.5f;
             }
             if (isSneaking) {
-                _saveSpeed -= MoveSpeed / 10 * 5;
+                _saveSpeed -= MoveSpeed / 10 * 4;
             }
             if (isRunning) {
-                _saveSpeed += MoveSpeed / 10 * 6;
+                _saveSpeed += MoveSpeed / 10 * 5;
             }
             if (GetComponent<Weapons>().currentWeapon == GetComponent<Weapons>().currentSidearm) {
                 _saveSpeed += MoveSpeed / 10 * 0.5f;
             }
             if (GetComponent<Weapons>().currentWeapon == GetComponent<Weapons>().currentPrimary) {
-                _saveSpeed -= MoveSpeed / 10 * 1.5f;
+                _saveSpeed -= MoveSpeed / 10 * 0.5f;
             }   
             if (GetComponent<Weapons>().currentWeapon == EWeaponName.Search) {
-                _saveSpeed += MoveSpeed / 10 * 0.5f;
+                _saveSpeed += MoveSpeed / 10 * 0.75f;
             }
         }
 
@@ -260,12 +260,12 @@ namespace ProjectEpsilon {
                             case "MP5Collider":
                             case "RemingtonM870Collider":
                             case "SuperShortyCollider":
-                                hit.collider.gameObject.GetComponentInParent<WeaponPickup>().AcquireWeapon(gameObject);
+                                hit.collider.gameObject.GetComponentInParent<Pickup>().AcquireWeapon(gameObject, 1);
                                 break;
                             case "Ammo45ACPCollider":
                             case "Ammo7_62mmCollider":
                             case "Ammo12GaugeCollider":
-                                hit.collider.gameObject.GetComponentInParent<AmmoPickup>().AcquireAmmo(gameObject);
+                                hit.collider.gameObject.GetComponentInParent<Pickup>().AcquireWeapon(gameObject, 2);
                                 break;
                         }
                         isInteracting = false;

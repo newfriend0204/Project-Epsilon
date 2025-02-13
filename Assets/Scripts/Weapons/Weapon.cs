@@ -428,6 +428,9 @@ namespace ProjectEpsilon {
                 _saveDispersion -= Dispersion / 10 * 3;
             }
 
+			if (GetComponentInParent<Player>().isRunning) {
+				_saveDispersion = 200;
+			}
             _sceneObjects.GameUI.PlayerView.Crosshair.TopCrossHair.transform.localPosition = new Vector3(0, _saveDispersion * 10);
             _sceneObjects.GameUI.PlayerView.Crosshair.BottomCrossHair.transform.localPosition = new Vector3(0, -_saveDispersion * 10);
             _sceneObjects.GameUI.PlayerView.Crosshair.LeftCrossHair.transform.localPosition = new Vector3(_saveDispersion * 10, 0);
