@@ -149,7 +149,7 @@ namespace ProjectEpsilon {
 			ClipAmmo--;
         }
 
-        public void Reload() {
+		public void Reload(int loop = 0) {
 			if (IsCollected == false)
 				return;
 			if (ClipAmmo >= MaxClipAmmo)
@@ -174,7 +174,11 @@ namespace ProjectEpsilon {
 				ExitADS();
 			}
             _fireCooldown = TickTimer.CreateFromSeconds(Runner, ReloadTime);
-		}
+			if (loop == 0) {
+				GetComponentInParent<Player>().VoiceSound.clip = GetComponentInParent<Player>().ReloadClips[Random.Range(0, GetComponentInParent<Player>().ReloadClips.Length)];
+				GetComponentInParent<Player>().VoiceSound.Play();
+			}
+        }
 
 		public void ToggleVisibility(bool isVisible) { 
 			FirstPersonVisual.SetActive(isVisible);
@@ -195,7 +199,8 @@ namespace ProjectEpsilon {
 
 		public override void Spawned() {
 			if (HasStateAuthority) {
-				ClipAmmo = Mathf.Clamp(StartAmmo, 0, MaxClipAmmo);
+				StartAmmo = Random.Range(StartAmmo / 3 * 2, StartAmmo);
+                ClipAmmo = Mathf.Clamp(StartAmmo, 0, MaxClipAmmo);
                 int _remainingAmmo = 0;
                 switch (WeaponName) {
                     case EWeaponName.M1911:
@@ -218,6 +223,9 @@ namespace ProjectEpsilon {
                         break;
                 }
                 _remainingAmmo = StartAmmo - ClipAmmo;
+
+                GetComponentInParent<Player>().VoiceSound.clip = GetComponentInParent<Player>().RespawnClips[Random.Range(0, GetComponentInParent<Player>().RespawnClips.Length)];
+                GetComponentInParent<Player>().VoiceSound.Play();
             }
 
 			_visibleFireCount = _fireCount;
@@ -240,6 +248,104 @@ namespace ProjectEpsilon {
 					ExitADS();
                 Reload();
             }
+
+            if (Input.GetMouseButtonDown(1) && Type != EWeaponType.Search && ClipAmmo > 0) {
+                _fireCooldown = TickTimer.None;
+                IsReloading = false;
+                ReloadingSound.Stop();
+                EnterADS();
+            } else if (Input.GetMouseButtonUp(1) && !IsReloading && Type != EWeaponType.Search) {
+                ExitADS();
+            }
+
+            if (GetComponentInParent<Player>().isMoving) {
+                Animator.SetBool("IsMoving", true);
+            } else {
+                Animator.SetBool("IsMoving", false);
+            }
+
+            if (!GetComponentInParent<Player>().isMoving) {
+                GetComponentInParent<Player>().isRunning = false;
+            }
+            Animator.SetBool("IsRunning", GetComponentInParent<Player>().isRunning);
+
+            if (_muzzleEffectInstance != null) {
+                if (!_muzzleEffectInstance.GetComponent<ParticleSystem>().isPlaying) {
+                    _muzzleEffectInstance.SetActive(false);
+                }
+            }
+
+            if (Type == EWeaponType.Search) {
+                GetComponentInParent<Player>().isSearching = true;
+            } else {
+                GetComponentInParent<Player>().isSearching = false;
+            }
+
+            float _saveSpeed = 1;
+            if (GetComponentInParent<Player>().isSneaking) {
+                _saveSpeed -= 0.5f;
+            }
+            if (GetComponentInParent<Player>().isCrouching) {
+                _saveSpeed -= 0.1f;
+            }
+            Animator.SetFloat("speed", _saveSpeed);
+
+            switch (WeaponName) {
+                case EWeaponName.M1911:
+                    allAmmo = GetComponentInParent<Player>().ammo45ACP;
+                    break;
+                case EWeaponName.SMG11:
+                    allAmmo = GetComponentInParent<Player>().ammo45ACP;
+                    break;
+                case EWeaponName.SuperShorty:
+                    allAmmo = GetComponentInParent<Player>().ammo12Gauge;
+                    break;
+                case EWeaponName.AK47:
+                    allAmmo = GetComponentInParent<Player>().ammo7_62mm;
+                    break;
+                case EWeaponName.RemingtonM870:
+                    allAmmo = GetComponentInParent<Player>().ammo12Gauge;
+                    break;
+                case EWeaponName.MP5:
+                    allAmmo = GetComponentInParent<Player>().ammo7_62mm;
+                    break;
+            }
+
+            if (!GetComponentInParent<Weapons>().weaponTimer.ExpiredOrNotRunning(Runner)) {
+                _fireCooldown = TickTimer.None;
+                IsReloading = false;
+                ReloadingSound.Stop();
+            }
+
+            if (GetComponentInParent<Player>().isInteracting) {
+                FirstPersonVisual.SetActive(false);
+                PickupVisual.SetActive(true);
+            } else {
+                FirstPersonVisual.SetActive(true);
+                PickupVisual.SetActive(false);
+            }
+
+            _saveDispersion = Dispersion;
+            if (GetComponentInParent<Player>().isAiming) {
+                _saveDispersion -= Dispersion / 10 * 4;
+            }
+            if (GetComponentInParent<Player>().isSneaking) {
+                _saveDispersion -= Dispersion / 10 * 1;
+            }
+            if (GetComponentInParent<Player>().isCrouching) {
+                _saveDispersion -= Dispersion / 10 * 3;
+            }
+            if (GetComponentInParent<Player>().isMoving) {
+                _saveDispersion += Dispersion / 10 * 2;
+            }
+
+            if (GetComponentInParent<Player>().isRunning) {
+                _saveDispersion = 300;
+            }
+            _sceneObjects.GameUI.PlayerView.Crosshair.TopCrossHair.transform.localPosition = new Vector3(0, _saveDispersion * 25);
+            _sceneObjects.GameUI.PlayerView.Crosshair.BottomCrossHair.transform.localPosition = new Vector3(0, -_saveDispersion * 25);
+            _sceneObjects.GameUI.PlayerView.Crosshair.LeftCrossHair.transform.localPosition = new Vector3(_saveDispersion * 25, 0);
+            _sceneObjects.GameUI.PlayerView.Crosshair.RightCrossHair.transform.localPosition = new Vector3(-_saveDispersion * 25, 0);
 
             if (IsReloading && _fireCooldown.ExpiredOrNotRunning(Runner)) {
                 Animator.ResetTrigger("exitADS");
@@ -272,7 +378,7 @@ namespace ProjectEpsilon {
 				if (Type == EWeaponType.Shotgun) {
 					if (ClipAmmo != MaxClipAmmo) {
 						Animator.SetBool("ReloadEnd", false);
-						Reload();
+						Reload(1);
 					} else if (ClipAmmo == MaxClipAmmo) {
 						Animator.SetBool("ReloadEnd", true);
 					}
@@ -312,130 +418,6 @@ namespace ProjectEpsilon {
                 _fireCooldown = TickTimer.CreateFromSeconds(Runner, 0.5f);
 			}
 		}
-
-        private void Update() {
-            if (Input.GetMouseButtonDown(1) && Type != EWeaponType.Search && ClipAmmo > 0) {
-                _fireCooldown = TickTimer.None;
-                IsReloading = false;
-                ReloadingSound.Stop();
-				EnterADS();
-            } else if (Input.GetMouseButtonUp(1) && !IsReloading && Type != EWeaponType.Search) {
-                ExitADS();
-            }
-
-			if (GetComponentInParent<Player>().isMoving) {
-				Animator.SetBool("IsMoving", true);
-			} else {
-				Animator.SetBool("IsMoving", false);
-			}
-
-			if (Input.GetKey(KeyCode.LeftShift)) {
-				GetComponentInParent<Player>().isSneaking = true;
-            } else {
-				GetComponentInParent<Player>().isSneaking = false;
-            }
-
-			if (Input.GetKey(KeyCode.LeftControl) && !GetComponentInParent<Player>().isAiming) {
-				if (GetComponentInParent<Player>().isCrouching) {
-                    GetComponentInParent<Player>().isCrouching = !GetComponentInParent<Player>().isCrouching;
-                    if (GetComponentInParent<Player>().isCrouching) {
-                        StartCoroutine(GetComponentInParent<Player>().MoveCamera(GetComponentInParent<Player>().originalPosition));
-                        GetComponentInParent<Player>().KCC.SetHeight(1.2f);
-                    } else {
-                        StartCoroutine(GetComponentInParent<Player>().MoveCamera(GetComponentInParent<Player>().crounchPosition));
-                        GetComponentInParent<Player>().KCC.SetHeight(1.8f);
-                    }
-                }
-				GetComponentInParent<Player>().isRunning = true;
-				if (IsReloading) {
-					_fireCooldown = TickTimer.None;
-					IsReloading = false;
-					ReloadingSound.Stop();
-				}
-            } else {
-				GetComponentInParent<Player>().isRunning = false;
-            }
-
-			if (!GetComponentInParent<Player>().isMoving) {
-				GetComponentInParent<Player>().isRunning = false;
-			}
-            Animator.SetBool("IsRunning", GetComponentInParent<Player>().isRunning);
-
-			if (_muzzleEffectInstance != null) {
-				if (!_muzzleEffectInstance.GetComponent<ParticleSystem>().isPlaying) {
-					_muzzleEffectInstance.SetActive(false);
-				}
-			}
-
-			if (Type == EWeaponType.Search) {
-				GetComponentInParent<Player>().isSearching = true;
-            } else {
-				GetComponentInParent<Player>().isSearching = false;
-            }
-
-            float _saveSpeed = 1;
-			if (GetComponentInParent<Player>().isSneaking) {
-				_saveSpeed -= 0.5f;
-			}
-            if (GetComponentInParent<Player>().isCrouching) {
-                _saveSpeed -= 0.1f;
-            }
-			Animator.SetFloat("speed", _saveSpeed);
-
-			switch (WeaponName) {
-				case EWeaponName.M1911:
-					allAmmo = GetComponentInParent<Player>().ammo45ACP;
-					break;
-                case EWeaponName.SMG11:
-                    allAmmo = GetComponentInParent<Player>().ammo45ACP;
-                    break;
-                case EWeaponName.SuperShorty:
-                    allAmmo = GetComponentInParent<Player>().ammo12Gauge;
-                    break;
-                case EWeaponName.AK47:
-                    allAmmo = GetComponentInParent<Player>().ammo7_62mm;
-                    break;
-                case EWeaponName.RemingtonM870:
-                    allAmmo = GetComponentInParent<Player>().ammo12Gauge;
-                    break;
-                case EWeaponName.MP5:
-                    allAmmo = GetComponentInParent<Player>().ammo7_62mm;
-                    break;
-            }
-
-            if (!GetComponentInParent<Weapons>().weaponTimer.ExpiredOrNotRunning(Runner)) {
-                _fireCooldown = TickTimer.None;
-                IsReloading = false;
-                ReloadingSound.Stop();
-            }
-
-			if (GetComponentInParent<Player>().isInteracting) {
-				FirstPersonVisual.SetActive(false);
-				PickupVisual.SetActive(true);
-			} else {
-                FirstPersonVisual.SetActive(true);
-                PickupVisual.SetActive(false);
-            }
-
-            _saveDispersion = Dispersion;
-            if (GetComponentInParent<Player>().isAiming) {
-                _saveDispersion -= Dispersion / 10 * 4;
-            }
-            if (GetComponentInParent<Player>().isSneaking) {
-                _saveDispersion -= Dispersion / 10 * 1;
-            }
-            if (GetComponentInParent<Player>().isCrouching) {
-                _saveDispersion -= Dispersion / 10 * 3;
-            }
-
-			if (GetComponentInParent<Player>().isRunning) {
-				_saveDispersion = 200;
-			}
-            _sceneObjects.GameUI.PlayerView.Crosshair.TopCrossHair.transform.localPosition = new Vector3(0, _saveDispersion * 10);
-            _sceneObjects.GameUI.PlayerView.Crosshair.BottomCrossHair.transform.localPosition = new Vector3(0, -_saveDispersion * 10);
-            _sceneObjects.GameUI.PlayerView.Crosshair.LeftCrossHair.transform.localPosition = new Vector3(_saveDispersion * 10, 0);
-            _sceneObjects.GameUI.PlayerView.Crosshair.RightCrossHair.transform.localPosition = new Vector3(-_saveDispersion * 10, 0);
-        }
 
         public override void Render() {
 			if (_visibleFireCount < _fireCount) {
@@ -517,7 +499,7 @@ namespace ProjectEpsilon {
 				damage *= 2f;
 			}
 
-			switch (GetComponent<Weapons>().currentWeapon) {
+			switch (GetComponentInParent<Weapons>().currentWeapon) {
 				case EWeaponName.M1911:
 					if (distance < 10f)
 						break;
@@ -593,6 +575,10 @@ namespace ProjectEpsilon {
 
 			if (HasInputAuthority && Runner.IsForward) {
 				_sceneObjects.GameUI.PlayerView.Crosshair.ShowHit(enemyHealth.IsAlive == false, isCriticalHit);
+				if (enemyHealth.IsAlive == false) {
+                    GetComponentInParent<Player>().VoiceSound.clip = GetComponentInParent<Player>().KillClips[Random.Range(0, GetComponentInParent<Player>().KillClips.Length)];
+                    GetComponentInParent<Player>().VoiceSound.PlayDelayed(1f);
+                }
 			}
 		}
 

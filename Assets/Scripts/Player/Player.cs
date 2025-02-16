@@ -3,6 +3,7 @@ using Fusion;
 using Fusion.Addons.SimpleKCC;
 using Cinemachine;
 using System.Collections;
+using TMPro;
 
 namespace ProjectEpsilon {
     [DefaultExecutionOrder(-5)]
@@ -20,6 +21,12 @@ namespace ProjectEpsilon {
         public AudioSource JumpSound;
         public AudioSource SearchSound;
         public AudioClip[] JumpClips;
+        public AudioSource VoiceSound;
+        public AudioClip[] ReloadClips;
+        public AudioClip[] SearchClips;
+        public AudioClip[] HurtClips;
+        public AudioClip[] KillClips;
+        public AudioClip[] RespawnClips;
         public GameObject CameraHandle;
         public GameObject FirstPersonRoot;
         public GameObject ThirdPersonRoot;
@@ -48,11 +55,8 @@ namespace ProjectEpsilon {
         internal bool isRunning = false;
         internal bool isSearching = false;
 
-        [Networked]
-        internal int ammo45ACP { get; set; }
-        [Networked]
+        internal int ammo45ACP { get; set; } 
         internal int ammo7_62mm { get; set; }
-        [Networked]
         internal int ammo12Gauge { get; set; }
 
         private int _visibleJumpCount;
@@ -61,8 +65,9 @@ namespace ProjectEpsilon {
         internal Vector3 crounchPosition = new Vector3(0f, 1.678634f, 0f);
         internal bool isInteracting = false;
         private float _interactionTime = 0f;
-
         private SceneObjects _sceneObjects;
+
+        public TextMeshProUGUI DebugText;
 
         public void PlayFireEffect() {
             if (Mathf.Abs(GetAnimationMoveVelocity().x) > 0.2f)
@@ -84,6 +89,26 @@ namespace ProjectEpsilon {
             }
 
             _sceneObjects = Runner.GetSingleton<SceneObjects>();
+
+            GameObject gameUI = GameObject.Find("GameUI");
+            if (gameUI != null) {
+                // "DebugScreen" 오브젝트 찾기
+                Transform debugScreen = gameUI.transform.Find("PlayerView");
+                if (debugScreen != null) {
+                    // "DebugText" 오브젝트 찾기
+                    Transform debugTextTransform = debugScreen.Find("DebugText");
+                    if (debugTextTransform != null) {
+                        // TextMeshProUGUI 컴포넌트 가져오기
+                        DebugText = debugTextTransform.GetComponent<TextMeshProUGUI>();
+                    } else {
+                        Debug.LogError("DebugText 오브젝트를 찾을 수 없습니다.");
+                    }
+                } else {
+                    Debug.LogError("DebugScreen 오브젝트를 찾을 수 없습니다.");
+                }
+            } else {
+                Debug.LogError("GameUI 오브젝트를 찾을 수 없습니다.");
+            }
         }
 
         public override void FixedUpdateNetwork() {
@@ -189,6 +214,18 @@ namespace ProjectEpsilon {
                 return;
 
             RefreshCamera();
+
+            DebugText.text = "ObjectName: " + gameObject.name + "\r\n" +
+                "HasInputAuthority: " + HasInputAuthority + "\r\n" +
+                "HasStateAuthority: " + HasStateAuthority + "\r\n" +
+                "IsMoving: " + isMoving + "\r\n" +
+                "IsCrouching: " + isCrouching + "\r\n" +
+                "IsRunning: " + isRunning + "\r\n" +
+                "IsAiming: " + isAiming + "\r\n" +
+                "IsSearching: " + isSearching + "\r\n" +
+                "Primary: " + GetComponent<Weapons>().currentPrimary + "\r\n" +
+                "Sidearm: " + GetComponent<Weapons>().currentSidearm + "\r\n" +
+                "_moveVelocity: " + _moveVelocity;
         }
 
         private void ProcessInput(NetworkedInput input) {
@@ -211,14 +248,37 @@ namespace ProjectEpsilon {
             }
 
             if (input.Buttons.WasPressed(_previousButtons, EInputButton.Crouch)) {
-                isCrouching = !isCrouching;
-                if (isCrouching) {
+                if (!isCrouching) {
+                    isCrouching = true;
                     StartCoroutine(MoveCamera(originalPosition));
                     KCC.SetHeight(1.2f);
                 } else {
+                    isCrouching = false;
                     StartCoroutine(MoveCamera(crounchPosition));
-                    KCC.SetHeight(1.8f);
+                    KCC.SetHeight(1.737276f);
                 }
+            }
+
+            if (Input.GetKey(KeyCode.LeftShift)) {
+                isSneaking = true;
+            } else {
+                isSneaking = false;
+            }
+
+            if (Input.GetKey(KeyCode.LeftControl) && !isAiming) {
+                if (isCrouching) {
+                    isCrouching = false;
+                    StartCoroutine(MoveCamera(crounchPosition));
+                    KCC.SetHeight(1.737276f);
+                }
+                isRunning = true;
+                if (GetComponentInChildren<Weapon>().IsReloading) {
+                    GetComponentInChildren<Weapon>()._fireCooldown = TickTimer.None;
+                    GetComponentInChildren<Weapon>().IsReloading = false;
+                    GetComponentInChildren<Weapon>().ReloadingSound.Stop();
+                }
+            } else {
+                isRunning = false;
             }
 
             if (input.Buttons.IsSet(EInputButton.Fire) && !GetComponent<Weapons>().IsSwitching) {
@@ -238,7 +298,7 @@ namespace ProjectEpsilon {
             }
 
             if (Runner.GetPhysicsScene().Raycast(CameraHandle.transform.position, KCC.LookDirection, out var hit, 2.5f, LayerMask.GetMask("Item"), QueryTriggerInteraction.Ignore)) {
-                if (input.Buttons.WasPressed(_previousButtons, EInputButton.Interact) && HasStateAuthority) {
+                if (input.Buttons.WasPressed(_previousButtons, EInputButton.Interact)) {
                     if (GetComponent<Weapons>().CurrentWeapon != null) {
                         if (GetComponent<Weapons>().CurrentWeapon.IsReloading) {
                             GetComponent<Weapons>().CurrentWeapon._fireCooldown = TickTimer.None;
@@ -250,9 +310,9 @@ namespace ProjectEpsilon {
                     isInteracting = true;
                 }
                 if (isInteracting) {
-                    _interactionTime += Time.deltaTime;
+                    _interactionTime += Time.fixedDeltaTime;
 
-                    if (_interactionTime >= 0.5f) {
+                    if (_interactionTime >= 0.6f) {
                         switch (hit.collider.gameObject.name) {
                             case "M1911Collider":
                             case "SMG11Collider":

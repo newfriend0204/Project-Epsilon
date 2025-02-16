@@ -37,7 +37,14 @@ namespace ProjectEpsilon {
         public Sprite TransparentIcon;
 
         public TextMeshProUGUI WeaponToggleText;
-        public TextMeshProUGUI WeaponExplain;
+        public GameObject WeaponExplain;
+        public TextMeshProUGUI WeaponFirerate;
+        public TextMeshProUGUI WeaponDamage;
+        public TextMeshProUGUI WeaponDispersion;
+        public TextMeshProUGUI WeaponAmmo;
+        public TextMeshProUGUI WeaponReloadTime;
+        public TextMeshProUGUI WeaponGunExplain;
+        public TextMeshProUGUI WeaponExplainText;
 
         private Weapon _weapon;
 	    private int _lastClipAmmo;
@@ -184,34 +191,77 @@ namespace ProjectEpsilon {
             }
 
             if (_isExplaining) {
+                WeaponExplain.SetActive(true);
                 switch (weaponsScript.currentWeapon) {
                     case EWeaponName.M1911:
-                        WeaponExplain.text = "<mark>M1911</mark>\r\n가장 기본적인 권총입니다. 위력, 탄창 모두 평균입니다.\r\n탄약 수:<color=lightblue>12</color>         사용 탄약:<color=lightblue>.45ACP</color>       재장전 속도:<color=lightblue>1초</color>   \r\n연사력:<color=lightblue>450</color>                        탄퍼짐:<color=lightblue>2</color>                   위력:<color=lightblue>20</color>   \r\n\r\n<mark>특성:보조무기</mark>\r\n들고 있을때 요원 속도가 <color=green>소폭 증가</color>합니다.\r\n무기 교체 시간이 <color=green>소폭 감소</color>합니다.\r\n거리별 위력 감소가 <color=red>증가</color>합니다.\r\n거리별 위력 길이가 <color=red>감소</color>합니다.";
+                        WeaponExplainText.text = "가장 기본적인 권총입니다. 위력, 탄창 모두 평균입니다.";
+                        WeaponGunExplain.text = "<mark>특성:보조무기</mark>\r\n들고 있을때 요원 속도가 <color=green>소폭 증가</color>합니다.\r\n무기 교체 시간이 <color=green>소폭 감소</color>합니다.\r\n거리별 위력 감소가 <color=red>증가</color>합니다.\r\n거리별 위력 길이가 <color=red>감소</color>합니다.";
+                        WeaponAmmo.text = ".45 ACP\r\n총 12발";
+                        WeaponDamage.text = "20";
+                        WeaponDispersion.text = "2";
+                        WeaponFirerate.text = "450";
+                        WeaponReloadTime.text = "1초";
                         break;
                     case EWeaponName.SMG11:
-                        WeaponExplain.text = "<mark>SMG-11</mark>\r\n연사력은 매우 빠르지만 탄창이 제한적인 기관권총입니다.\r\n탄약 수:<color=lightblue>16</color>         사용 탄약:<color=lightblue>.45ACP</color>    재장전 속도:<color=lightblue>2.2초</color> \r\n연사력:<color=lightblue>1400</color>                        탄퍼짐:<color=lightblue>8</color>                   위력:<color=lightblue>10</color>   \r\n\r\n<mark>특성:보조무기</mark>\r\n들고 있을때 요원 속도가 <color=green>소폭 증가</color>합니다.\r\n무기 교체 시간이 <color=green>소폭 감소</color>합니다.\r\n거리별 위력 감소가 <color=red>증가</color>합니다.\r\n거리별 위력 길이가 <color=red>감소</color>합니다.";
+                        WeaponExplainText.text = "연사력은 매우 빠르지만 탄창이 제한적인 기관권총입니다.";
+                        WeaponGunExplain.text = "<mark>특성:보조무기</mark>\r\n들고 있을때 요원 속도가 <color=green>소폭 증가</color>합니다.\r\n무기 교체 시간이 <color=green>소폭 감소</color>합니다.\r\n거리별 위력 감소가 <color=red>증가</color>합니다.\r\n거리별 위력 길이가 <color=red>감소</color>합니다.";
+                        WeaponAmmo.text = ".45 ACP\r\n총 16발";
+                        WeaponDamage.text = "10";
+                        WeaponDispersion.text = "8";
+                        WeaponFirerate.text = "1400";
+                        WeaponReloadTime.text = "2.2초";
                         break;
                     case EWeaponName.SuperShorty:
-                        WeaponExplain.text = "<mark>Super Shorty</mark>\r\n근거리에선 매우 강력한 성능을 발휘하지만 중거리부터는\r\n크게 위력이 떨어지는 펌프 액션 산탄총입니다.\r\n탄약 수:<color=lightblue>3</color>         사용 탄약:<color=lightblue>12게이지</color>    재장전 속도:<color=lightblue>발당 0.2초</color> \r\n연사력:<color=lightblue>75</color>                        탄퍼짐:<color=lightblue>8</color>                            위력:<color=lightblue>10</color>   \r\n\r\n<mark>특성:보조무기</mark>\r\n들고 있을때 요원 속도가 <color=green>소폭 증가</color>합니다.\r\n무기 교체 시간이 <color=green>소폭 감소</color>합니다.\r\n거리별 위력 감소가 <color=red>증가</color>합니다.\r\n거리별 위력 길이가 <color=red>감소</color>합니다.";
-                        break; ;
+                        WeaponExplainText.text = "근거리에선 매우 강력한 성능을 발휘하지만 중거리부터는\r\n크게 위력이 떨어지는 펌프 액션 산탄총입니다.";
+                        WeaponGunExplain.text = "<mark>특성:보조무기</mark>\r\n들고 있을때 요원 속도가 <color=green>소폭 증가</color>합니다.\r\n무기 교체 시간이 <color=green>소폭 감소</color>합니다.\r\n거리별 위력 감소가 <color=red>증가</color>합니다.\r\n거리별 위력 길이가 <color=red>감소</color>합니다.";
+                        WeaponAmmo.text = "12게이지\r\n총 3발";
+                        WeaponDamage.text = "10";
+                        WeaponDispersion.text = "8";
+                        WeaponFirerate.text = "75";
+                        WeaponReloadTime.text = "발당 0.2초";
+                        break;
                     case EWeaponName.AK47:
-                        WeaponExplain.text = "<mark>AK47</mark>\r\n위력은 강력하지만 연사력이 조금 낮은 돌격소총입니다.\r\n탄약 수:<color=lightblue>30</color>      사용 탄약:<color=lightblue>7.62mm</color>     재장전 속도:<color=lightblue>1.8초</color>    \r\n연사력:<color=lightblue>600</color>                        탄퍼짐:<color=lightblue>4</color>                    위력:<color=lightblue>20</color>   \r\n\r\n<mark>특성:주무기</mark>\r\n들고 있을때 요원 속도가 <color=red>소폭 감소</color>합니다.\r\n무기 교체 시간이 <color=red>소폭 증가</color>합니다.\r\n거리별 위력 감소가 <color=green>감소</color>합니다.\r\n거리별 위력 길이가 <color=green>증가</color>합니다.";
+                        WeaponExplainText.text = "위력은 강력하지만 연사력이 조금 낮은 돌격소총입니다.";
+                        WeaponGunExplain.text = "<mark>특성:주무기</mark>\r\n들고 있을때 요원 속도가 <color=red>소폭 감소</color>합니다.\r\n무기 교체 시간이 <color=red>소폭 증가</color>합니다.\r\n거리별 위력 감소가 <color=green>감소</color>합니다.\r\n거리별 위력 길이가 <color=green>증가</color>합니다.";
+                        WeaponAmmo.text = "7.62mm\r\n총 20발";
+                        WeaponDamage.text = "20";
+                        WeaponDispersion.text = "4";
+                        WeaponFirerate.text = "600";
+                        WeaponReloadTime.text = "1.8초";
                         break;
                     case EWeaponName.RemingtonM870:
-                        WeaponExplain.text = "<mark>Remington M870</mark>\r\n중거리까지 든든히 교전할 수 있는 펌프 액션 산탄총입니다.\r\n탄약 수:<color=lightblue>7</color>      사용 탄약:<color=lightblue>12게이지</color>    재장전 속도:<color=lightblue>발당 0.2초</color>   \r\n연사력:<color=lightblue>75</color>                       탄퍼짐:<color=lightblue>6</color>                   위력:<color=lightblue>발당 10</color>   \r\n\r\n<mark>특성:주무기</mark>\r\n들고 있을때 요원 속도가 <color=red>소폭 감소</color>합니다.\r\n무기 교체 시간이 <color=red>소폭 증가</color>합니다.\r\n거리별 위력 감소가 <color=green>감소</color>합니다.\r\n거리별 위력 길이가 <color=green>증가</color>합니다.";
+                        WeaponExplainText.text = "중거리까지 든든히 교전할 수 있는 펌프 액션 산탄총입니다.";
+                        WeaponGunExplain.text = "<mark>특성:주무기</mark>\r\n들고 있을때 요원 속도가 <color=red>소폭 감소</color>합니다.\r\n무기 교체 시간이 <color=red>소폭 증가</color>합니다.\r\n거리별 위력 감소가 <color=green>감소</color>합니다.\r\n거리별 위력 길이가 <color=green>증가</color>합니다.";
+                        WeaponAmmo.text = "12게이지\r\n총 7발";
+                        WeaponDamage.text = "10";
+                        WeaponDispersion.text = "6";
+                        WeaponFirerate.text = "75";
+                        WeaponReloadTime.text = "발당 0.2초";
                         break;
                     case EWeaponName.MP5:
-                        WeaponExplain.text = "<mark>MP5</mark>\r\n연사력이 빠르지만 위력이 조금 약간 기관탄총입니다.\r\n탄약 수:<color=lightblue>40</color>      사용 탄약:<color=lightblue>7.62mm</color>     재장전 속도:<color=lightblue>2초</color>      \r\n연사력:<color=lightblue>900</color>                       탄퍼짐:<color=lightblue>6</color>                 위력:<color=lightblue>15</color>   \r\n\r\n<mark>특성:주무기</mark>\r\n들고 있을때 요원 속도가 <color=red>소폭 감소</color>합니다.\r\n무기 교체 시간이 <color=red>소폭 증가</color>합니다.\r\n거리별 위력 감소가 <color=green>감소</color>합니다.\r\n거리별 위력 길이가 <color=green>증가</color>합니다.";
+                        WeaponExplainText.text = "연사력이 빠르지만 위력이 조금 약간 낮은 기관탄총입니다.";
+                        WeaponGunExplain.text = "<mark>특성:주무기</mark>\r\n들고 있을때 요원 속도가 <color=red>소폭 감소</color>합니다.\r\n무기 교체 시간이 <color=red>소폭 증가</color>합니다.\r\n거리별 위력 감소가 <color=green>감소</color>합니다.\r\n거리별 위력 길이가 <color=green>증가</color>합니다.";
+                        WeaponAmmo.text = "7.62mm\r\n총 30발";
+                        WeaponDamage.text = "15";
+                        WeaponDispersion.text = "6";
+                        WeaponFirerate.text = "900";
+                        WeaponReloadTime.text = "2초";
                         break;
                     case EWeaponName.Search:
-                        WeaponExplain.text = "<mark>탐색</mark>\r\n근처 전투장비를 쉽게 찾을 수 있는 특수 고글입니다.\r\n최대 탐색 거리:<color=lightblue>10m</color>\r\n아이템을 찾을시 <color=lightblue>초록색 윤곽선, 혹은 초록으로 보입니다.</color>\r\n또한 전투 장비 위에 <color=lightblue>무슨 장비인지 이름이 뜹니다.</color>\r\n\r\n \r\n\r\n<mark>특성:전투 장비</mark>\r\n들고 있을때 요원 속도가 <color=green>증가</color>합니다.\r\n무기 교체 시간이 <color=green>감소</color>합니다.";
+                        WeaponExplainText.text = "10m 이내의 전투 장비와 20m 밖에 있는 적을 찾을 수 있는\r\n특수 고글입니다. 단, 착용시 소음이 심하다는 단점이 있습니다.";
+                        WeaponGunExplain.text = "특성:전투 장비</mark>\r\n들고 있을때 요원 속도가 <color=green>증가</color>합니다.\r\n무기 교체 시간이 <color=green>감소</color>합니다.";
+                        WeaponAmmo.text = "-";
+                        WeaponDamage.text = "-";
+                        WeaponDispersion.text = "-";
+                        WeaponFirerate.text = "-";
+                        WeaponReloadTime.text = "-";
                         break;
                     default:
                         break;
                 }
                 WeaponToggleText.text = "무기 설명 닫기";
             } else {
-                WeaponExplain.text = "";
+                WeaponExplain.SetActive(false);
                 WeaponToggleText.text = "무기 설명 열기";
             }
 

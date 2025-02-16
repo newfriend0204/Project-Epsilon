@@ -27,7 +27,10 @@ namespace ProjectEpsilon {
 		private SceneObjects _sceneObjects;
 
 		public bool ApplyDamage(PlayerRef instigator, float damage, Vector3 position, Vector3 direction, EWeaponType weaponType, bool isCritical) {
-			if (CurrentHealth <= 0f)
+            GetComponentInParent<Player>().VoiceSound.clip = GetComponentInParent<Player>().HurtClips[Random.Range(0, GetComponentInParent<Player>().HurtClips.Length)];
+            GetComponentInParent<Player>().VoiceSound.Play();
+
+            if (CurrentHealth <= 0f)
 				return false;
 
 			if (IsImmortal)

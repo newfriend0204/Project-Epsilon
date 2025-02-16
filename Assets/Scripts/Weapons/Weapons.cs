@@ -52,7 +52,7 @@ namespace ProjectEpsilon {
 			var newWeapon = GetWeapon(currentWeapon);
             if (slot == 0) {
                 newWeapon = GetWeapon(EWeaponName.Search);
-				if (previousSearchWeapon != EWeaponName.Search && CurrentWeapon != GetWeapon(EWeaponName.Search))
+                if (previousSearchWeapon != EWeaponName.Search && CurrentWeapon != GetWeapon(EWeaponName.Search))
 					previousSearchWeapon = CurrentWeapon.WeaponName;
             } else if (slot == 1) {
 				newWeapon = GetWeapon(currentSidearm);
@@ -94,6 +94,8 @@ namespace ProjectEpsilon {
             if (newWeapon.WeaponName == EWeaponName.Search) {
                 SearchSound.clip = SearchStartSound;
                 SearchSound.Play();
+                GetComponentInParent<Player>().VoiceSound.clip = GetComponentInParent<Player>().SearchClips[Random.Range(0, GetComponentInParent<Player>().SearchClips.Length)];
+                GetComponentInParent<Player>().VoiceSound.Play();
             }
 
             _pendingWeapon = newWeapon;
@@ -156,7 +158,7 @@ namespace ProjectEpsilon {
             }
 
             if (weapon.IsCollected) {
-                weapon.ClipAmmo = weapon.StartAmmo;
+                weapon.ClipAmmo = Random.Range(weapon.StartAmmo / 3 * 2, weapon.StartAmmo);
             } else {
 				weapon.IsCollected = true;
 			}

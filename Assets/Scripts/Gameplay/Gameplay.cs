@@ -25,10 +25,9 @@ namespace ProjectEpsilon {
 	public class Gameplay : NetworkBehaviour {
 		public GameUI GameUI;
 		public Player PlayerPrefab;
-		public GameObject[] PickupPrefab;
-		public float  GameDuration = 180f;
-		public float  PlayerRespawnTime = 5f;
-		public float  DoubleDamageDuration = 30f;
+		public float GameDuration = 180f;
+		public float PlayerRespawnTime = 5f;
+		public float DoubleDamageDuration = 30f;
 
 		[Networked][Capacity(32)][HideInInspector]
 		public NetworkDictionary<PlayerRef, PlayerData> PlayerData { get; }
@@ -201,17 +200,6 @@ namespace ProjectEpsilon {
 
 			return spawnPoint;
 		}
-
-		private Transform GetPickupPoint() {
-            Transform pickupPoint = default;
-
-            var pickupPoints = Runner.SimulationUnityScene.GetComponents<PickupPoint>(false);
-            for (int i = 0, offset = Random.Range(0, pickupPoints.Length); i < pickupPoints.Length; i++) {
-                pickupPoint = pickupPoints[(offset + i) % pickupPoints.Length].transform;
-            }
-
-            return pickupPoint;
-        }
 
 		private void StartGameplay() {
 			StopAllCoroutines();

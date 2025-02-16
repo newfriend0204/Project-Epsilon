@@ -7,16 +7,16 @@ namespace ProjectEpsilon {
 		public TextMeshProUGUI Position;
 		public TextMeshProUGUI RemainingTime;
 		public TextMeshProUGUI Kills;
-		public GameObject      Skirmish;
+		public GameObject Skirmish;
 
 		[Header("Announcer")]
-		public GameObject      GameplayStart;
-		public GameObject      LeadTaken;
-		public GameObject      LeadLost;
-		public GameObject      DoubleDamage;
-		public GameObject      RemainingTime3;
-		public GameObject      RemainingTime2;
-		public GameObject      RemainingTime1;
+		public GameObject GameplayStart;
+		public GameObject LeadTaken;
+		public GameObject LeadLost;
+		public GameObject DoubleDamage;
+		public GameObject RemainingTime3;
+		public GameObject RemainingTime2;
+		public GameObject RemainingTime1;
 
 		private GameUI _gameUI;
 
