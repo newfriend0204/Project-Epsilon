@@ -41,6 +41,8 @@ namespace ProjectEpsilon {
         private int _spawnMode = 0;
 
         public override void Spawned() {
+            if (!HasStateAuthority)
+                return;
             ActiveObject.SetActive(IsActive);
             InactiveObject.SetActive(IsActive == false);
             _spawnMode = Random.Range(1, 4);
@@ -153,7 +155,7 @@ namespace ProjectEpsilon {
                     break;
             }
 
-            if (FindObjectOfType<Player>().isSearching) {
+            if (HasInputAuthority && FindObjectOfType<Player>().isSearching) {
                 Player _playerObject = FindObjectOfType<Player>();
                 if (_playerObject.isSearching) {
                     float distance = Vector3.Distance(transform.position, _playerObject.transform.position);
@@ -212,6 +214,8 @@ namespace ProjectEpsilon {
         }
 
         void ChangeMode() {
+            if (!HasStateAuthority)
+                return;
             int[] modes;
             switch (_spawnMode) {
                 case 1:

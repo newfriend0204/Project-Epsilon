@@ -240,13 +240,45 @@ namespace ProjectEpsilon {
         }
 
         public override void FixedUpdateNetwork() {
-			if (IsCollected == false)
-				return;
+            if (IsCollected == false) {
+                if (WeaponName != EWeaponName.Search)
+                    return;
+            }
 
-            if (ClipAmmo == 0) {
+			if (ClipAmmo == 0) {
 				if (GetComponentInParent<Player>().isAiming)
 					ExitADS();
-                Reload();
+				Reload();
+			}
+		}
+
+        public override void Render() {
+			if (_visibleFireCount < _fireCount) {
+				PlayFireEffect();
+			}
+
+			for (int i = _visibleFireCount; i < _fireCount; i++) {
+				var data = _projectileData[i % _projectileData.Length];
+				var muzzleTransform = HasInputAuthority ? FirstPersonMuzzleTransform : ThirdPersonMuzzleTransform;
+
+				var projectileVisual = Instantiate(ProjectileVisualPrefab, muzzleTransform.position, muzzleTransform.rotation);
+				projectileVisual.SetHit(data.HitPosition, data.HitNormal, data.ShowHitEffect);
+			}
+
+			_visibleFireCount = _fireCount;
+
+			if (_reloadingVisible != IsReloading) {
+				Animator.SetBool("IsReloading", IsReloading);
+
+				if (IsReloading) {
+					ReloadingSound.Play();
+				}
+
+				_reloadingVisible = IsReloading;
+			}
+
+            if (Type == EWeaponType.Shotgun && ClipAmmo == MaxClipAmmo) {
+                Animator.SetBool("ReloadEnd", true);
             }
 
             if (Input.GetMouseButtonDown(1) && Type != EWeaponType.Search && ClipAmmo > 0) {
@@ -352,10 +384,10 @@ namespace ProjectEpsilon {
                 IsReloading = false;
 
                 int reloadAmmo = MaxClipAmmo - ClipAmmo;
-				int _remainingAmmo = 0;
+                int _remainingAmmo = 0;
                 switch (WeaponName) {
                     case EWeaponName.M1911:
-						_remainingAmmo = GetComponentInParent<Player>().ammo45ACP;
+                        _remainingAmmo = GetComponentInParent<Player>().ammo45ACP;
                         break;
                     case EWeaponName.SMG11:
                         _remainingAmmo = GetComponentInParent<Player>().ammo45ACP;
@@ -374,29 +406,29 @@ namespace ProjectEpsilon {
                         break;
                 }
                 reloadAmmo = Mathf.Min(reloadAmmo, _remainingAmmo);
-				
-				if (Type == EWeaponType.Shotgun) {
-					if (ClipAmmo != MaxClipAmmo) {
-						Animator.SetBool("ReloadEnd", false);
-						Reload(1);
-					} else if (ClipAmmo == MaxClipAmmo) {
-						Animator.SetBool("ReloadEnd", true);
-					}
-					if (GetComponentInParent<Player>().ammo12Gauge == 0) {
-						Animator.SetBool("ReloadEnd", true);
-					}
-				}
 
-				if (Type == EWeaponType.Shotgun) {
-					reloadAmmo = 1;
-				}
+                if (Type == EWeaponType.Shotgun) {
+                    if (ClipAmmo != MaxClipAmmo) {
+                        Animator.SetBool("ReloadEnd", false);
+                        Reload(1);
+                    } else if (ClipAmmo == MaxClipAmmo) {
+                        Animator.SetBool("ReloadEnd", true);
+                    }
+                    if (GetComponentInParent<Player>().ammo12Gauge == 0) {
+                        Animator.SetBool("ReloadEnd", true);
+                    }
+                }
 
-				if (ClipAmmo < MaxClipAmmo && allAmmo > 0) {
-					ClipAmmo += reloadAmmo;
-					switch (WeaponName) {
-						case EWeaponName.M1911:
-							GetComponentInParent<Player>().ammo45ACP -= reloadAmmo;
-							break;
+                if (Type == EWeaponType.Shotgun) {
+                    reloadAmmo = 1;
+                }
+
+                if (ClipAmmo < MaxClipAmmo && allAmmo > 0) {
+                    ClipAmmo += reloadAmmo;
+                    switch (WeaponName) {
+                        case EWeaponName.M1911:
+                            GetComponentInParent<Player>().ammo45ACP -= reloadAmmo;
+                            break;
                         case EWeaponName.SMG11:
                             GetComponentInParent<Player>().ammo45ACP -= reloadAmmo;
                             break;
@@ -404,8 +436,8 @@ namespace ProjectEpsilon {
                             GetComponentInParent<Player>().ammo12Gauge -= reloadAmmo;
                             break;
                         case EWeaponName.AK47:
-							GetComponentInParent<Player>().ammo7_62mm -= reloadAmmo;
-							break;
+                            GetComponentInParent<Player>().ammo7_62mm -= reloadAmmo;
+                            break;
                         case EWeaponName.RemingtonM870:
                             GetComponentInParent<Player>().ammo12Gauge -= reloadAmmo;
                             break;
@@ -413,39 +445,9 @@ namespace ProjectEpsilon {
                             GetComponentInParent<Player>().ammo7_62mm -= reloadAmmo;
                             break;
                     }
-				}
+                }
 
                 _fireCooldown = TickTimer.CreateFromSeconds(Runner, 0.5f);
-			}
-		}
-
-        public override void Render() {
-			if (_visibleFireCount < _fireCount) {
-				PlayFireEffect();
-			}
-
-			for (int i = _visibleFireCount; i < _fireCount; i++) {
-				var data = _projectileData[i % _projectileData.Length];
-				var muzzleTransform = HasInputAuthority ? FirstPersonMuzzleTransform : ThirdPersonMuzzleTransform;
-
-				var projectileVisual = Instantiate(ProjectileVisualPrefab, muzzleTransform.position, muzzleTransform.rotation);
-				projectileVisual.SetHit(data.HitPosition, data.HitNormal, data.ShowHitEffect);
-			}
-
-			_visibleFireCount = _fireCount;
-
-			if (_reloadingVisible != IsReloading) {
-				Animator.SetBool("IsReloading", IsReloading);
-
-				if (IsReloading) {
-					ReloadingSound.Play();
-				}
-
-				_reloadingVisible = IsReloading;
-			}
-
-            if (Type == EWeaponType.Shotgun && ClipAmmo == MaxClipAmmo) {
-                Animator.SetBool("ReloadEnd", true);
             }
         }
 

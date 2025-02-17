@@ -292,7 +292,7 @@ namespace ProjectEpsilon {
         }
 
         private void SetWeapon(Weapon weapon) {
-		    _weapon = weapon;
+            _weapon = weapon;
 
             switch (weapon.WeaponName) {
                 case EWeaponName.M1911:

@@ -135,39 +135,6 @@ namespace ProjectEpsilon {
                 MovePlayer();
                 RefreshCamera();
             }
-
-            if (GetComponent<Weapons>().currentWeapon == EWeaponName.Search) {
-                isSearching = true;
-                if (!SearchSound.isPlaying) {
-                    SearchSound.Play();
-                }
-            } else {
-                isSearching = false;
-                SearchSound.Stop();
-            }
-
-            _saveSpeed = MoveSpeed;
-            if (isAiming) {
-                _saveSpeed -= MoveSpeed / 10 * 1;
-            }
-            if (isCrouching) {
-                _saveSpeed -= MoveSpeed / 10 * 2.5f;
-            }
-            if (isSneaking) {
-                _saveSpeed -= MoveSpeed / 10 * 4;
-            }
-            if (isRunning) {
-                _saveSpeed += MoveSpeed / 10 * 5;
-            }
-            if (GetComponent<Weapons>().currentWeapon == GetComponent<Weapons>().currentSidearm) {
-                _saveSpeed += MoveSpeed / 10 * 0.5f;
-            }
-            if (GetComponent<Weapons>().currentWeapon == GetComponent<Weapons>().currentPrimary) {
-                _saveSpeed -= MoveSpeed / 10 * 0.5f;
-            }   
-            if (GetComponent<Weapons>().currentWeapon == EWeaponName.Search) {
-                _saveSpeed += MoveSpeed / 10 * 0.75f;
-            }
         }
 
         public override void Render() {
@@ -207,6 +174,75 @@ namespace ProjectEpsilon {
             }
 
             _visibleJumpCount = _jumpCount;
+
+            if (GetComponent<Weapons>().currentWeapon == EWeaponName.Search) {
+                isSearching = true;
+                if (!SearchSound.isPlaying) {
+                    SearchSound.Play();
+                }
+            } else {
+                isSearching = false;
+                SearchSound.Stop();
+            }
+
+            _saveSpeed = MoveSpeed;
+            if (isAiming) {
+                _saveSpeed -= MoveSpeed / 10 * 1;
+            }
+            if (isCrouching) {
+                _saveSpeed -= MoveSpeed / 10 * 2.5f;
+            }
+            if (isSneaking) {
+                _saveSpeed -= MoveSpeed / 10 * 4;
+            }
+            if (isRunning) {
+                _saveSpeed += MoveSpeed / 10 * 5;
+            }
+            if (GetComponent<Weapons>().currentWeapon == GetComponent<Weapons>().currentSidearm) {
+                _saveSpeed += MoveSpeed / 10 * 0.5f;
+            }
+            if (GetComponent<Weapons>().currentWeapon == GetComponent<Weapons>().currentPrimary) {
+                _saveSpeed -= MoveSpeed / 10 * 0.5f;
+            }
+            if (GetComponent<Weapons>().currentWeapon == EWeaponName.Search) {
+                _saveSpeed += MoveSpeed / 10 * 0.75f;
+            }
+
+            if (Input.GetKeyDown(KeyCode.C) && HasInputAuthority) {
+                if (!isCrouching) {
+                    isCrouching = true;
+                    StartCoroutine(MoveCamera(originalPosition));
+                } else {
+                    isCrouching = false;
+                    StartCoroutine(MoveCamera(crounchPosition));
+                }
+            }
+
+            if (isCrouching)
+                KCC.SetHeight(1.2f);
+            else
+                KCC.SetHeight(1.737276f);
+
+            if (Input.GetKey(KeyCode.LeftShift) && HasInputAuthority) {
+                isSneaking = true;
+            } else {
+                isSneaking = false;
+            }
+
+            if (Input.GetKey(KeyCode.LeftControl) && !isAiming && HasInputAuthority) {
+                if (isCrouching) {
+                    isCrouching = false;
+                    StartCoroutine(MoveCamera(crounchPosition));
+                }
+                isRunning = true;
+                if (GetComponentInChildren<Weapon>().IsReloading) {
+                    GetComponentInChildren<Weapon>()._fireCooldown = TickTimer.None;
+                    GetComponentInChildren<Weapon>().IsReloading = false;
+                    GetComponentInChildren<Weapon>().ReloadingSound.Stop();
+                }
+            } else {
+                isRunning = false;
+            }
         }
 
         private void LateUpdate() {
@@ -225,6 +261,7 @@ namespace ProjectEpsilon {
                 "IsSearching: " + isSearching + "\r\n" +
                 "Primary: " + GetComponent<Weapons>().currentPrimary + "\r\n" +
                 "Sidearm: " + GetComponent<Weapons>().currentSidearm + "\r\n" +
+                "currentWeapon: " + GetComponent<Weapons>().currentWeapon + "\r\n" +
                 "_moveVelocity: " + _moveVelocity;
         }
 
@@ -245,40 +282,6 @@ namespace ProjectEpsilon {
 
             if (KCC.HasJumped) {
                 _jumpCount++;
-            }
-
-            if (input.Buttons.WasPressed(_previousButtons, EInputButton.Crouch)) {
-                if (!isCrouching) {
-                    isCrouching = true;
-                    StartCoroutine(MoveCamera(originalPosition));
-                    KCC.SetHeight(1.2f);
-                } else {
-                    isCrouching = false;
-                    StartCoroutine(MoveCamera(crounchPosition));
-                    KCC.SetHeight(1.737276f);
-                }
-            }
-
-            if (Input.GetKey(KeyCode.LeftShift)) {
-                isSneaking = true;
-            } else {
-                isSneaking = false;
-            }
-
-            if (Input.GetKey(KeyCode.LeftControl) && !isAiming) {
-                if (isCrouching) {
-                    isCrouching = false;
-                    StartCoroutine(MoveCamera(crounchPosition));
-                    KCC.SetHeight(1.737276f);
-                }
-                isRunning = true;
-                if (GetComponentInChildren<Weapon>().IsReloading) {
-                    GetComponentInChildren<Weapon>()._fireCooldown = TickTimer.None;
-                    GetComponentInChildren<Weapon>().IsReloading = false;
-                    GetComponentInChildren<Weapon>().ReloadingSound.Stop();
-                }
-            } else {
-                isRunning = false;
             }
 
             if (input.Buttons.IsSet(EInputButton.Fire) && !GetComponent<Weapons>().IsSwitching) {

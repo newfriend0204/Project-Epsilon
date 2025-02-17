@@ -175,13 +175,11 @@ namespace ProjectEpsilon {
 	    }
 
 	    public override void Spawned() {
-            if (HasStateAuthority) {
-                CurrentWeapon = AllWeapons[0];
-                CurrentWeapon.IsCollected = true;
-				_isCollectedSidearm = true;
-				currentWeapon = EWeaponName.M1911;
-				currentSidearm = EWeaponName.M1911;
-            }
+            CurrentWeapon = AllWeapons[0];
+            CurrentWeapon.IsCollected = true;
+			_isCollectedSidearm = true;
+			currentWeapon = EWeaponName.M1911;
+			currentSidearm = EWeaponName.M1911;
         }
 
 	    public override void FixedUpdateNetwork() {

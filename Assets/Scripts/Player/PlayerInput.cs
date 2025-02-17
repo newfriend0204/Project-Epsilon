@@ -12,7 +12,6 @@ namespace ProjectEpsilon {
         Primary,
         Interact,
         Aim,
-        Crouch,
         Search,
     }
 
@@ -108,7 +107,6 @@ namespace ProjectEpsilon {
                 _accumulatedInput.Buttons.Set(EInputButton.Sidearm, keyboard.digit1Key.isPressed || keyboard.numpad1Key.isPressed);
                 _accumulatedInput.Buttons.Set(EInputButton.Primary, keyboard.digit2Key.isPressed || keyboard.numpad2Key.isPressed);
                 _accumulatedInput.Buttons.Set(EInputButton.Interact, keyboard.fKey.isPressed);
-                _accumulatedInput.Buttons.Set(EInputButton.Crouch, keyboard.cKey.isPressed);
                 _accumulatedInput.Buttons.Set(EInputButton.Search, keyboard.spaceKey.isPressed);
             }
         }
