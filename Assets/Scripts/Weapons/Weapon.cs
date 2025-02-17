@@ -100,7 +100,7 @@ namespace ProjectEpsilon {
 				return;
 			if (Type == EWeaponType.Search)
 				return;
-            if (GetComponentInParent<Player>().isRunning) {
+            if (GetComponentInParent<Player>().IsRunning) {
 				return;
             }
 			if (!GetComponentInParent<Weapons>().weaponTimer.ExpiredOrNotRunning(Runner)) {
@@ -150,9 +150,9 @@ namespace ProjectEpsilon {
         }
 
 		public void Reload(int loop = 0) {
-			if (IsCollected == false)
-				return;
-			if (ClipAmmo >= MaxClipAmmo)
+            if (IsCollected == false)
+                return;
+            if (ClipAmmo >= MaxClipAmmo)
 				return;
 			if (allAmmo <= 0)
 				return;
@@ -170,7 +170,7 @@ namespace ProjectEpsilon {
 
             IsReloading = true;
 
-			if (GetComponentInParent<Player>().isAiming == true) {
+			if (GetComponentInParent<Player>().IsAiming == true) {
 				ExitADS();
 			}
             _fireCooldown = TickTimer.CreateFromSeconds(Runner, ReloadTime);
@@ -178,6 +178,8 @@ namespace ProjectEpsilon {
 				GetComponentInParent<Player>().VoiceSound.clip = GetComponentInParent<Player>().ReloadClips[Random.Range(0, GetComponentInParent<Player>().ReloadClips.Length)];
 				GetComponentInParent<Player>().VoiceSound.Play();
 			}
+
+            Debug.Log("살아남았다.");
         }
 
 		public void ToggleVisibility(bool isVisible) { 
@@ -240,20 +242,23 @@ namespace ProjectEpsilon {
         }
 
         public override void FixedUpdateNetwork() {
+            if (HasInputAuthority == false)
+                return;
+
             if (IsCollected == false) {
                 if (WeaponName != EWeaponName.Search)
                     return;
             }
 
 			if (ClipAmmo == 0) {
-				if (GetComponentInParent<Player>().isAiming)
+				if (GetComponentInParent<Player>().IsAiming)
 					ExitADS();
 				Reload();
 			}
 		}
 
         public override void Render() {
-			if (_visibleFireCount < _fireCount) {
+            if (_visibleFireCount < _fireCount) {
 				PlayFireEffect();
 			}
 
@@ -290,16 +295,16 @@ namespace ProjectEpsilon {
                 ExitADS();
             }
 
-            if (GetComponentInParent<Player>().isMoving) {
+            if (GetComponentInParent<Player>().IsMoving) {
                 Animator.SetBool("IsMoving", true);
             } else {
                 Animator.SetBool("IsMoving", false);
             }
 
-            if (!GetComponentInParent<Player>().isMoving) {
-                GetComponentInParent<Player>().isRunning = false;
+            if (!GetComponentInParent<Player>().IsMoving) {
+                GetComponentInParent<Player>().IsRunning = false;
             }
-            Animator.SetBool("IsRunning", GetComponentInParent<Player>().isRunning);
+            Animator.SetBool("IsRunning", GetComponentInParent<Player>().IsRunning);
 
             if (_muzzleEffectInstance != null) {
                 if (!_muzzleEffectInstance.GetComponent<ParticleSystem>().isPlaying) {
@@ -308,16 +313,16 @@ namespace ProjectEpsilon {
             }
 
             if (Type == EWeaponType.Search) {
-                GetComponentInParent<Player>().isSearching = true;
+                GetComponentInParent<Player>().IsSearching = true;
             } else {
-                GetComponentInParent<Player>().isSearching = false;
+                GetComponentInParent<Player>().IsSearching = false;
             }
 
             float _saveSpeed = 1;
-            if (GetComponentInParent<Player>().isSneaking) {
+            if (GetComponentInParent<Player>().IsSneaking) {
                 _saveSpeed -= 0.5f;
             }
-            if (GetComponentInParent<Player>().isCrouching) {
+            if (GetComponentInParent<Player>().IsCrouching) {
                 _saveSpeed -= 0.1f;
             }
             Animator.SetFloat("speed", _saveSpeed);
@@ -358,20 +363,20 @@ namespace ProjectEpsilon {
             }
 
             _saveDispersion = Dispersion;
-            if (GetComponentInParent<Player>().isAiming) {
+            if (GetComponentInParent<Player>().IsAiming) {
                 _saveDispersion -= Dispersion / 10 * 4;
             }
-            if (GetComponentInParent<Player>().isSneaking) {
+            if (GetComponentInParent<Player>().IsSneaking) {
                 _saveDispersion -= Dispersion / 10 * 1;
             }
-            if (GetComponentInParent<Player>().isCrouching) {
+            if (GetComponentInParent<Player>().IsCrouching) {
                 _saveDispersion -= Dispersion / 10 * 3;
             }
-            if (GetComponentInParent<Player>().isMoving) {
+            if (GetComponentInParent<Player>().IsMoving) {
                 _saveDispersion += Dispersion / 10 * 2;
             }
 
-            if (GetComponentInParent<Player>().isRunning) {
+            if (GetComponentInParent<Player>().IsRunning) {
                 _saveDispersion = 300;
             }
             _sceneObjects.GameUI.PlayerView.Crosshair.TopCrossHair.transform.localPosition = new Vector3(0, _saveDispersion * 25);
@@ -479,7 +484,7 @@ namespace ProjectEpsilon {
 			_muzzleEffectInstance.SetActive(true);
 			_muzzleEffectInstance.GetComponent<ParticleSystem>().Play();
 
-            if (GetComponentInParent<Player>().isAiming) {
+            if (GetComponentInParent<Player>().IsAiming) {
                 Animator.SetTrigger("FireADS");
             } else {
                 Animator.SetTrigger("Fire");
@@ -600,14 +605,14 @@ namespace ProjectEpsilon {
 
         public void EnterADS() {
             Animator.SetTrigger("enterADS");
-			GetComponentInParent<Player>().isAiming = true;
+			GetComponentInParent<Player>().IsAiming = true;
 			GetComponentInParent<Player>().ZoomIn();
             Animator.ResetTrigger("exitADS");
         }
 
         public void ExitADS() {
             Animator.SetTrigger("exitADS");
-			GetComponentInParent<Player>().isAiming = false;
+			GetComponentInParent<Player>().IsAiming = false;
 			GetComponentInParent<Player>().ZoomOut();
         }
 

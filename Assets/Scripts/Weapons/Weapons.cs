@@ -25,16 +25,20 @@ namespace ProjectEpsilon {
 	    internal Weapon _pendingWeapon { get; set; }
 
 	    private Weapon _visibleWeapon;
-		private bool _isCollectedPrimary = false;
+        private bool _isCollectedPrimary = false;
 		private bool _isCollectedSidearm = false;
 		private float _saveTakeInTime;
 		private float _saveTakeOutTime;
-        internal EWeaponName previousSearchWeapon;
-        internal EWeaponName currentPrimary;
-        internal EWeaponName currentSidearm;
-        internal EWeaponName currentWeapon;
+        [Networked]
+        internal EWeaponName previousSearchWeapon { get; set; }
+        [Networked]
+        internal EWeaponName currentPrimary { get; set; }
+        [Networked]
+        internal EWeaponName currentSidearm { get; set; }
+        [Networked]
+        internal EWeaponName currentWeapon { get; set; }
 
-	    public void Fire(bool justPressed) {
+        public void Fire(bool justPressed) {
 			if (CurrentWeapon == null || IsSwitching)
 				return;
 
@@ -83,7 +87,7 @@ namespace ProjectEpsilon {
 					CurrentWeapon.ReloadingSound.Stop();
 				}
 			}
-			if (GetComponentInParent<Player>().isAiming) {
+			if (GetComponentInParent<Player>().IsAiming) {
 				CurrentWeapon.ExitADS();
 			}
 

@@ -4,6 +4,8 @@ using Fusion.Addons.SimpleKCC;
 using Cinemachine;
 using System.Collections;
 using TMPro;
+using UnityEngine.Windows;
+using Input = UnityEngine.Input;
 
 namespace ProjectEpsilon {
     [DefaultExecutionOrder(-5)]
@@ -48,12 +50,18 @@ namespace ProjectEpsilon {
         [Networked]
         private Vector3 _moveVelocity { get; set; }
 
-        internal bool isAiming = false;
-        internal bool isMoving = false;
-        internal bool isCrouching = false;
-        internal bool isSneaking = false;
-        internal bool isRunning = false;
-        internal bool isSearching = false;
+        [Networked]
+        public bool IsAiming { get; set; }
+        [Networked]
+        public bool IsMoving { get; set; }
+        [Networked]
+        public bool IsCrouching { get; set; }
+        [Networked]
+        public bool IsSneaking { get; set; }
+        [Networked]
+        public bool IsRunning { get; set; }
+        [Networked]
+        public bool IsSearching { get; set; }
 
         internal int ammo45ACP { get; set; } 
         internal int ammo7_62mm { get; set; }
@@ -148,7 +156,7 @@ namespace ProjectEpsilon {
             Animator.SetBool("IsGrounded", KCC.IsGrounded);
             if (Weapons.CurrentWeapon != null)
                 Animator.SetBool("IsReloading", Weapons.CurrentWeapon.IsReloading);
-            Animator.SetBool("IsCrouching", isCrouching);
+            Animator.SetBool("IsCrouching", IsCrouching);
             Animator.SetFloat("MoveX", moveVelocity.x, 0.05f, Time.deltaTime);
             Animator.SetFloat("MoveZ", moveVelocity.z, 0.05f, Time.deltaTime);
             Animator.SetFloat("MoveSpeed", moveVelocity.magnitude);
@@ -176,26 +184,26 @@ namespace ProjectEpsilon {
             _visibleJumpCount = _jumpCount;
 
             if (GetComponent<Weapons>().currentWeapon == EWeaponName.Search) {
-                isSearching = true;
+                IsSearching = true;
                 if (!SearchSound.isPlaying) {
                     SearchSound.Play();
                 }
             } else {
-                isSearching = false;
+                IsSearching = false;
                 SearchSound.Stop();
             }
 
             _saveSpeed = MoveSpeed;
-            if (isAiming) {
+            if (IsAiming) {
                 _saveSpeed -= MoveSpeed / 10 * 1;
             }
-            if (isCrouching) {
+            if (IsCrouching) {
                 _saveSpeed -= MoveSpeed / 10 * 2.5f;
             }
-            if (isSneaking) {
+            if (IsSneaking) {
                 _saveSpeed -= MoveSpeed / 10 * 4;
             }
-            if (isRunning) {
+            if (IsRunning) {
                 _saveSpeed += MoveSpeed / 10 * 5;
             }
             if (GetComponent<Weapons>().currentWeapon == GetComponent<Weapons>().currentSidearm) {
@@ -208,41 +216,10 @@ namespace ProjectEpsilon {
                 _saveSpeed += MoveSpeed / 10 * 0.75f;
             }
 
-            if (Input.GetKeyDown(KeyCode.C) && HasInputAuthority) {
-                if (!isCrouching) {
-                    isCrouching = true;
-                    StartCoroutine(MoveCamera(originalPosition));
-                } else {
-                    isCrouching = false;
-                    StartCoroutine(MoveCamera(crounchPosition));
-                }
-            }
-
-            if (isCrouching)
+            if (IsCrouching)
                 KCC.SetHeight(1.2f);
             else
                 KCC.SetHeight(1.737276f);
-
-            if (Input.GetKey(KeyCode.LeftShift) && HasInputAuthority) {
-                isSneaking = true;
-            } else {
-                isSneaking = false;
-            }
-
-            if (Input.GetKey(KeyCode.LeftControl) && !isAiming && HasInputAuthority) {
-                if (isCrouching) {
-                    isCrouching = false;
-                    StartCoroutine(MoveCamera(crounchPosition));
-                }
-                isRunning = true;
-                if (GetComponentInChildren<Weapon>().IsReloading) {
-                    GetComponentInChildren<Weapon>()._fireCooldown = TickTimer.None;
-                    GetComponentInChildren<Weapon>().IsReloading = false;
-                    GetComponentInChildren<Weapon>().ReloadingSound.Stop();
-                }
-            } else {
-                isRunning = false;
-            }
         }
 
         private void LateUpdate() {
@@ -254,11 +231,12 @@ namespace ProjectEpsilon {
             DebugText.text = "ObjectName: " + gameObject.name + "\r\n" +
                 "HasInputAuthority: " + HasInputAuthority + "\r\n" +
                 "HasStateAuthority: " + HasStateAuthority + "\r\n" +
-                "IsMoving: " + isMoving + "\r\n" +
-                "IsCrouching: " + isCrouching + "\r\n" +
-                "IsRunning: " + isRunning + "\r\n" +
-                "IsAiming: " + isAiming + "\r\n" +
-                "IsSearching: " + isSearching + "\r\n" +
+                "IsMoving: " + IsMoving + "\r\n" +
+                "IsCrouching: " + IsCrouching + "\r\n" +
+                "IsRunning: " + IsRunning + "\r\n" +
+                "IsSneaking: " + IsSneaking + "\r\n" +
+                "IsAiming: " + IsAiming + "\r\n" +
+                "IsSearching: " + IsSearching + "\r\n" +
                 "Primary: " + GetComponent<Weapons>().currentPrimary + "\r\n" +
                 "Sidearm: " + GetComponent<Weapons>().currentSidearm + "\r\n" +
                 "currentWeapon: " + GetComponent<Weapons>().currentWeapon + "\r\n" +
@@ -284,12 +262,43 @@ namespace ProjectEpsilon {
                 _jumpCount++;
             }
 
+            if (input.Buttons.IsSet(EInputButton.Sneak) && HasInputAuthority) {
+                IsSneaking = true;
+            } else {
+                IsSneaking = false;
+            }
+
+            if (input.Buttons.IsSet(EInputButton.Run) && !IsAiming && HasInputAuthority) {
+                if (IsCrouching) {
+                    IsCrouching = false;
+                    StartCoroutine(MoveCamera(crounchPosition));
+                }
+                IsRunning = true;
+                if (GetComponentInChildren<Weapon>().IsReloading) {
+                    GetComponentInChildren<Weapon>()._fireCooldown = TickTimer.None;
+                    GetComponentInChildren<Weapon>().IsReloading = false;
+                    GetComponentInChildren<Weapon>().ReloadingSound.Stop();
+                }
+            } else {
+                IsRunning = false;
+            }
+
             if (input.Buttons.IsSet(EInputButton.Fire) && !GetComponent<Weapons>().IsSwitching) {
                 bool justPressed = input.Buttons.WasPressed(_previousButtons, EInputButton.Fire);
                 Weapons.Fire(justPressed);
                 Health.StopImmortality();
             } else if (input.Buttons.IsSet(EInputButton.Reload)) {
                 Weapons.Reload();
+            }
+
+            if (input.Buttons.WasPressed(_previousButtons, EInputButton.Crouch)) {
+                if (!IsCrouching) {
+                    IsCrouching = true;
+                    StartCoroutine(MoveCamera(originalPosition));
+                } else {
+                    IsCrouching = false;
+                    StartCoroutine(MoveCamera(crounchPosition));
+                }
             }
 
             if (input.Buttons.WasPressed(_previousButtons, EInputButton.Search)) {
@@ -357,10 +366,10 @@ namespace ProjectEpsilon {
 
             if (desiredMoveVelocity == Vector3.zero) {
                 acceleration = KCC.IsGrounded == true ? GroundDeceleration : AirDeceleration;
-                isMoving = false;
+                IsMoving = false;
             } else {
                 acceleration = KCC.IsGrounded == true ? GroundAcceleration : AirAcceleration;
-                isMoving = true;
+                IsMoving = true;
             }
 
             _moveVelocity = Vector3.Lerp(_moveVelocity, desiredMoveVelocity, acceleration * Runner.DeltaTime);

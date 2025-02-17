@@ -37,16 +37,13 @@ namespace ProjectEpsilon {
 
         private static Collider[] _colliders = new Collider[8];
         private bool _isSearched = false;
-        private int _currentMode = 0;
-        private int _spawnMode = 0;
+
+        [Networked]
+        private int _currentMode { get; set; }
+        [Networked]
+        private int _spawnMode { get; set; }
 
         public override void Spawned() {
-            if (!HasStateAuthority)
-                return;
-            ActiveObject.SetActive(IsActive);
-            InactiveObject.SetActive(IsActive == false);
-            _spawnMode = Random.Range(1, 4);
-            _currentMode = Random.Range(1, 10);
             transform.rotation = Quaternion.Euler(0, Random.Range(1, 360), 0);
             Ammo45ACP.SetActive(true);
             Ammo7_62mm.SetActive(true);
@@ -57,6 +54,12 @@ namespace ProjectEpsilon {
             AK47.SetActive(true);
             RemingtonM870.SetActive(true);
             MP5.SetActive(true);
+            ActiveObject.SetActive(IsActive);
+            InactiveObject.SetActive(IsActive == false);
+            if (!HasStateAuthority)
+                return;
+            _spawnMode = Random.Range(1, 4);
+            _currentMode = Random.Range(1, 10);
         }
 
         public override void FixedUpdateNetwork() {
@@ -68,7 +71,15 @@ namespace ProjectEpsilon {
             Gizmos.DrawWireSphere(transform.position, 0.1f);
         }
 
-        void Update() {
+        public override void Render() {
+            if (_activationTimer.Expired(Runner) && HasStateAuthority) {
+                _activationTimer = TickTimer.None;
+                ChangeMode();
+            }
+
+            ActiveObject.SetActive(IsActive);
+            InactiveObject.SetActive(IsActive == false);
+
             if (_currentMode != 1)
                 Ammo45ACP.SetActive(false);
             if (_currentMode != 2)
@@ -155,9 +166,9 @@ namespace ProjectEpsilon {
                     break;
             }
 
-            if (HasInputAuthority && FindObjectOfType<Player>().isSearching) {
+            if (HasInputAuthority && FindObjectOfType<Player>().IsSearching) {
                 Player _playerObject = FindObjectOfType<Player>();
-                if (_playerObject.isSearching) {
+                if (_playerObject.IsSearching) {
                     float distance = Vector3.Distance(transform.position, _playerObject.transform.position);
                     Vector3 direction = new Vector3(_playerObject.transform.position.x, _playerObject.transform.position.y + 1.737276f, _playerObject.transform.position.z) - transform.position;
                     Quaternion rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(0, 180, 0);
@@ -182,11 +193,6 @@ namespace ProjectEpsilon {
             }
         }
 
-        public override void Render() {
-            ActiveObject.SetActive(IsActive);
-            InactiveObject.SetActive(IsActive == false);
-        }
-
         public void AcquireWeapon(GameObject player, int mode) {
             if (mode == 1) {
                 var weapons = player.GetComponentInParent<Weapons>();
@@ -209,13 +215,10 @@ namespace ProjectEpsilon {
                 }
                 _activationTimer = TickTimer.CreateFromSeconds(Runner, Cooldown);
             }
-            _currentMode = Random.Range(1, 10);
             transform.rotation = Quaternion.Euler(0, Random.Range(1, 360), 0);
         }
 
         void ChangeMode() {
-            if (!HasStateAuthority)
-                return;
             int[] modes;
             switch (_spawnMode) {
                 case 1:

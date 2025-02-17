@@ -35,19 +35,19 @@ namespace ProjectEpsilon {
             float _saveVolume = HasInputAuthority ? 0.15f : 0.6f;
 			float _saveMax = _saveVolume;
             float _saveDuration = FootstepDuration;
-            if (GetComponentInParent<Player>().isCrouching) {
+            if (GetComponentInParent<Player>().IsCrouching) {
                 _saveVolume -= _saveMax / 10 * 2.5f;
                 _saveDuration += 0.05f;
 			}
-            if (GetComponentInParent<Player>().isSneaking) {
+            if (GetComponentInParent<Player>().IsSneaking) {
                 _saveVolume -= _saveMax / 10 * 3.5f;
                 _saveDuration += 0.1f;
             }
-            if (GetComponentInParent<Player>().isAiming) {
+            if (GetComponentInParent<Player>().IsAiming) {
                 _saveVolume -= _saveMax / 10 * 1;
                 _saveDuration += 0.01f;
             }
-            if (GetComponentInParent<Player>().isRunning) {
+            if (GetComponentInParent<Player>().IsRunning) {
                 _saveVolume += _saveMax / 10 * 5;
                 _saveDuration -= 0.05f;
             }

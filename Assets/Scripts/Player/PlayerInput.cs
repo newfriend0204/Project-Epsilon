@@ -13,6 +13,9 @@ namespace ProjectEpsilon {
         Interact,
         Aim,
         Search,
+        Crouch,
+        Sneak,
+        Run,
     }
 
     public struct NetworkedInput : INetworkInput {
@@ -73,7 +76,7 @@ namespace ProjectEpsilon {
                 var mouseDelta = mouse.delta.ReadValue();
 
                 var lookRotationDelta = new Vector2(-mouseDelta.y, mouseDelta.x);
-                if (GetComponent<Player>().isAiming) {
+                if (GetComponent<Player>().IsAiming) {
                     lookRotationDelta *= LookSensitivity / (60f + (60f * (100 - LookZoomSensitivity) / 100));
                 } else {
                     lookRotationDelta *= LookSensitivity / 60f;
@@ -108,6 +111,9 @@ namespace ProjectEpsilon {
                 _accumulatedInput.Buttons.Set(EInputButton.Primary, keyboard.digit2Key.isPressed || keyboard.numpad2Key.isPressed);
                 _accumulatedInput.Buttons.Set(EInputButton.Interact, keyboard.fKey.isPressed);
                 _accumulatedInput.Buttons.Set(EInputButton.Search, keyboard.spaceKey.isPressed);
+                _accumulatedInput.Buttons.Set(EInputButton.Crouch, keyboard.cKey.isPressed);
+                _accumulatedInput.Buttons.Set(EInputButton.Sneak, keyboard.leftShiftKey.isPressed);
+                _accumulatedInput.Buttons.Set(EInputButton.Run, keyboard.leftCtrlKey.isPressed);
             }
         }
 
