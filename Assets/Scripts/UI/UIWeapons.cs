@@ -147,6 +147,7 @@ namespace ProjectEpsilon {
                     SetAmmoTransparency(1f, Ammo45ACP);
                     break;
                 case EWeaponName.AK47:
+                case EWeaponName.MP5:
                     SetAmmoTransparency(1f, Ammo7_62mm);
                     break;
                 case EWeaponName.RemingtonM870:

@@ -4,8 +4,6 @@ using Fusion.Addons.SimpleKCC;
 using Cinemachine;
 using System.Collections;
 using TMPro;
-using UnityEngine.Windows;
-using Input = UnityEngine.Input;
 
 namespace ProjectEpsilon {
     [DefaultExecutionOrder(-5)]
@@ -18,8 +16,9 @@ namespace ProjectEpsilon {
         public HitboxRoot HitboxRoot;
 
         [Header("Setup")]
-        public float MoveSpeed = 6f;
         public float JumpForce = 10f;
+        [Networked]
+        public float MoveSpeed { get; set; }
         public AudioSource JumpSound;
         public AudioSource SearchSound;
         public AudioClip[] JumpClips;
@@ -50,7 +49,6 @@ namespace ProjectEpsilon {
         [Networked]
         private Vector3 _moveVelocity { get; set; }
 
-        [Networked]
         public bool IsAiming { get; set; }
         [Networked]
         public bool IsMoving { get; set; }
@@ -63,15 +61,19 @@ namespace ProjectEpsilon {
         [Networked]
         public bool IsSearching { get; set; }
 
-        internal int ammo45ACP { get; set; } 
+        [Networked]
+        internal int ammo45ACP { get; set; }
+        [Networked]
         internal int ammo7_62mm { get; set; }
+        [Networked]
         internal int ammo12Gauge { get; set; }
 
         private int _visibleJumpCount;
-        private float _saveSpeed;
+        private float _saveOriginalSpeed;
         internal Vector3 originalPosition = new Vector3(0f, 1.2f, 0f);
         internal Vector3 crounchPosition = new Vector3(0f, 1.678634f, 0f);
         internal bool isInteracting = false;
+        internal bool isDebuging = false;
         private float _interactionTime = 0f;
         private SceneObjects _sceneObjects;
 
@@ -100,23 +102,17 @@ namespace ProjectEpsilon {
 
             GameObject gameUI = GameObject.Find("GameUI");
             if (gameUI != null) {
-                // "DebugScreen" 오브젝트 찾기
                 Transform debugScreen = gameUI.transform.Find("PlayerView");
                 if (debugScreen != null) {
-                    // "DebugText" 오브젝트 찾기
                     Transform debugTextTransform = debugScreen.Find("DebugText");
                     if (debugTextTransform != null) {
-                        // TextMeshProUGUI 컴포넌트 가져오기
                         DebugText = debugTextTransform.GetComponent<TextMeshProUGUI>();
-                    } else {
-                        Debug.LogError("DebugText 오브젝트를 찾을 수 없습니다.");
                     }
-                } else {
-                    Debug.LogError("DebugScreen 오브젝트를 찾을 수 없습니다.");
                 }
-            } else {
-                Debug.LogError("GameUI 오브젝트를 찾을 수 없습니다.");
             }
+
+            MoveSpeed = 5f;
+            _saveOriginalSpeed = MoveSpeed;
         }
 
         public override void FixedUpdateNetwork() {
@@ -193,27 +189,27 @@ namespace ProjectEpsilon {
                 SearchSound.Stop();
             }
 
-            _saveSpeed = MoveSpeed;
+            MoveSpeed = _saveOriginalSpeed;
             if (IsAiming) {
-                _saveSpeed -= MoveSpeed / 10 * 1;
+                MoveSpeed -= _saveOriginalSpeed / 10 * 1;
             }
             if (IsCrouching) {
-                _saveSpeed -= MoveSpeed / 10 * 2.5f;
+                MoveSpeed -= _saveOriginalSpeed / 10 * 2.5f;
             }
             if (IsSneaking) {
-                _saveSpeed -= MoveSpeed / 10 * 4;
+                MoveSpeed -= _saveOriginalSpeed / 10 * 9; // 4
             }
             if (IsRunning) {
-                _saveSpeed += MoveSpeed / 10 * 5;
+                MoveSpeed += _saveOriginalSpeed / 10 * 30; // 5
             }
             if (GetComponent<Weapons>().currentWeapon == GetComponent<Weapons>().currentSidearm) {
-                _saveSpeed += MoveSpeed / 10 * 0.5f;
+                MoveSpeed += _saveOriginalSpeed / 10 * 0.5f;
             }
             if (GetComponent<Weapons>().currentWeapon == GetComponent<Weapons>().currentPrimary) {
-                _saveSpeed -= MoveSpeed / 10 * 0.5f;
+                MoveSpeed -= _saveOriginalSpeed / 10 * 0.5f;
             }
             if (GetComponent<Weapons>().currentWeapon == EWeaponName.Search) {
-                _saveSpeed += MoveSpeed / 10 * 0.75f;
+                MoveSpeed += _saveOriginalSpeed / 10 * 0.75f;
             }
 
             if (IsCrouching)
@@ -228,19 +224,28 @@ namespace ProjectEpsilon {
 
             RefreshCamera();
 
-            DebugText.text = "ObjectName: " + gameObject.name + "\r\n" +
-                "HasInputAuthority: " + HasInputAuthority + "\r\n" +
-                "HasStateAuthority: " + HasStateAuthority + "\r\n" +
-                "IsMoving: " + IsMoving + "\r\n" +
-                "IsCrouching: " + IsCrouching + "\r\n" +
-                "IsRunning: " + IsRunning + "\r\n" +
-                "IsSneaking: " + IsSneaking + "\r\n" +
-                "IsAiming: " + IsAiming + "\r\n" +
-                "IsSearching: " + IsSearching + "\r\n" +
-                "Primary: " + GetComponent<Weapons>().currentPrimary + "\r\n" +
-                "Sidearm: " + GetComponent<Weapons>().currentSidearm + "\r\n" +
-                "currentWeapon: " + GetComponent<Weapons>().currentWeapon + "\r\n" +
-                "_moveVelocity: " + _moveVelocity;
+            if (isDebuging)
+                DebugText.text = "";
+            else {
+                DebugText.text =
+                    "-----Player Status-----\r\n" +
+                    "ObjectName: " + gameObject.name + "\r\n" +
+                    "HasInputAuthority: " + HasInputAuthority + "\r\n" +
+                    "HasStateAuthority: " + HasStateAuthority + "\r\n" +
+                    "IsMoving: " + IsMoving + "\r\n" +
+                    "IsCrouching: " + IsCrouching + "\r\n" +
+                    "IsRunning: " + IsRunning + "\r\n" +
+                    "IsSneaking: " + IsSneaking + "\r\n" +
+                    "IsAiming: " + IsAiming + "\r\n" +
+                    "IsSearching: " + IsSearching + "\r\n" +
+                    "Primary: " + GetComponent<Weapons>().currentPrimary + "\r\n" +
+                    "Sidearm: " + GetComponent<Weapons>().currentSidearm + "\r\n" +
+                    "currentWeapon: " + GetComponent<Weapons>().currentWeapon + "\r\n" +
+                    "_moveVelocity: " + _moveVelocity + "\r\n" +
+                    "ammo45ACP: " + ammo45ACP + "\r\n" +
+                    "ammo7_62mm: " + ammo7_62mm + "\r\n" +
+                    "ammo12Gauge: " + ammo12Gauge + "\r\n";
+            }
         }
 
         private void ProcessInput(NetworkedInput input) {
@@ -255,7 +260,10 @@ namespace ProjectEpsilon {
                 jumpImpulse = JumpForce;
             }
 
-            MovePlayer(inputDirection * _saveSpeed, jumpImpulse);
+            if (HasStateAuthority)
+                MovePlayer(inputDirection * MoveSpeed * 5, jumpImpulse);
+            else
+                MovePlayer(inputDirection * MoveSpeed, jumpImpulse);
             RefreshCamera();
 
             if (KCC.HasJumped) {
@@ -301,12 +309,17 @@ namespace ProjectEpsilon {
                 }
             }
 
+            if (input.Buttons.WasPressed(_previousButtons, EInputButton.Debug)) {
+                isDebuging = !isDebuging;
+            }
+
             if (input.Buttons.WasPressed(_previousButtons, EInputButton.Search)) {
                 Weapons.SwitchWeapon(0);
             } else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Sidearm)) {
                 Weapons.SwitchWeapon(1);
             } else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Primary)) {
                 Weapons.SwitchWeapon(2);
+                MoveSpeed += 5f;
             }
 
             if (Runner.GetPhysicsScene().Raycast(CameraHandle.transform.position, KCC.LookDirection, out var hit, 2.5f, LayerMask.GetMask("Item"), QueryTriggerInteraction.Ignore)) {

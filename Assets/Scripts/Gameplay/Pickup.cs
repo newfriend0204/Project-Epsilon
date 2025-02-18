@@ -37,6 +37,7 @@ namespace ProjectEpsilon {
 
         private static Collider[] _colliders = new Collider[8];
         private bool _isSearched = false;
+        private Player _playerObject;
 
         [Networked]
         private int _currentMode { get; set; }
@@ -76,6 +77,9 @@ namespace ProjectEpsilon {
                 _activationTimer = TickTimer.None;
                 ChangeMode();
             }
+
+            if (_playerObject == null)
+                _playerObject = Runner.GetPlayerObject(Runner.LocalPlayer).GetComponent<Player>();
 
             ActiveObject.SetActive(IsActive);
             InactiveObject.SetActive(IsActive == false);
@@ -166,26 +170,23 @@ namespace ProjectEpsilon {
                     break;
             }
 
-            if (HasInputAuthority && FindObjectOfType<Player>().IsSearching) {
-                Player _playerObject = FindObjectOfType<Player>();
-                if (_playerObject.IsSearching) {
-                    float distance = Vector3.Distance(transform.position, _playerObject.transform.position);
-                    Vector3 direction = new Vector3(_playerObject.transform.position.x, _playerObject.transform.position.y + 1.737276f, _playerObject.transform.position.z) - transform.position;
-                    Quaternion rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(0, 180, 0);
-                    InfoObject.transform.rotation = Quaternion.Slerp(InfoObject.transform.rotation, rotation, Time.deltaTime * 5f);
-                    if (distance <= 10) {
-                        if (_isSearched == false) {
-                            _isSearched = true;
-                            SearchFound.transform.position = _playerObject.transform.position;
-                            SearchFound.Play();
-                        }
-                        InfoObject.SetActive(true);
-                        OutlineScript.enabled = true;
-                    } else {
-                        _isSearched = false;
-                        InfoObject.SetActive(false);
-                        OutlineScript.enabled = false;
+            if (_playerObject.IsSearching && _playerObject.HasInputAuthority) {
+                float distance = Vector3.Distance(transform.position, _playerObject.transform.position);
+                Vector3 direction = new Vector3(_playerObject.transform.position.x, _playerObject.transform.position.y + 1.737276f, _playerObject.transform.position.z) - transform.position;
+                Quaternion rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(0, 180, 0);
+                InfoObject.transform.rotation = Quaternion.Slerp(InfoObject.transform.rotation, rotation, Time.deltaTime * 5f);
+                if (distance <= 10) {
+                    if (_isSearched == false) {
+                        _isSearched = true;
+                        SearchFound.transform.position = _playerObject.transform.position;
+                        SearchFound.Play();
                     }
+                    InfoObject.SetActive(true);
+                    OutlineScript.enabled = true;
+                } else {
+                    _isSearched = false;
+                    InfoObject.SetActive(false);
+                    OutlineScript.enabled = false;
                 }
             } else {
                 InfoObject.SetActive(false);

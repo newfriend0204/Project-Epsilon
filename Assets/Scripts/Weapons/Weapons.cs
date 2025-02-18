@@ -106,7 +106,7 @@ namespace ProjectEpsilon {
 			_saveTakeInTime = CurrentWeapon.TakeInTime;
 			_saveTakeOutTime = newWeapon.TakeOutTime;
             _switchTimer = TickTimer.CreateFromSeconds(Runner, _saveTakeInTime + _saveTakeOutTime);
-            weaponTimer = TickTimer.CreateFromSeconds(Runner, _saveTakeInTime + _saveTakeOutTime + 0.1f);
+            weaponTimer = TickTimer.CreateFromSeconds(Runner, _saveTakeInTime + _saveTakeOutTime + 0.2f);
 
             if (HasInputAuthority && Runner.IsForward) {
 				CurrentWeapon.Animator.SetTrigger("Hide");

@@ -178,8 +178,6 @@ namespace ProjectEpsilon {
 				GetComponentInParent<Player>().VoiceSound.clip = GetComponentInParent<Player>().ReloadClips[Random.Range(0, GetComponentInParent<Player>().ReloadClips.Length)];
 				GetComponentInParent<Player>().VoiceSound.Play();
 			}
-
-            Debug.Log("살아남았다.");
         }
 
 		public void ToggleVisibility(bool isVisible) { 
@@ -225,9 +223,6 @@ namespace ProjectEpsilon {
                         break;
                 }
                 _remainingAmmo = StartAmmo - ClipAmmo;
-
-                GetComponentInParent<Player>().VoiceSound.clip = GetComponentInParent<Player>().RespawnClips[Random.Range(0, GetComponentInParent<Player>().RespawnClips.Length)];
-                GetComponentInParent<Player>().VoiceSound.Play();
             }
 
 			_visibleFireCount = _fireCount;
@@ -286,15 +281,6 @@ namespace ProjectEpsilon {
                 Animator.SetBool("ReloadEnd", true);
             }
 
-            if (Input.GetMouseButtonDown(1) && Type != EWeaponType.Search && ClipAmmo > 0) {
-                _fireCooldown = TickTimer.None;
-                IsReloading = false;
-                ReloadingSound.Stop();
-                EnterADS();
-            } else if (Input.GetMouseButtonUp(1) && !IsReloading && Type != EWeaponType.Search) {
-                ExitADS();
-            }
-
             if (GetComponentInParent<Player>().IsMoving) {
                 Animator.SetBool("IsMoving", true);
             } else {
@@ -316,6 +302,15 @@ namespace ProjectEpsilon {
                 GetComponentInParent<Player>().IsSearching = true;
             } else {
                 GetComponentInParent<Player>().IsSearching = false;
+            }
+
+            if (Input.GetMouseButtonDown(1) && Type != EWeaponType.Search && ClipAmmo > 0) {
+                _fireCooldown = TickTimer.None;
+                IsReloading = false;
+                ReloadingSound.Stop();
+                EnterADS();
+            } else if (Input.GetMouseButtonUp(1) && !IsReloading && Type != EWeaponType.Search) {
+                ExitADS();
             }
 
             float _saveSpeed = 1;

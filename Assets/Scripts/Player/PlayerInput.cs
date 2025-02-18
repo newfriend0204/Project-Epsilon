@@ -11,11 +11,11 @@ namespace ProjectEpsilon {
         Sidearm,
         Primary,
         Interact,
-        Aim,
         Search,
         Crouch,
         Sneak,
         Run,
+        Debug,
     }
 
     public struct NetworkedInput : INetworkInput {
@@ -84,7 +84,6 @@ namespace ProjectEpsilon {
                 _lookRotationAccumulator.Accumulate(lookRotationDelta);
 
                 _accumulatedInput.Buttons.Set(EInputButton.Fire, mouse.leftButton.isPressed);
-                _accumulatedInput.Buttons.Set(EInputButton.Aim, mouse.rightButton.isPressed);
             }
 
             if (keyboard != null) {
@@ -114,6 +113,7 @@ namespace ProjectEpsilon {
                 _accumulatedInput.Buttons.Set(EInputButton.Crouch, keyboard.cKey.isPressed);
                 _accumulatedInput.Buttons.Set(EInputButton.Sneak, keyboard.leftShiftKey.isPressed);
                 _accumulatedInput.Buttons.Set(EInputButton.Run, keyboard.leftCtrlKey.isPressed);
+                _accumulatedInput.Buttons.Set(EInputButton.Debug, keyboard.pKey.isPressed);
             }
         }
 

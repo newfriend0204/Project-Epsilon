@@ -135,8 +135,12 @@ namespace ProjectEpsilon {
 
 			var spawnPoint = GetSpawnPoint();
 			var player = Runner.Spawn(PlayerPrefab, spawnPoint.position, spawnPoint.rotation, playerRef);
+            if (playerData.Deaths != 0) {
+                player.VoiceSound.clip = GetComponentInParent<Player>().RespawnClips[Random.Range(0, GetComponentInParent<Player>().RespawnClips.Length)];
+                player.VoiceSound.Play();
+            }
 
-			Runner.SetPlayerObject(playerRef, player.Object);
+            Runner.SetPlayerObject(playerRef, player.Object);
 
 			RecalculateStatisticPositions();
 		}
@@ -178,7 +182,7 @@ namespace ProjectEpsilon {
 			var spawnPoint = GetSpawnPoint();
 			var player = Runner.Spawn(PlayerPrefab, spawnPoint.position, spawnPoint.rotation, playerRef);
 
-			Runner.SetPlayerObject(playerRef, player.Object);
+            Runner.SetPlayerObject(playerRef, player.Object);
 		}
 
 		private Transform GetSpawnPoint() {
