@@ -120,7 +120,7 @@ namespace Fusion.Menu {
       // Test for input errors before switching screen
       var inputRegionCode = _sessionCodeField.text.ToUpper();
       if (creating == false && Config.CodeGenerator.IsValid(inputRegionCode) == false) {
-        await Controller.PopupAsync($"The session code '{inputRegionCode}' is not a valid session code. Please enter {Config.CodeGenerator.Length} characters or digits.", "Invalid Session Code");
+        await Controller.PopupAsync($"참여 코드 '{inputRegionCode}' 가 유효하지 않습니다. {Config.CodeGenerator.Length}글자 로 작성하여 주십시오.", "잘못된 참여 코드");
         return;
       }
 
@@ -139,7 +139,7 @@ namespace Fusion.Menu {
       }
 
       if (_regionRequest.IsCompletedSuccessfully == false && _regionRequest.Result.Count == 0) {
-        await Controller.PopupAsync($"Failed to request regions.", "Connection Failed");
+        await Controller.PopupAsync($"요청한 지역에 연결을 실패했습니다.", "연결 실패");
         Controller.Show<FusionMenuUIMain>();
         return;
       }
@@ -154,7 +154,7 @@ namespace Fusion.Menu {
         }
 
         if (regionIndex == -1) {
-          await Controller.PopupAsync($"Selected region is not available.", "Connection Failed");
+          await Controller.PopupAsync($"선택한 지역이 유효하지 않습니다.", "연결 실패");
           Controller.Show<FusionMenuUIMain>();
           return;
         }
@@ -164,7 +164,7 @@ namespace Fusion.Menu {
       } else {
         var regionIndex = Config.CodeGenerator.DecodeRegion(inputRegionCode);
         if (regionIndex < 0 || regionIndex > Config.AvailableRegions.Count) {
-          await Controller.PopupAsync($"The session code '{inputRegionCode}' is not a valid session code (cannot decode the region).", "Invalid Session Code");
+          await Controller.PopupAsync($"참여 코드 '{inputRegionCode}' 는 틀린 코드입니다.", "잘못된 참여 코드");
           return;
         }
 

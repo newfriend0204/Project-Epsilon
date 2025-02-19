@@ -13,11 +13,11 @@ namespace Fusion.Menu {
     /// <summary>
     /// Available characters for the code generation. The default setup skips O and 0 for example.
     /// </summary>
-    [InlineHelp] public string ValidCharacters = "ABCDEFGHIJKLMNPQRSTUVWXYZ123456789";
+    [InlineHelp] public string ValidCharacters = "123456789";
     /// <summary>
     /// The length of the party code.
     /// </summary>
-    [InlineHelp, Range(1, 32)] public int Length = 8;
+    [InlineHelp, Range(1, 32)] public int Length = 4;
     /// <summary>
     /// The position of the encoded region.
     /// </summary>

@@ -46,7 +46,7 @@ namespace ProjectEpsilon {
 		private List<Transform> _recentSpawnPoints = new(4);
 		private float _nextSpawnTime;
 
-        public void PlayerKilled(PlayerRef killerPlayerRef, PlayerRef victimPlayerRef, EWeaponType weaponType, bool isCriticalKill) {
+        public void PlayerKilled(PlayerRef killerPlayerRef, PlayerRef victimPlayerRef, EWeaponName weaponName, bool isCriticalKill) {
 			if (HasStateAuthority == false)
 				return;
 
@@ -61,7 +61,7 @@ namespace ProjectEpsilon {
 			playerData.IsAlive = false;
 			PlayerData.Set(victimPlayerRef, playerData);
 
-			RPC_PlayerKilled(killerPlayerRef, victimPlayerRef, weaponType, isCriticalKill);
+			RPC_PlayerKilled(killerPlayerRef, victimPlayerRef, weaponName, isCriticalKill);
 
 			StartCoroutine(RespawnPlayer(victimPlayerRef, PlayerRespawnTime));
 
@@ -257,7 +257,7 @@ namespace ProjectEpsilon {
 		}
 
 		[Rpc(RpcSources.StateAuthority, RpcTargets.All, Channel = RpcChannel.Reliable)]
-		private void RPC_PlayerKilled(PlayerRef killerPlayerRef, PlayerRef victimPlayerRef, EWeaponType weaponType, bool isCriticalKill) {
+		private void RPC_PlayerKilled(PlayerRef killerPlayerRef, PlayerRef victimPlayerRef, EWeaponName weaponName, bool isCriticalKill) {
 			string killerNickname = "";
 			string victimNickname = "";
 
@@ -269,7 +269,7 @@ namespace ProjectEpsilon {
 				victimNickname = victimData.Nickname;
 			}
 
-			GameUI.GameplayView.KillFeed.ShowKill(killerNickname, victimNickname, weaponType, isCriticalKill);
+			GameUI.GameplayView.KillFeed.ShowKill(killerNickname, victimNickname, weaponName, isCriticalKill);
 		}
 
 		[Rpc(RpcSources.All, RpcTargets.StateAuthority, Channel = RpcChannel.Reliable)]

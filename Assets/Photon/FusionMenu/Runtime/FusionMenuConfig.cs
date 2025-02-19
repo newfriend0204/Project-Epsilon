@@ -27,7 +27,7 @@ namespace Fusion.Menu {
     /// An empty entry symbolizes best region option.
     /// An empty list will hide the related dropdown on the settings screen.
     /// </summary>
-    [InlineHelp, SerializeField] protected List<string> _availableRegions = new List<string> { "asia", "eu", "sa", "us" };
+    [InlineHelp, SerializeField] protected List<string> _availableRegions = new List<string> { "아시아", "유럽", "아프리카", "미국" };
     /// <summary>
     /// Static list of scenes available in the scenes menu.
     /// An empty list will hide the related button in the main screen.

@@ -205,13 +205,13 @@ namespace ProjectEpsilon {
                 var ammos = player.GetComponentInParent<Player>();
                 switch (Bullet) {
                     case BulletName.ammo45ACP:
-                        ammos.ammo45ACP += Random.Range(7, 15);
+                        ammos.ammo45ACP += Random.Range(8, 17);
                         break;
                     case BulletName.ammo7_62mm:
-                        ammos.ammo7_62mm += Random.Range(12, 18);
+                        ammos.ammo7_62mm += Random.Range(15, 21);
                         break;
                     case BulletName.ammo12Gauge:
-                        ammos.ammo12Gauge += Random.Range(5, 8);
+                        ammos.ammo12Gauge += Random.Range(6, 9);
                         break;
                 }
                 _activationTimer = TickTimer.CreateFromSeconds(Runner, Cooldown);

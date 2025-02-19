@@ -26,7 +26,7 @@ namespace ProjectEpsilon {
 		private int _visibleHitCount;
 		private SceneObjects _sceneObjects;
 
-		public bool ApplyDamage(PlayerRef instigator, float damage, Vector3 position, Vector3 direction, EWeaponType weaponType, bool isCritical) {
+		public bool ApplyDamage(PlayerRef instigator, float damage, Vector3 position, Vector3 direction, EWeaponName weaponName, bool isCritical) {
             GetComponentInParent<Player>().VoiceSound.clip = GetComponentInParent<Player>().HurtClips[Random.Range(0, GetComponentInParent<Player>().HurtClips.Length)];
             GetComponentInParent<Player>().VoiceSound.Play();
 
@@ -41,7 +41,7 @@ namespace ProjectEpsilon {
 			if (CurrentHealth <= 0f) {
 				CurrentHealth = 0f;
 
-				_sceneObjects.Gameplay.PlayerKilled(instigator, Object.InputAuthority, weaponType, isCritical);
+				_sceneObjects.Gameplay.PlayerKilled(instigator, Object.InputAuthority, weaponName, isCritical);
 			}
 
 			_lastHitPosition = position - transform.position;

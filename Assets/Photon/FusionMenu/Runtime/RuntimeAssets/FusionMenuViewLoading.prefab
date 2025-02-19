@@ -20,7 +20,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1354979092034538576
 RectTransform:
   m_ObjectHideFlags: 0
@@ -37,7 +37,6 @@ RectTransform:
   - {fileID: 4396831068235747903}
   - {fileID: 3483712127375685710}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -64,6 +63,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!223 &3223168210392810838
 Canvas:
   m_ObjectHideFlags: 0
@@ -81,7 +81,9 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
+  m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -135,6 +137,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 1354979092034538576}
     m_Modifications:
     - target: {fileID: 3299228075148112361, guid: 726db72832c5a144ebaf8b2216db6a86, type: 3}
@@ -255,17 +258,32 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4659959630870295037, guid: 726db72832c5a144ebaf8b2216db6a86, type: 3}
       propertyPath: m_text
-      value: disconnect
+      value: "\uC5F0\uAC78 \uB04A\uAE30"
+      objectReference: {fileID: 0}
+    - target: {fileID: 4659959630870295037, guid: 726db72832c5a144ebaf8b2216db6a86, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 983182d6923b1ad48ba2756be7972fa2, type: 2}
+    - target: {fileID: 4659959630870295037, guid: 726db72832c5a144ebaf8b2216db6a86, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5461616926018199764, guid: 726db72832c5a144ebaf8b2216db6a86, type: 3}
       propertyPath: m_Name
       value: SecondaryButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 5461616926018199764, guid: 726db72832c5a144ebaf8b2216db6a86, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7698136242973444759, guid: 726db72832c5a144ebaf8b2216db6a86, type: 3}
       propertyPath: m_Alpha
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 726db72832c5a144ebaf8b2216db6a86, type: 3}
 --- !u!114 &2740996292481784511 stripped
 MonoBehaviour:
@@ -288,8 +306,21 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 1354979092034538576}
     m_Modifications:
+    - target: {fileID: 174312323332843977, guid: 37a18036de6b1fc4a9379c26b008176e, type: 3}
+      propertyPath: m_text
+      value: "\uB85C\uB529 \uC911..."
+      objectReference: {fileID: 0}
+    - target: {fileID: 174312323332843977, guid: 37a18036de6b1fc4a9379c26b008176e, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 983182d6923b1ad48ba2756be7972fa2, type: 2}
+    - target: {fileID: 174312323332843977, guid: 37a18036de6b1fc4a9379c26b008176e, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: -2759966456673590252, guid: 983182d6923b1ad48ba2756be7972fa2, type: 2}
     - target: {fileID: 1850569090021060015, guid: 37a18036de6b1fc4a9379c26b008176e, type: 3}
       propertyPath: m_Alpha
       value: 1
@@ -383,6 +414,9 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 37a18036de6b1fc4a9379c26b008176e, type: 3}
 --- !u!224 &4396831068235747903 stripped
 RectTransform:
@@ -405,6 +439,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 1354979092034538576}
     m_Modifications:
     - target: {fileID: 1069063535695972184, guid: 81492d77d1a2dc249825473704d5db4c, type: 3}
@@ -516,6 +551,9 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 81492d77d1a2dc249825473704d5db4c, type: 3}
 --- !u!224 &8688826769243587999 stripped
 RectTransform:

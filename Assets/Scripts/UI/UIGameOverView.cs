@@ -5,9 +5,9 @@ namespace ProjectEpsilon {
     public class UIGameOverView : MonoBehaviour
 	{
 		public TextMeshProUGUI Winner;
-		public GameObject      VictoryGroup;
-		public GameObject      DefeatGroup;
-		public AudioSource     GameOverMusic;
+		public GameObject VictoryGroup;
+		public GameObject DefeatGroup;
+		public AudioSource GameOverMusic;
 
 		private GameUI _gameUI;
 		private EGameplayState _lastState;
@@ -44,7 +44,7 @@ namespace ProjectEpsilon {
 				if (playerPair.Value.StatisticPosition != 1)
 					continue;
 
-				Winner.text = $"Winner is {playerPair.Value.Nickname}";
+				Winner.text = $"승리자: {playerPair.Value.Nickname}";
 				localPlayerIsWinner = playerPair.Key == _gameUI.Runner.LocalPlayer;
 			}
 

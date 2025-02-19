@@ -82,7 +82,7 @@ namespace ProjectEpsilon {
 			}
 			if (CurrentWeapon != null) {
 				if (CurrentWeapon.IsReloading) {
-					CurrentWeapon._fireCooldown = TickTimer.None;
+					//CurrentWeapon._fireCooldown = TickTimer.None;
 					CurrentWeapon.IsReloading = false;
 					CurrentWeapon.ReloadingSound.Stop();
 				}
@@ -106,7 +106,7 @@ namespace ProjectEpsilon {
 			_saveTakeInTime = CurrentWeapon.TakeInTime;
 			_saveTakeOutTime = newWeapon.TakeOutTime;
             _switchTimer = TickTimer.CreateFromSeconds(Runner, _saveTakeInTime + _saveTakeOutTime);
-            weaponTimer = TickTimer.CreateFromSeconds(Runner, _saveTakeInTime + _saveTakeOutTime + 0.2f);
+            weaponTimer = TickTimer.CreateFromSeconds(Runner, _saveTakeInTime + _saveTakeOutTime + 0.1f);
 
             if (HasInputAuthority && Runner.IsForward) {
 				CurrentWeapon.Animator.SetTrigger("Hide");
@@ -161,11 +161,11 @@ namespace ProjectEpsilon {
                 SwitchWeapon(2);
             }
 
-            if (weapon.IsCollected) {
-                weapon.ClipAmmo = Random.Range(weapon.StartAmmo / 3 * 2, weapon.StartAmmo);
-            } else {
-				weapon.IsCollected = true;
-			}
+            //if (weapon.IsCollected) {
+                weapon.ClipAmmo = Random.Range(weapon.StartAmmo / 4 * 3, weapon.StartAmmo);
+            //} else {
+			//	weapon.IsCollected = true;
+			//}
 			return true;
         }
 
@@ -180,7 +180,7 @@ namespace ProjectEpsilon {
 
 	    public override void Spawned() {
             CurrentWeapon = AllWeapons[0];
-            CurrentWeapon.IsCollected = true;
+            //CurrentWeapon.IsCollected = true;
 			_isCollectedSidearm = true;
 			currentWeapon = EWeaponName.M1911;
 			currentSidearm = EWeaponName.M1911;

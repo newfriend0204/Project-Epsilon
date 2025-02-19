@@ -66,7 +66,7 @@ namespace Fusion.Menu {
         list.Add(region);
 
       } else {
-        list.Add("Best Region");
+        list.Add("최적 지역");
       }
       if (string.IsNullOrEmpty(appVersion) == false) {
         list.Add(appVersion);

@@ -69,8 +69,8 @@ namespace ProjectEpsilon {
 
 		public bool HasAmmo => ClipAmmo > 0 || allAmmo > 0;
 
-		[Networked]
-		public NetworkBool IsCollected { get; set; }
+		//[Networked]
+		//public NetworkBool IsCollected { get; set; }
 		[Networked]
 		public NetworkBool IsReloading { get; set; }
 		[Networked]
@@ -92,8 +92,8 @@ namespace ProjectEpsilon {
 		private SceneObjects _sceneObjects;
 
         public void Fire(Vector3 firePosition, Vector3 fireDirection, bool justPressed) {
-			if (IsCollected == false)
-				return;
+			//if (IsCollected == false)
+			//	return;
 			if (justPressed == false && IsAutomatic == false)
 				return;
 			if (_fireCooldown.ExpiredOrNotRunning(Runner) == false && !IsReloading)
@@ -107,8 +107,8 @@ namespace ProjectEpsilon {
 				return;
 			}
 
-            if (IsReloading && ClipAmmo > 0) {
-                _fireCooldown = TickTimer.None;
+            if (IsReloading && ClipAmmo > 0 && HasInputAuthority) {
+                //_fireCooldown = TickTimer.None;
                 IsReloading = false;
                 ReloadingSound.Stop();
             }
@@ -150,8 +150,8 @@ namespace ProjectEpsilon {
         }
 
 		public void Reload(int loop = 0) {
-            if (IsCollected == false)
-                return;
+            //if (IsCollected == false)
+            //    return;
             if (ClipAmmo >= MaxClipAmmo)
 				return;
 			if (allAmmo <= 0)
@@ -161,6 +161,10 @@ namespace ProjectEpsilon {
 			if (_fireCooldown.ExpiredOrNotRunning(Runner) == false)
 				return;
             if (Type == EWeaponType.Search)
+                return;
+            if (GetComponentInParent<Player>().IsRunning)
+                return;
+            if (!GetComponentInParent<Weapons>().weaponTimer.ExpiredOrNotRunning(Runner))
                 return;
 
             if (Type == EWeaponType.Shotgun && ClipAmmo < MaxClipAmmo - 1) {
@@ -199,7 +203,7 @@ namespace ProjectEpsilon {
 
 		public override void Spawned() {
 			if (HasStateAuthority) {
-				StartAmmo = Random.Range(StartAmmo / 3 * 2, StartAmmo);
+				StartAmmo = Random.Range(StartAmmo / 4 * 3, StartAmmo);
                 ClipAmmo = Mathf.Clamp(StartAmmo, 0, MaxClipAmmo);
                 int _remainingAmmo = 0;
                 switch (WeaponName) {
@@ -240,12 +244,12 @@ namespace ProjectEpsilon {
             if (HasInputAuthority == false)
                 return;
 
-            if (IsCollected == false) {
-                if (WeaponName != EWeaponName.Search)
-                    return;
-            }
+            //if (IsCollected == false) {
+            //    if (WeaponName != EWeaponName.Search)
+            //        return;
+            //}
 
-			if (ClipAmmo == 0) {
+			if (ClipAmmo == 0 && !GetComponentInParent<Weapons>().weaponTimer.ExpiredOrNotRunning(Runner)) {
 				if (GetComponentInParent<Player>().IsAiming)
 					ExitADS();
 				GetComponentInParent<Weapons>().Reload();
@@ -253,6 +257,8 @@ namespace ProjectEpsilon {
 		}
 
         public override void Render() {
+            //Debug.Log("isReloading: " + IsReloading);
+            //Debug.Log("_fireCooldown: " + _fireCooldown);
             if (_visibleFireCount < _fireCount) {
 				PlayFireEffect();
 			}
@@ -287,9 +293,6 @@ namespace ProjectEpsilon {
                 Animator.SetBool("IsMoving", false);
             }
 
-            if (!GetComponentInParent<Player>().IsMoving) {
-                GetComponentInParent<Player>().IsRunning = false;
-            }
             Animator.SetBool("IsRunning", GetComponentInParent<Player>().IsRunning);
 
             if (_muzzleEffectInstance != null) {
@@ -305,7 +308,7 @@ namespace ProjectEpsilon {
             }
 
             if (Input.GetMouseButtonDown(1) && Type != EWeaponType.Search && ClipAmmo > 0) {
-                _fireCooldown = TickTimer.None;
+                //_fireCooldown = TickTimer.None;
                 IsReloading = false;
                 ReloadingSound.Stop();
                 EnterADS();
@@ -344,7 +347,7 @@ namespace ProjectEpsilon {
             }
 
             if (!GetComponentInParent<Weapons>().weaponTimer.ExpiredOrNotRunning(Runner)) {
-                _fireCooldown = TickTimer.None;
+                //_fireCooldown = TickTimer.None;
                 IsReloading = false;
                 ReloadingSound.Stop();
             }
@@ -572,7 +575,7 @@ namespace ProjectEpsilon {
                     break;
             }
 
-            if (enemyHealth.ApplyDamage(Object.InputAuthority, damage, position, direction, Type, isCriticalHit) == false)
+            if (enemyHealth.ApplyDamage(Object.InputAuthority, damage, position, direction, WeaponName, isCriticalHit) == false)
 				return;
 
 			if (HasInputAuthority && Runner.IsForward) {

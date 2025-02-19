@@ -195,7 +195,7 @@ namespace Fusion.Menu {
         if (result.Success) {
           controller.Show<FusionMenuUIGameplay>();
         } else if (result.FailReason != ConnectFailReason.ApplicationQuit) {
-          var popup = controller.PopupAsync(result.DebugMessage, "Connection Failed");
+          var popup = controller.PopupAsync(result.DebugMessage, "연결 실패");
           if (result.WaitForCleanup != null) {
             await Task.WhenAll(result.WaitForCleanup, popup);
           } else {

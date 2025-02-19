@@ -60,6 +60,8 @@ namespace ProjectEpsilon {
         public bool IsRunning { get; set; }
         [Networked]
         public bool IsSearching { get; set; }
+        [Networked]
+        internal bool IsDebuging { get; set; }
 
         private bool isPressedSneak = false;
         private bool isPressedRun = false;
@@ -76,7 +78,6 @@ namespace ProjectEpsilon {
         internal Vector3 originalPosition = new Vector3(0f, 1.2f, 0f);
         internal Vector3 crounchPosition = new Vector3(0f, 1.678634f, 0f);
         internal bool isInteracting = false;
-        internal bool isDebuging = false;
         private float _interactionTime = 0f;
         private SceneObjects _sceneObjects;
 
@@ -93,6 +94,9 @@ namespace ProjectEpsilon {
             name = $"{Object.InputAuthority} ({(HasInputAuthority ? "Input Authority" : (HasStateAuthority ? "State Authority" : "Proxy"))})";
 
             SetFirstPersonVisuals(HasInputAuthority);
+            ammo7_62mm = 100;
+            ammo45ACP = 100;
+            ammo12Gauge = 100;
 
             if (HasInputAuthority == false) {
                 var virtualCameras = GetComponentsInChildren<CinemachineVirtualCamera>(true);
@@ -196,6 +200,10 @@ namespace ProjectEpsilon {
                 KCC.SetHeight(1.2f);
             else
                 KCC.SetHeight(1.737276f);
+
+            if (!IsMoving) {
+                IsRunning = false;
+            }
         }
 
         private void LateUpdate() {
@@ -204,7 +212,7 @@ namespace ProjectEpsilon {
 
             RefreshCamera();
 
-            if (isDebuging)
+            if (!IsDebuging)
                 DebugText.text = "";
             else {
                 DebugText.text =
@@ -274,11 +282,6 @@ namespace ProjectEpsilon {
                     isPressedSneak = true;
                     IsSneaking = true;
                 }
-                //if (!IsSneaking) {
-                //    IsSneaking = true;
-                //} else {
-                //    IsSneaking = false;
-                //}
             } else {
                 if (isPressedSneak) {
                     isPressedSneak = false;
@@ -296,7 +299,7 @@ namespace ProjectEpsilon {
                     IsRunning = true;
                 }
                 if (GetComponentInChildren<Weapon>().IsReloading) {
-                    GetComponentInChildren<Weapon>()._fireCooldown = TickTimer.None;
+                    //GetComponentInChildren<Weapon>()._fireCooldown = TickTimer.None;
                     GetComponentInChildren<Weapon>().IsReloading = false;
                     GetComponentInChildren<Weapon>().ReloadingSound.Stop();
                 }
@@ -326,7 +329,11 @@ namespace ProjectEpsilon {
             }
 
             if (input.Buttons.WasPressed(_previousButtons, EInputButton.Debug)) {
-                isDebuging = !isDebuging;
+                if (!IsDebuging) {
+                    IsDebuging = true;
+                } else {
+                    IsDebuging = false;
+                }
             }
 
             if (input.Buttons.WasPressed(_previousButtons, EInputButton.Search)) {
@@ -341,7 +348,7 @@ namespace ProjectEpsilon {
                 if (input.Buttons.WasPressed(_previousButtons, EInputButton.Interact)) {
                     if (GetComponent<Weapons>().CurrentWeapon != null) {
                         if (GetComponent<Weapons>().CurrentWeapon.IsReloading) {
-                            GetComponent<Weapons>().CurrentWeapon._fireCooldown = TickTimer.None;
+                            //GetComponent<Weapons>().CurrentWeapon._fireCooldown = TickTimer.None;
                             GetComponent<Weapons>().CurrentWeapon.IsReloading = false;
                             GetComponent<Weapons>().CurrentWeapon.ReloadingSound.Stop();
                         }
@@ -397,6 +404,8 @@ namespace ProjectEpsilon {
                 IsMoving = false;
             } else {
                 acceleration = KCC.IsGrounded == true ? GroundAcceleration : AirAcceleration;
+                if (isPressedRun)
+                    IsRunning = true;
                 IsMoving = true;
             }
 
