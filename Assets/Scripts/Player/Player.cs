@@ -61,6 +61,9 @@ namespace ProjectEpsilon {
         [Networked]
         public bool IsSearching { get; set; }
 
+        private bool isPressedSneak = false;
+        private bool isPressedRun = false;
+
         [Networked]
         internal int ammo45ACP { get; set; }
         [Networked]
@@ -189,29 +192,6 @@ namespace ProjectEpsilon {
                 SearchSound.Stop();
             }
 
-            MoveSpeed = _saveOriginalSpeed;
-            if (IsAiming) {
-                MoveSpeed -= _saveOriginalSpeed / 10 * 1;
-            }
-            if (IsCrouching) {
-                MoveSpeed -= _saveOriginalSpeed / 10 * 2.5f;
-            }
-            if (IsSneaking) {
-                MoveSpeed -= _saveOriginalSpeed / 10 * 9; // 4
-            }
-            if (IsRunning) {
-                MoveSpeed += _saveOriginalSpeed / 10 * 30; // 5
-            }
-            if (GetComponent<Weapons>().currentWeapon == GetComponent<Weapons>().currentSidearm) {
-                MoveSpeed += _saveOriginalSpeed / 10 * 0.5f;
-            }
-            if (GetComponent<Weapons>().currentWeapon == GetComponent<Weapons>().currentPrimary) {
-                MoveSpeed -= _saveOriginalSpeed / 10 * 0.5f;
-            }
-            if (GetComponent<Weapons>().currentWeapon == EWeaponName.Search) {
-                MoveSpeed += _saveOriginalSpeed / 10 * 0.75f;
-            }
-
             if (IsCrouching)
                 KCC.SetHeight(1.2f);
             else
@@ -241,7 +221,8 @@ namespace ProjectEpsilon {
                     "Primary: " + GetComponent<Weapons>().currentPrimary + "\r\n" +
                     "Sidearm: " + GetComponent<Weapons>().currentSidearm + "\r\n" +
                     "currentWeapon: " + GetComponent<Weapons>().currentWeapon + "\r\n" +
-                    "_moveVelocity: " + _moveVelocity + "\r\n" +
+                    "_saveOriginalSpeed: " + _saveOriginalSpeed + "\r\n" +
+                    "MoveSpeed: " + MoveSpeed + "\r\n" +
                     "ammo45ACP: " + ammo45ACP + "\r\n" +
                     "ammo7_62mm: " + ammo7_62mm + "\r\n" +
                     "ammo12Gauge: " + ammo12Gauge + "\r\n";
@@ -260,35 +241,70 @@ namespace ProjectEpsilon {
                 jumpImpulse = JumpForce;
             }
 
-            if (HasStateAuthority)
-                MovePlayer(inputDirection * MoveSpeed * 5, jumpImpulse);
-            else
-                MovePlayer(inputDirection * MoveSpeed, jumpImpulse);
+            MoveSpeed = _saveOriginalSpeed;
+            if (IsAiming) {
+                MoveSpeed -= _saveOriginalSpeed / 10 * 1f;
+            }
+            if (IsCrouching) {
+                MoveSpeed -= _saveOriginalSpeed / 10 * 3f;
+            }
+            if (IsSneaking) {
+                MoveSpeed -= _saveOriginalSpeed / 10 * 4f;
+            }
+            if (IsRunning) {
+                MoveSpeed += _saveOriginalSpeed / 10 * 5f;
+            }
+            if (GetComponent<Weapons>().currentWeapon == GetComponent<Weapons>().currentSidearm) {
+                MoveSpeed += _saveOriginalSpeed / 10 * 0.5f;
+            } else if (GetComponent<Weapons>().currentWeapon == GetComponent<Weapons>().currentPrimary) {
+                MoveSpeed -= _saveOriginalSpeed / 10 * 0.5f;
+            }
+            if (GetComponent<Weapons>().currentWeapon == EWeaponName.Search) {
+                MoveSpeed += _saveOriginalSpeed / 10 * 0.75f;
+            }
+            MovePlayer(inputDirection * MoveSpeed, jumpImpulse);
             RefreshCamera();
 
             if (KCC.HasJumped) {
                 _jumpCount++;
             }
 
-            if (input.Buttons.IsSet(EInputButton.Sneak) && HasInputAuthority) {
-                IsSneaking = true;
+            if (input.Buttons.IsSet(EInputButton.Sneak)) {
+                if (!isPressedSneak) {
+                    isPressedSneak = true;
+                    IsSneaking = true;
+                }
+                //if (!IsSneaking) {
+                //    IsSneaking = true;
+                //} else {
+                //    IsSneaking = false;
+                //}
             } else {
-                IsSneaking = false;
+                if (isPressedSneak) {
+                    isPressedSneak = false;
+                    IsSneaking = false;
+                }
             }
 
-            if (input.Buttons.IsSet(EInputButton.Run) && !IsAiming && HasInputAuthority) {
+            if (input.Buttons.IsSet(EInputButton.Run) && !IsAiming) {
                 if (IsCrouching) {
                     IsCrouching = false;
                     StartCoroutine(MoveCamera(crounchPosition));
                 }
-                IsRunning = true;
+                if (!isPressedRun) {
+                    isPressedRun = true;
+                    IsRunning = true;
+                }
                 if (GetComponentInChildren<Weapon>().IsReloading) {
                     GetComponentInChildren<Weapon>()._fireCooldown = TickTimer.None;
                     GetComponentInChildren<Weapon>().IsReloading = false;
                     GetComponentInChildren<Weapon>().ReloadingSound.Stop();
                 }
             } else {
-                IsRunning = false;
+                if (isPressedRun) {
+                    isPressedRun = false;
+                    IsRunning = false;
+                }
             }
 
             if (input.Buttons.IsSet(EInputButton.Fire) && !GetComponent<Weapons>().IsSwitching) {
@@ -319,7 +335,6 @@ namespace ProjectEpsilon {
                 Weapons.SwitchWeapon(1);
             } else if (input.Buttons.WasPressed(_previousButtons, EInputButton.Primary)) {
                 Weapons.SwitchWeapon(2);
-                MoveSpeed += 5f;
             }
 
             if (Runner.GetPhysicsScene().Raycast(CameraHandle.transform.position, KCC.LookDirection, out var hit, 2.5f, LayerMask.GetMask("Item"), QueryTriggerInteraction.Ignore)) {

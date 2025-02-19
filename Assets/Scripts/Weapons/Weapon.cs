@@ -248,7 +248,7 @@ namespace ProjectEpsilon {
 			if (ClipAmmo == 0) {
 				if (GetComponentInParent<Player>().IsAiming)
 					ExitADS();
-				Reload();
+				GetComponentInParent<Weapons>().Reload();
 			}
 		}
 
