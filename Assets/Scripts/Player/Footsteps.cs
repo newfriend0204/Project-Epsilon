@@ -32,7 +32,7 @@ namespace ProjectEpsilon {
 			if (KCC.RealSpeed < 0.5f)
 				return;
 
-            float _saveVolume = HasInputAuthority ? 0.15f : 0.6f;
+            float _saveVolume = HasInputAuthority ? 0.1f : 0.3f;
 			float _saveMax = _saveVolume;
             float _saveDuration = FootstepDuration;
             if (GetComponentInParent<Player>().IsCrouching) {

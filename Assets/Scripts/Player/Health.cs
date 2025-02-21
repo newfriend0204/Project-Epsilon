@@ -20,23 +20,23 @@ namespace ProjectEpsilon {
 		private Vector3 _lastHitPosition { get; set; }
 		[Networked]
 		private Vector3 _lastHitDirection { get; set; }
-		[Networked]
-		private TickTimer _immortalTimer { get; set; }
+        [Networked]
+        private TickTimer _immortalTimer { get; set; }
+        [Networked]
+        private TickTimer _hurtTimer { get; set; }
 
-		private int _visibleHitCount;
+
+        private int _visibleHitCount;
 		private SceneObjects _sceneObjects;
 
 		public bool ApplyDamage(PlayerRef instigator, float damage, Vector3 position, Vector3 direction, EWeaponName weaponName, bool isCritical) {
-            GetComponentInParent<Player>().VoiceSound.clip = GetComponentInParent<Player>().HurtClips[Random.Range(0, GetComponentInParent<Player>().HurtClips.Length)];
-            GetComponentInParent<Player>().VoiceSound.Play();
-
             if (CurrentHealth <= 0f)
 				return false;
 
 			if (IsImmortal)
 				return false;
 
-			CurrentHealth -= damage;
+            CurrentHealth -= damage;
 
 			if (CurrentHealth <= 0f) {
 				CurrentHealth = 0f;
@@ -86,7 +86,12 @@ namespace ProjectEpsilon {
 		public override void Render() {
 			if (_visibleHitCount < _hitCount) {
 				PlayDamageEffect();
-			}
+				if (_hurtTimer.ExpiredOrNotRunning(Runner)) {
+					GetComponent<Player>().VoiceSound.clip = GetComponent<Player>().HurtClips[Random.Range(0, GetComponent<Player>().HurtClips.Length)];
+					GetComponent<Player>().VoiceSound.Play();
+					_hurtTimer = TickTimer.CreateFromSeconds(Runner, 0.3f);
+				}
+            }
 
 			ImmortalityIndicator.SetActive(IsImmortal);
 

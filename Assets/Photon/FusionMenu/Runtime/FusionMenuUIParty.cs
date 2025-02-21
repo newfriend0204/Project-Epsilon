@@ -120,7 +120,7 @@ namespace Fusion.Menu {
       // Test for input errors before switching screen
       var inputRegionCode = _sessionCodeField.text.ToUpper();
       if (creating == false && Config.CodeGenerator.IsValid(inputRegionCode) == false) {
-        await Controller.PopupAsync($"참여 코드 '{inputRegionCode}' 가 유효하지 않습니다. {Config.CodeGenerator.Length}글자 로 작성하여 주십시오.", "잘못된 참여 코드");
+        await Controller.PopupAsync($"참여 코드 '{inputRegionCode}'가 유효하지 않습니다. {Config.CodeGenerator.Length}글자로 작성하여 주십시오.", "잘못된 참여 코드");
         return;
       }
 
@@ -164,7 +164,7 @@ namespace Fusion.Menu {
       } else {
         var regionIndex = Config.CodeGenerator.DecodeRegion(inputRegionCode);
         if (regionIndex < 0 || regionIndex > Config.AvailableRegions.Count) {
-          await Controller.PopupAsync($"참여 코드 '{inputRegionCode}' 는 틀린 코드입니다.", "잘못된 참여 코드");
+          await Controller.PopupAsync($"참여 코드 '{inputRegionCode}'는 틀린 코드입니다.", "잘못된 참여 코드");
           return;
         }
 

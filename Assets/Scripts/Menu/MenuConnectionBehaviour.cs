@@ -55,7 +55,7 @@ namespace ProjectEpsilon {
 
 		public virtual async Task<ConnectResult> ConnectAsync(IFusionMenuConnectArgs connectionArgs) {
 			if (string.IsNullOrEmpty(PhotonAppSettings.Global.AppSettings.AppIdFusion) == true) {
-				await _connectionBehaviour.UIController.PopupAsync("The Fusion AppId is missing in PhotonAppSettings. Please follow setup instructions before running the game.", "Game not configured");
+				await _connectionBehaviour.UIController.PopupAsync("PhotonAppSettings에서 Fusion AppId가 누락되었습니다. 실행 지침을 따르세요.", "게임 구성되지 않음");
 				_connectionBehaviour.UIController.Show<FusionMenuUIMain>();
 				return ConnectionFail(ConnectFailReason.UserRequest);
 			}
@@ -124,7 +124,7 @@ namespace ProjectEpsilon {
 			}
 
 			if (reason != ConnectFailReason.UserRequest) {
-				await _connectionBehaviour.UIController.PopupAsync(reason.ToString(), "Disconnected");
+				await _connectionBehaviour.UIController.PopupAsync(reason.ToString(), "연결 끊어짐");
 			}
 
 			_connectionBehaviour.UIController.OnGameStopped();
@@ -179,7 +179,7 @@ namespace ProjectEpsilon {
 				if (shutdownReason == ShutdownReason.DisconnectedByPluginLogic) {
 					Controller.OnGameStopped();
 					Controller.Show<FusionMenuUIMain>();
-					Controller.PopupAsync("Disconnected from the server.", "Disconnected");
+					Controller.PopupAsync("서버로부터 연결이 끊어졌습니다.", "연결 끊어짐");
 
 					if (runner.SceneManager != null) {
 						if (runner.SceneManager.MainRunnerScene.IsValid() == true) {

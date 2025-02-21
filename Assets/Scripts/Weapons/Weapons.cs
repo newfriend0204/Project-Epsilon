@@ -82,8 +82,8 @@ namespace ProjectEpsilon {
 			}
 			if (CurrentWeapon != null) {
 				if (CurrentWeapon.IsReloading) {
-					//CurrentWeapon._fireCooldown = TickTimer.None;
-					CurrentWeapon.IsReloading = false;
+					CurrentWeapon._fireCooldown = TickTimer.CreateFromTicks(Runner, 1);
+                    CurrentWeapon.IsReloading = false;
 					CurrentWeapon.ReloadingSound.Stop();
 				}
 			}
@@ -160,12 +160,7 @@ namespace ProjectEpsilon {
                 currentPrimary = EWeaponName.MP5;
                 SwitchWeapon(2);
             }
-
-            //if (weapon.IsCollected) {
-                weapon.ClipAmmo = Random.Range(weapon.StartAmmo / 4 * 3, weapon.StartAmmo);
-            //} else {
-			//	weapon.IsCollected = true;
-			//}
+            weapon.ClipAmmo = Random.Range(weapon.StartAmmo / 3 * 2, weapon.StartAmmo + 1);
 			return true;
         }
 
@@ -180,7 +175,6 @@ namespace ProjectEpsilon {
 
 	    public override void Spawned() {
             CurrentWeapon = AllWeapons[0];
-            //CurrentWeapon.IsCollected = true;
 			_isCollectedSidearm = true;
 			currentWeapon = EWeaponName.M1911;
 			currentSidearm = EWeaponName.M1911;

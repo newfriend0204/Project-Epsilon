@@ -16,6 +16,7 @@ namespace ProjectEpsilon {
         Sneak,
         Run,
         Debug,
+        Aim,
     }
 
     public struct NetworkedInput : INetworkInput {
@@ -84,6 +85,7 @@ namespace ProjectEpsilon {
                 _lookRotationAccumulator.Accumulate(lookRotationDelta);
 
                 _accumulatedInput.Buttons.Set(EInputButton.Fire, mouse.leftButton.isPressed);
+                _accumulatedInput.Buttons.Set(EInputButton.Aim, mouse.rightButton.isPressed);
             }
 
             if (keyboard != null) {

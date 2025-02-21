@@ -1,7 +1,9 @@
 using Fusion;
 using Fusion.Addons.SimpleKCC;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 
 namespace ProjectEpsilon {
@@ -69,8 +71,6 @@ namespace ProjectEpsilon {
 
 		public bool HasAmmo => ClipAmmo > 0 || allAmmo > 0;
 
-		//[Networked]
-		//public NetworkBool IsCollected { get; set; }
 		[Networked]
 		public NetworkBool IsReloading { get; set; }
 		[Networked]
@@ -87,16 +87,15 @@ namespace ProjectEpsilon {
 		private int _fireTicks;
 		private int _visibleFireCount;
 		private bool _reloadingVisible;
+        private bool checkAim = false;
 		private float _saveDispersion;
         private GameObject _muzzleEffectInstance;
 		private SceneObjects _sceneObjects;
 
         public void Fire(Vector3 firePosition, Vector3 fireDirection, bool justPressed) {
-			//if (IsCollected == false)
-			//	return;
-			if (justPressed == false && IsAutomatic == false)
+			if (!justPressed && !IsAutomatic)
 				return;
-			if (_fireCooldown.ExpiredOrNotRunning(Runner) == false && !IsReloading)
+			if (!_fireCooldown.ExpiredOrNotRunning(Runner) && !IsReloading)
 				return;
 			if (Type == EWeaponType.Search)
 				return;
@@ -107,8 +106,8 @@ namespace ProjectEpsilon {
 				return;
 			}
 
-            if (IsReloading && ClipAmmo > 0 && HasInputAuthority) {
-                //_fireCooldown = TickTimer.None;
+            if (IsReloading && ClipAmmo > 0) {
+                _fireCooldown = TickTimer.CreateFromTicks(Runner, 1);
                 IsReloading = false;
                 ReloadingSound.Stop();
             }
@@ -150,8 +149,6 @@ namespace ProjectEpsilon {
         }
 
 		public void Reload(int loop = 0) {
-            //if (IsCollected == false)
-            //    return;
             if (ClipAmmo >= MaxClipAmmo)
 				return;
 			if (allAmmo <= 0)
@@ -166,6 +163,9 @@ namespace ProjectEpsilon {
                 return;
             if (!GetComponentInParent<Weapons>().weaponTimer.ExpiredOrNotRunning(Runner))
                 return;
+            if (GetComponentInParent<Player>().IsAiming == true) {
+                return;
+            }
 
             if (Type == EWeaponType.Shotgun && ClipAmmo < MaxClipAmmo - 1) {
                 Animator.SetTrigger("ReturnReload");
@@ -174,9 +174,6 @@ namespace ProjectEpsilon {
 
             IsReloading = true;
 
-			if (GetComponentInParent<Player>().IsAiming == true) {
-				ExitADS();
-			}
             _fireCooldown = TickTimer.CreateFromSeconds(Runner, ReloadTime);
 			if (loop == 0) {
 				GetComponentInParent<Player>().VoiceSound.clip = GetComponentInParent<Player>().ReloadClips[Random.Range(0, GetComponentInParent<Player>().ReloadClips.Length)];
@@ -203,7 +200,7 @@ namespace ProjectEpsilon {
 
 		public override void Spawned() {
 			if (HasStateAuthority) {
-				StartAmmo = Random.Range(StartAmmo / 4 * 3, StartAmmo);
+				StartAmmo = Random.Range(StartAmmo / 3 * 2, StartAmmo + 1);
                 ClipAmmo = Mathf.Clamp(StartAmmo, 0, MaxClipAmmo);
                 int _remainingAmmo = 0;
                 switch (WeaponName) {
@@ -240,25 +237,7 @@ namespace ProjectEpsilon {
 			_sceneObjects = Runner.GetSingleton<SceneObjects>();
         }
 
-        public override void FixedUpdateNetwork() {
-            if (HasInputAuthority == false)
-                return;
-
-            //if (IsCollected == false) {
-            //    if (WeaponName != EWeaponName.Search)
-            //        return;
-            //}
-
-			if (ClipAmmo == 0 && !GetComponentInParent<Weapons>().weaponTimer.ExpiredOrNotRunning(Runner)) {
-				if (GetComponentInParent<Player>().IsAiming)
-					ExitADS();
-				GetComponentInParent<Weapons>().Reload();
-			}
-		}
-
         public override void Render() {
-            //Debug.Log("isReloading: " + IsReloading);
-            //Debug.Log("_fireCooldown: " + _fireCooldown);
             if (_visibleFireCount < _fireCount) {
 				PlayFireEffect();
 			}
@@ -273,7 +252,10 @@ namespace ProjectEpsilon {
 
 			_visibleFireCount = _fireCount;
 
-			if (_reloadingVisible != IsReloading) {
+            if (!IsReloading)
+                ReloadingSound.Stop();
+
+            if (_reloadingVisible != IsReloading) {
 				Animator.SetBool("IsReloading", IsReloading);
 
 				if (IsReloading) {
@@ -307,15 +289,6 @@ namespace ProjectEpsilon {
                 GetComponentInParent<Player>().IsSearching = false;
             }
 
-            if (Input.GetMouseButtonDown(1) && Type != EWeaponType.Search && ClipAmmo > 0) {
-                //_fireCooldown = TickTimer.None;
-                IsReloading = false;
-                ReloadingSound.Stop();
-                EnterADS();
-            } else if (Input.GetMouseButtonUp(1) && !IsReloading && Type != EWeaponType.Search) {
-                ExitADS();
-            }
-
             float _saveSpeed = 1;
             if (GetComponentInParent<Player>().IsSneaking) {
                 _saveSpeed -= 0.5f;
@@ -347,9 +320,23 @@ namespace ProjectEpsilon {
             }
 
             if (!GetComponentInParent<Weapons>().weaponTimer.ExpiredOrNotRunning(Runner)) {
-                //_fireCooldown = TickTimer.None;
+                _fireCooldown = TickTimer.CreateFromTicks(Runner, 1);
                 IsReloading = false;
                 ReloadingSound.Stop();
+            }
+
+            if (ClipAmmo == 0 && GetComponentInParent<Weapons>().weaponTimer.ExpiredOrNotRunning(Runner)) {
+                if (GetComponentInParent<Player>().IsAiming)
+                    ExitADS();
+                Reload();
+            }
+
+            if (Input.GetMouseButtonDown(1) && HasInputAuthority) {
+                if (ClipAmmo > 0) {
+                    EnterADS();
+                }
+            } else if (Input.GetMouseButtonUp(1) && HasInputAuthority) {
+                ExitADS();
             }
 
             if (GetComponentInParent<Player>().isInteracting) {
@@ -362,25 +349,38 @@ namespace ProjectEpsilon {
 
             _saveDispersion = Dispersion;
             if (GetComponentInParent<Player>().IsAiming) {
-                _saveDispersion -= Dispersion / 10 * 4;
+                _saveDispersion -= Dispersion / 10 * 4f;
+                if (IsReloading) {
+                    _fireCooldown = TickTimer.CreateFromTicks(Runner, 1);
+                    IsReloading = false;
+                    ReloadingSound.Stop();
+                }
             }
             if (GetComponentInParent<Player>().IsSneaking) {
-                _saveDispersion -= Dispersion / 10 * 1;
+                _saveDispersion -= Dispersion / 10 * 2f;
             }
             if (GetComponentInParent<Player>().IsCrouching) {
-                _saveDispersion -= Dispersion / 10 * 3;
+                _saveDispersion -= Dispersion / 10 * 2.5f;
             }
             if (GetComponentInParent<Player>().IsMoving) {
-                _saveDispersion += Dispersion / 10 * 2;
+                _saveDispersion += Dispersion / 10 * 1.5f;
             }
 
             if (GetComponentInParent<Player>().IsRunning) {
                 _saveDispersion = 300;
+                if (IsReloading) {
+                    _fireCooldown = TickTimer.CreateFromTicks(Runner, 1);
+                    IsReloading = false;
+                    ReloadingSound.Stop();
+                }
             }
-            _sceneObjects.GameUI.PlayerView.Crosshair.TopCrossHair.transform.localPosition = new Vector3(0, _saveDispersion * 25);
-            _sceneObjects.GameUI.PlayerView.Crosshair.BottomCrossHair.transform.localPosition = new Vector3(0, -_saveDispersion * 25);
-            _sceneObjects.GameUI.PlayerView.Crosshair.LeftCrossHair.transform.localPosition = new Vector3(_saveDispersion * 25, 0);
-            _sceneObjects.GameUI.PlayerView.Crosshair.RightCrossHair.transform.localPosition = new Vector3(-_saveDispersion * 25, 0);
+
+            if (HasInputAuthority) {
+                _sceneObjects.GameUI.PlayerView.Crosshair.TopCrossHair.transform.localPosition = new Vector3(0, _saveDispersion * 20);
+                _sceneObjects.GameUI.PlayerView.Crosshair.BottomCrossHair.transform.localPosition = new Vector3(0, -_saveDispersion * 20);
+                _sceneObjects.GameUI.PlayerView.Crosshair.LeftCrossHair.transform.localPosition = new Vector3(_saveDispersion * 20, 0);
+                _sceneObjects.GameUI.PlayerView.Crosshair.RightCrossHair.transform.localPosition = new Vector3(-_saveDispersion * 20, 0);
+            }
 
             if (IsReloading && _fireCooldown.ExpiredOrNotRunning(Runner)) {
                 Animator.ResetTrigger("exitADS");
@@ -530,16 +530,16 @@ namespace ProjectEpsilon {
                         damage *= 0.5f;
                     break;
                 case EWeaponName.SuperShorty:
-                    if (distance < 2f)
+                    if (distance < 4f)
                         break;
-                    else if (distance < 5f)
+                    else if (distance < 8f)
                         damage *= 0.8f;
                     else if (distance < 12f)
                         damage *= 0.6f;
                     else if (distance < 16f)
                         damage *= 0.4f;
                     else
-                        damage *= 0.1f;
+                        damage *= 0.2f;
                     break;
                 case EWeaponName.AK47:
                     if (distance < 20f)
@@ -552,13 +552,13 @@ namespace ProjectEpsilon {
                         damage *= 0.7f;
                     break;
 				case EWeaponName.RemingtonM870:
-                    if (distance < 5f)
+                    if (distance < 10f)
                         break;
-                    else if (distance < 10f)
-                        damage *= 0.6f;
                     else if (distance < 15f)
-                        damage *= 0.4f;
+                        damage *= 0.7f;
                     else if (distance < 20f)
+                        damage *= 0.5f;
+                    else if (distance < 25f)
                         damage *= 0.3f;
                     else
                         damage *= 0.2f;
@@ -582,7 +582,7 @@ namespace ProjectEpsilon {
 				_sceneObjects.GameUI.PlayerView.Crosshair.ShowHit(enemyHealth.IsAlive == false, isCriticalHit);
 				if (enemyHealth.IsAlive == false) {
                     GetComponentInParent<Player>().VoiceSound.clip = GetComponentInParent<Player>().KillClips[Random.Range(0, GetComponentInParent<Player>().KillClips.Length)];
-                    GetComponentInParent<Player>().VoiceSound.PlayDelayed(1f);
+                    GetComponentInParent<Player>().VoiceSound.PlayDelayed(2.5f);
                 }
 			}
 		}
@@ -602,15 +602,15 @@ namespace ProjectEpsilon {
 		}
 
         public void EnterADS() {
+            checkAim = true;
             Animator.SetTrigger("enterADS");
-			GetComponentInParent<Player>().IsAiming = true;
 			GetComponentInParent<Player>().ZoomIn();
             Animator.ResetTrigger("exitADS");
         }
 
         public void ExitADS() {
+            checkAim = false;
             Animator.SetTrigger("exitADS");
-			GetComponentInParent<Player>().IsAiming = false;
 			GetComponentInParent<Player>().ZoomOut();
         }
 

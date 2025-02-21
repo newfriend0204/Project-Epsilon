@@ -25,6 +25,7 @@ namespace ProjectEpsilon {
         public GameObject AK47;
         public GameObject RemingtonM870;
         public GameObject MP5;
+        public GameObject Medikit;
         public GameObject InactiveObject;
         public GameObject InfoObject;
         public Outline OutlineScript;
@@ -55,12 +56,13 @@ namespace ProjectEpsilon {
             AK47.SetActive(true);
             RemingtonM870.SetActive(true);
             MP5.SetActive(true);
+            Medikit.SetActive(true);
             ActiveObject.SetActive(IsActive);
             InactiveObject.SetActive(IsActive == false);
             if (!HasStateAuthority)
                 return;
-            _spawnMode = Random.Range(1, 4);
-            _currentMode = Random.Range(1, 10);
+            _spawnMode = Random.Range(1, 5);
+            _currentMode = Random.Range(1, 11);
         }
 
         public override void FixedUpdateNetwork() {
@@ -102,6 +104,8 @@ namespace ProjectEpsilon {
                 RemingtonM870.SetActive(false);
             if (_currentMode != 9)
                 MP5.SetActive(false);
+            if (_currentMode != 10)
+                Medikit.SetActive(false);
 
             if (_currentMode == 1)
                 Ammo45ACP.SetActive(true);
@@ -121,6 +125,8 @@ namespace ProjectEpsilon {
                 RemingtonM870.SetActive(true);
             if (_currentMode == 9)
                 MP5.SetActive(true);
+            if (_currentMode == 10)
+                Medikit.SetActive(true);
 
             switch (_currentMode) {
                 case 1:
@@ -168,6 +174,10 @@ namespace ProjectEpsilon {
                     OutlineScript = MP5.transform.Find("MP5")?.GetComponent<Outline>();
                     InfoObject = MP5.transform.Find("Text")?.gameObject;
                     break;
+                case 10:
+                    OutlineScript = Medikit.transform.Find("Medikit")?.GetComponent<Outline>();
+                    InfoObject = Medikit.transform.Find("Text")?.gameObject;
+                    break;
             }
 
             if (_playerObject.IsSearching && _playerObject.HasInputAuthority) {
@@ -205,15 +215,17 @@ namespace ProjectEpsilon {
                 var ammos = player.GetComponentInParent<Player>();
                 switch (Bullet) {
                     case BulletName.ammo45ACP:
-                        ammos.ammo45ACP += Random.Range(8, 17);
+                        ammos.ammo45ACP += Random.Range(6, 16);
                         break;
                     case BulletName.ammo7_62mm:
-                        ammos.ammo7_62mm += Random.Range(15, 21);
+                        ammos.ammo7_62mm += Random.Range(12, 21);
                         break;
                     case BulletName.ammo12Gauge:
-                        ammos.ammo12Gauge += Random.Range(6, 9);
+                        ammos.ammo12Gauge += Random.Range(5, 8);
                         break;
                 }
+                _activationTimer = TickTimer.CreateFromSeconds(Runner, Cooldown);
+            } else if (mode == 3) {
                 _activationTimer = TickTimer.CreateFromSeconds(Runner, Cooldown);
             }
             transform.rotation = Quaternion.Euler(0, Random.Range(1, 360), 0);
@@ -223,15 +235,19 @@ namespace ProjectEpsilon {
             int[] modes;
             switch (_spawnMode) {
                 case 1:
-                    modes = new int[] { 1, 1, 2, 2, 3, 3, 4, 5, 6, 7, 8, 9 };
+                    modes = new int[] { 1, 1, 2, 2, 3, 3, 4, 5, 6, 7, 8, 9, 10, 10 };
                     _currentMode = modes[Random.Range(0, modes.Length)];
                     break;
                 case 2:
-                    modes = new int[] { 1, 2, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9 };
+                    modes = new int[] { 1, 2, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10 };
                     _currentMode = modes[Random.Range(0, modes.Length)];
                     break;
                 case 3:
-                    modes = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+                    modes = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10 };
+                    _currentMode = modes[Random.Range(0, modes.Length)];
+                    break;
+                case 4:
+                    modes = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 10, 10, 10 };
                     _currentMode = modes[Random.Range(0, modes.Length)];
                     break;
             }

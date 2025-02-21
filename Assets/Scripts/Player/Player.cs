@@ -49,6 +49,7 @@ namespace ProjectEpsilon {
         [Networked]
         private Vector3 _moveVelocity { get; set; }
 
+        [Networked]
         public bool IsAiming { get; set; }
         [Networked]
         public bool IsMoving { get; set; }
@@ -94,9 +95,18 @@ namespace ProjectEpsilon {
             name = $"{Object.InputAuthority} ({(HasInputAuthority ? "Input Authority" : (HasStateAuthority ? "State Authority" : "Proxy"))})";
 
             SetFirstPersonVisuals(HasInputAuthority);
-            ammo7_62mm = 100;
-            ammo45ACP = 100;
-            ammo12Gauge = 100;
+
+            _sceneObjects = Runner.GetSingleton<SceneObjects>();
+
+            if (_sceneObjects.Gameplay.State == EGameplayState.Skirmish) {
+                ammo7_62mm = 999;
+                ammo45ACP = 999;
+                ammo12Gauge = 999;
+            } else {
+                ammo7_62mm = Random.Range(4, 11);
+                ammo45ACP = Random.Range(8, 13);
+                ammo12Gauge = Random.Range(2, 6);
+            }
 
             if (HasInputAuthority == false) {
                 var virtualCameras = GetComponentsInChildren<CinemachineVirtualCamera>(true);
@@ -104,8 +114,6 @@ namespace ProjectEpsilon {
                     virtualCameras[i].enabled = false;
                 }
             }
-
-            _sceneObjects = Runner.GetSingleton<SceneObjects>();
 
             GameObject gameUI = GameObject.Find("GameUI");
             if (gameUI != null) {
@@ -203,6 +211,36 @@ namespace ProjectEpsilon {
 
             if (!IsMoving) {
                 IsRunning = false;
+                IsSneaking = false;
+            }
+
+            if (IsSearching && HasInputAuthority) {
+                Player player = FindObjectOfType<Player>();
+                foreach (GameObject obj in GameObject.FindObjectsOfType<GameObject>()) {
+                    if (obj != player.gameObject) {
+                        Transform thirdPersonTransform = obj.transform.Find("ThirdPersonRoot");
+                        if (thirdPersonTransform != null) {
+                            Outline outline = thirdPersonTransform.GetComponent<Outline>();
+                            float distance = Vector3.Distance(player.transform.position, thirdPersonTransform.position);
+                            if (distance >= 20f) {
+                                outline.enabled = true;
+                            } else {
+                                outline.enabled = false;
+                            }
+                        }
+                    }
+                }
+            } else {
+                Player player = FindObjectOfType<Player>();
+                foreach (GameObject obj in GameObject.FindObjectsOfType<GameObject>()) {
+                    if (obj != player.gameObject) {
+                        Transform thirdPersonTransform = obj.transform.Find("ThirdPersonRoot");
+                        if (thirdPersonTransform != null) {
+                            Outline outline = thirdPersonTransform.GetComponent<Outline>();
+                            outline.enabled = false;
+                        }
+                    }
+                }
             }
         }
 
@@ -299,7 +337,7 @@ namespace ProjectEpsilon {
                     IsRunning = true;
                 }
                 if (GetComponentInChildren<Weapon>().IsReloading) {
-                    //GetComponentInChildren<Weapon>()._fireCooldown = TickTimer.None;
+                    GetComponentInChildren<Weapon>()._fireCooldown = TickTimer.CreateFromTicks(Runner, 1);
                     GetComponentInChildren<Weapon>().IsReloading = false;
                     GetComponentInChildren<Weapon>().ReloadingSound.Stop();
                 }
@@ -308,6 +346,13 @@ namespace ProjectEpsilon {
                     isPressedRun = false;
                     IsRunning = false;
                 }
+            }
+
+            if (input.Buttons.IsSet(EInputButton.Aim) && HasInputAuthority && Weapons.CurrentWeapon.allAmmo > 0 && Weapons.CurrentWeapon.Type != EWeaponType.Search) {
+                if (Weapons.CurrentWeapon.ClipAmmo > 0)
+                    IsAiming = true;
+            } else {
+                IsAiming = false;
             }
 
             if (input.Buttons.IsSet(EInputButton.Fire) && !GetComponent<Weapons>().IsSwitching) {
@@ -348,7 +393,7 @@ namespace ProjectEpsilon {
                 if (input.Buttons.WasPressed(_previousButtons, EInputButton.Interact)) {
                     if (GetComponent<Weapons>().CurrentWeapon != null) {
                         if (GetComponent<Weapons>().CurrentWeapon.IsReloading) {
-                            //GetComponent<Weapons>().CurrentWeapon._fireCooldown = TickTimer.None;
+                            GetComponent<Weapons>().CurrentWeapon._fireCooldown = TickTimer.CreateFromTicks(Runner, 1);
                             GetComponent<Weapons>().CurrentWeapon.IsReloading = false;
                             GetComponent<Weapons>().CurrentWeapon.ReloadingSound.Stop();
                         }
@@ -373,6 +418,10 @@ namespace ProjectEpsilon {
                             case "Ammo7_62mmCollider":
                             case "Ammo12GaugeCollider":
                                 hit.collider.gameObject.GetComponentInParent<Pickup>().AcquireWeapon(gameObject, 2);
+                                break;
+                            case "MedikitCollider":
+                                hit.collider.gameObject.GetComponentInParent<Pickup>().AcquireWeapon(gameObject, 3);
+                                Health.AddHealth(Random.Range(75, 176));
                                 break;
                         }
                         isInteracting = false;
@@ -404,8 +453,12 @@ namespace ProjectEpsilon {
                 IsMoving = false;
             } else {
                 acceleration = KCC.IsGrounded == true ? GroundAcceleration : AirAcceleration;
-                if (isPressedRun)
+                if (isPressedRun) {
                     IsRunning = true;
+                }
+                if (isPressedSneak) {
+                    IsSneaking = true;
+                }
                 IsMoving = true;
             }
 

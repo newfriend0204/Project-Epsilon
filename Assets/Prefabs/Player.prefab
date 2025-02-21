@@ -141,7 +141,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3989897635212225753}
   m_Layer: 8
-  m_Name: MP5FirstMuzzle
+  m_Name: MP5ThirdMuzzle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -156,7 +156,7 @@ Transform:
   m_GameObject: {fileID: 93065195232152679}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.021746239, y: 0.1796344, z: 0.7698}
+  m_LocalPosition: {x: 0.0628, y: 0.2495, z: 0.2573}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1044,10 +1044,10 @@ MonoBehaviour:
   Type: 1
   WeaponName: 2
   IsAutomatic: 1
-  Damage: 20
+  Damage: 45
   FireRate: 600
   ProjectilesPerShot: 1
-  Dispersion: 4
+  Dispersion: 5
   HitMask:
     serializedVersion: 2
     m_Bits: 65
@@ -1071,8 +1071,6 @@ MonoBehaviour:
   EmptyClipSound: {fileID: 7577767043446467932}
   TakeOutTime: 0.6
   TakeInTime: 0.5
-  _IsCollected:
-    _value: 0
   _IsReloading:
     _value: 0
   _ClipAmmo: 0
@@ -1485,7 +1483,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: -973724649278464913, guid: bfbc8b07bd216478eb5fca35a6fe51e2, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.5
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -3273,8 +3271,6 @@ MonoBehaviour:
   EmptyClipSound: {fileID: 7259402290570135526}
   TakeOutTime: 0.2
   TakeInTime: 0.2
-  _IsCollected:
-    _value: 0
   _IsReloading:
     _value: 0
   _ClipAmmo: 0
@@ -3322,7 +3318,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: -973724649278464913, guid: bfbc8b07bd216478eb5fca35a6fe51e2, type: 2}
   m_audioClip: {fileID: 8300000, guid: 46343a805c19e7445a5dbe87397e451c, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.5
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -4525,17 +4521,17 @@ MonoBehaviour:
   Type: 0
   WeaponName: 0
   IsAutomatic: 0
-  Damage: 20
+  Damage: 35
   FireRate: 450
   ProjectilesPerShot: 1
-  Dispersion: 2
+  Dispersion: 4
   HitMask:
     serializedVersion: 2
     m_Bits: 65
   MaxHitDistance: 100
   MaxClipAmmo: 12
   StartAmmo: 12
-  ReloadTime: 1
+  ReloadTime: 1.4
   Name: M1911
   Animator: {fileID: 557149143401022487}
   FirstPersonVisual: {fileID: 598741929949552826}
@@ -4552,8 +4548,6 @@ MonoBehaviour:
   EmptyClipSound: {fileID: 253264026651134671}
   TakeOutTime: 0.3
   TakeInTime: 0.2
-  _IsCollected:
-    _value: 0
   _IsReloading:
     _value: 0
   _ClipAmmo: 0
@@ -5313,10 +5307,10 @@ MonoBehaviour:
   Type: 1
   WeaponName: 1
   IsAutomatic: 1
-  Damage: 10
+  Damage: 30
   FireRate: 1400
   ProjectilesPerShot: 1
-  Dispersion: 8
+  Dispersion: 7
   HitMask:
     serializedVersion: 2
     m_Bits: 65
@@ -5340,8 +5334,6 @@ MonoBehaviour:
   EmptyClipSound: {fileID: 5753219741910626252}
   TakeOutTime: 0.4
   TakeInTime: 0.3
-  _IsCollected:
-    _value: 0
   _IsReloading:
     _value: 0
   _ClipAmmo: 0
@@ -6759,7 +6751,7 @@ MonoBehaviour:
   Type: 1
   WeaponName: 6
   IsAutomatic: 1
-  Damage: 15
+  Damage: 35
   FireRate: 900
   ProjectilesPerShot: 1
   Dispersion: 6
@@ -6776,7 +6768,7 @@ MonoBehaviour:
   ThirdPersonVisual: {fileID: 1025616180874650590}
   PickupVisual: {fileID: 1737269853526371796}
   FirstPersonMuzzleTransform: {fileID: 1262864912462436575}
-  ThirdPersonMuzzleTransform: {fileID: 0}
+  ThirdPersonMuzzleTransform: {fileID: 3989897635212225753}
   MuzzleEffectPrefab: {fileID: 1000010254994808, guid: 9defeac88977c0d448aa4541073ee9e4, type: 3}
   ProjectileVisualPrefab: {fileID: 7491510959155936860, guid: 5041eeb12cd5049cea0ffc96bb0676f5, type: 3}
   CartridgePosition: {fileID: 4145162698051427403}
@@ -6786,8 +6778,6 @@ MonoBehaviour:
   EmptyClipSound: {fileID: 4632685576271416974}
   TakeOutTime: 0.7
   TakeInTime: 0.4
-  _IsCollected:
-    _value: 0
   _IsReloading:
     _value: 0
   _ClipAmmo: 0
@@ -13248,7 +13238,7 @@ MonoBehaviour:
   Type: 2
   WeaponName: 5
   IsAutomatic: 0
-  Damage: 10
+  Damage: 15
   FireRate: 75
   ProjectilesPerShot: 8
   Dispersion: 8
@@ -13275,8 +13265,6 @@ MonoBehaviour:
   EmptyClipSound: {fileID: 6139589189673845416}
   TakeOutTime: 0.4
   TakeInTime: 0.3
-  _IsCollected:
-    _value: 0
   _IsReloading:
     _value: 0
   _ClipAmmo: 0
@@ -14666,6 +14654,7 @@ MonoBehaviour:
   GroundDeceleration: 25
   AirAcceleration: 25
   AirDeceleration: 1.3
+  _IsAiming: 0
   _IsMoving: 0
   _IsCrouching: 0
   _IsSneaking: 0
@@ -16381,9 +16370,9 @@ MonoBehaviour:
   Type: 2
   WeaponName: 3
   IsAutomatic: 0
-  Damage: 10
+  Damage: 25
   FireRate: 75
-  ProjectilesPerShot: 6
+  ProjectilesPerShot: 10
   Dispersion: 6
   HitMask:
     serializedVersion: 2
@@ -16408,8 +16397,6 @@ MonoBehaviour:
   EmptyClipSound: {fileID: 194937495691504383}
   TakeOutTime: 0.8
   TakeInTime: 0.5
-  _IsCollected:
-    _value: 0
   _IsReloading:
     _value: 0
   _ClipAmmo: 0
@@ -27253,7 +27240,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 948270911172817289, guid: 018f1c2109d7023488206bb23d1a8f71, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6770660135264712101}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5355928461982673233, guid: 018f1c2109d7023488206bb23d1a8f71, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5997260934578008475}
   m_SourcePrefab: {fileID: 100100000, guid: 018f1c2109d7023488206bb23d1a8f71, type: 3}
 --- !u!4 &41135303804828830 stripped
 Transform:
@@ -27275,6 +27265,24 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5355928461982673233, guid: 018f1c2109d7023488206bb23d1a8f71, type: 3}
   m_PrefabInstance: {fileID: 6769228500826109191}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5997260934578008475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1703827389568588886}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 3
+  outlineColor: {r: 0.15686275, g: 1, b: 0.023529412, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!4 &2084855840742917868 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4692684994304406507, guid: 018f1c2109d7023488206bb23d1a8f71, type: 3}

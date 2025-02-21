@@ -198,17 +198,17 @@ namespace ProjectEpsilon {
                         WeaponExplainText.text = "가장 기본적인 권총입니다. 위력, 탄창 모두 평균입니다.";
                         WeaponGunExplain.text = "<mark>특성:보조무기</mark>\r\n들고 있을때 요원 속도가 <color=green>소폭 증가</color>합니다.\r\n무기 교체 시간이 <color=green>소폭 감소</color>합니다.\r\n거리별 위력 감소가 <color=red>증가</color>합니다.\r\n거리별 위력 길이가 <color=red>감소</color>합니다.";
                         WeaponAmmo.text = ".45 ACP\r\n총 12발";
-                        WeaponDamage.text = "20";
-                        WeaponDispersion.text = "2";
+                        WeaponDamage.text = "36";
+                        WeaponDispersion.text = "4";
                         WeaponFirerate.text = "450";
-                        WeaponReloadTime.text = "1초";
+                        WeaponReloadTime.text = "1.4초";
                         break;
                     case EWeaponName.SMG11:
                         WeaponExplainText.text = "연사력은 매우 빠르지만 탄창이 제한적인 기관권총입니다.";
                         WeaponGunExplain.text = "<mark>특성:보조무기</mark>\r\n들고 있을때 요원 속도가 <color=green>소폭 증가</color>합니다.\r\n무기 교체 시간이 <color=green>소폭 감소</color>합니다.\r\n거리별 위력 감소가 <color=red>증가</color>합니다.\r\n거리별 위력 길이가 <color=red>감소</color>합니다.";
                         WeaponAmmo.text = ".45 ACP\r\n총 16발";
-                        WeaponDamage.text = "10";
-                        WeaponDispersion.text = "8";
+                        WeaponDamage.text = "30";
+                        WeaponDispersion.text = "7";
                         WeaponFirerate.text = "1400";
                         WeaponReloadTime.text = "2.2초";
                         break;
@@ -216,7 +216,7 @@ namespace ProjectEpsilon {
                         WeaponExplainText.text = "근거리에선 매우 강력한 성능을 발휘하지만 중거리부터는\r\n크게 위력이 떨어지는 펌프 액션 산탄총입니다.";
                         WeaponGunExplain.text = "<mark>특성:보조무기</mark>\r\n들고 있을때 요원 속도가 <color=green>소폭 증가</color>합니다.\r\n무기 교체 시간이 <color=green>소폭 감소</color>합니다.\r\n거리별 위력 감소가 <color=red>증가</color>합니다.\r\n거리별 위력 길이가 <color=red>감소</color>합니다.";
                         WeaponAmmo.text = "12게이지\r\n총 3발";
-                        WeaponDamage.text = "10";
+                        WeaponDamage.text = "15";
                         WeaponDispersion.text = "8";
                         WeaponFirerate.text = "75";
                         WeaponReloadTime.text = "발당 0.2초";
@@ -225,8 +225,8 @@ namespace ProjectEpsilon {
                         WeaponExplainText.text = "위력은 강력하지만 연사력이 조금 낮은 돌격소총입니다.";
                         WeaponGunExplain.text = "<mark>특성:주무기</mark>\r\n들고 있을때 요원 속도가 <color=red>소폭 감소</color>합니다.\r\n무기 교체 시간이 <color=red>소폭 증가</color>합니다.\r\n거리별 위력 감소가 <color=green>감소</color>합니다.\r\n거리별 위력 길이가 <color=green>증가</color>합니다.";
                         WeaponAmmo.text = "7.62mm\r\n총 20발";
-                        WeaponDamage.text = "20";
-                        WeaponDispersion.text = "4";
+                        WeaponDamage.text = "45";
+                        WeaponDispersion.text = "5";
                         WeaponFirerate.text = "600";
                         WeaponReloadTime.text = "1.8초";
                         break;
@@ -234,7 +234,7 @@ namespace ProjectEpsilon {
                         WeaponExplainText.text = "중거리까지 든든히 교전할 수 있는 펌프 액션 산탄총입니다.";
                         WeaponGunExplain.text = "<mark>특성:주무기</mark>\r\n들고 있을때 요원 속도가 <color=red>소폭 감소</color>합니다.\r\n무기 교체 시간이 <color=red>소폭 증가</color>합니다.\r\n거리별 위력 감소가 <color=green>감소</color>합니다.\r\n거리별 위력 길이가 <color=green>증가</color>합니다.";
                         WeaponAmmo.text = "12게이지\r\n총 7발";
-                        WeaponDamage.text = "10";
+                        WeaponDamage.text = "25";
                         WeaponDispersion.text = "6";
                         WeaponFirerate.text = "75";
                         WeaponReloadTime.text = "발당 0.2초";
@@ -243,7 +243,7 @@ namespace ProjectEpsilon {
                         WeaponExplainText.text = "연사력이 빠르지만 위력이 조금 약간 낮은 기관탄총입니다.";
                         WeaponGunExplain.text = "<mark>특성:주무기</mark>\r\n들고 있을때 요원 속도가 <color=red>소폭 감소</color>합니다.\r\n무기 교체 시간이 <color=red>소폭 증가</color>합니다.\r\n거리별 위력 감소가 <color=green>감소</color>합니다.\r\n거리별 위력 길이가 <color=green>증가</color>합니다.";
                         WeaponAmmo.text = "7.62mm\r\n총 30발";
-                        WeaponDamage.text = "15";
+                        WeaponDamage.text = "35";
                         WeaponDispersion.text = "6";
                         WeaponFirerate.text = "900";
                         WeaponReloadTime.text = "2초";
