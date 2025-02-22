@@ -106,7 +106,7 @@ namespace ProjectEpsilon {
 
                 _accumulatedInput.MoveDirection = moveDirection.normalized;
 
-                _accumulatedInput.Buttons.Set(EInputButton.Jump, keyboard.tKey.isPressed);
+                //_accumulatedInput.Buttons.Set(EInputButton.Jump, keyboard.tKey.isPressed); 점프는 그냥 더미데이터로...
                 _accumulatedInput.Buttons.Set(EInputButton.Reload, keyboard.rKey.isPressed);
                 _accumulatedInput.Buttons.Set(EInputButton.Sidearm, keyboard.digit1Key.isPressed || keyboard.numpad1Key.isPressed);
                 _accumulatedInput.Buttons.Set(EInputButton.Primary, keyboard.digit2Key.isPressed || keyboard.numpad2Key.isPressed);
@@ -115,7 +115,7 @@ namespace ProjectEpsilon {
                 _accumulatedInput.Buttons.Set(EInputButton.Crouch, keyboard.cKey.isPressed);
                 _accumulatedInput.Buttons.Set(EInputButton.Sneak, keyboard.leftShiftKey.isPressed);
                 _accumulatedInput.Buttons.Set(EInputButton.Run, keyboard.leftCtrlKey.isPressed);
-                _accumulatedInput.Buttons.Set(EInputButton.Debug, keyboard.pKey.isPressed);
+                _accumulatedInput.Buttons.Set(EInputButton.Debug, keyboard.mKey.isPressed);
             }
         }
 

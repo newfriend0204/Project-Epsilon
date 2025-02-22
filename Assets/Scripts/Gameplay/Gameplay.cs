@@ -29,7 +29,7 @@ namespace ProjectEpsilon {
 		public float PlayerRespawnTime = 5f;
 		public float DoubleDamageDuration = 30f;
 
-		[Networked][Capacity(32)][HideInInspector]
+        [Networked][Capacity(32)][HideInInspector]
 		public NetworkDictionary<PlayerRef, PlayerData> PlayerData { get; }
 		[Networked][HideInInspector]
 		public TickTimer RemainingTime { get; set; }
@@ -135,10 +135,6 @@ namespace ProjectEpsilon {
 
 			var spawnPoint = GetSpawnPoint();
 			var player = Runner.Spawn(PlayerPrefab, spawnPoint.position, spawnPoint.rotation, playerRef);
-            if (playerData.Deaths != 0) {
-                player.VoiceSound.clip = GetComponentInParent<Player>().RespawnClips[Random.Range(0, GetComponentInParent<Player>().RespawnClips.Length)];
-                player.VoiceSound.Play();
-            }
 
             Runner.SetPlayerObject(playerRef, player.Object);
 
@@ -181,6 +177,8 @@ namespace ProjectEpsilon {
 
 			var spawnPoint = GetSpawnPoint();
 			var player = Runner.Spawn(PlayerPrefab, spawnPoint.position, spawnPoint.rotation, playerRef);
+            player.VoiceSound.clip = player.GetComponent<Player>().RespawnClips[Random.Range(0, player.GetComponent<Player>().RespawnClips.Length)];
+            player.VoiceSound.Play();
 
             Runner.SetPlayerObject(playerRef, player.Object);
 		}

@@ -92,14 +92,18 @@ namespace ProjectEpsilon {
 			}
 
             if (CurrentWeapon.WeaponName == EWeaponName.Search) {
-                SearchSound.clip = SearchEndSound;
-                SearchSound.Play();
+				if (HasInputAuthority) {
+					SearchSound.clip = SearchEndSound;
+					SearchSound.Play();
+				}
             }
             if (newWeapon.WeaponName == EWeaponName.Search) {
-                SearchSound.clip = SearchStartSound;
-                SearchSound.Play();
-                GetComponentInParent<Player>().VoiceSound.clip = GetComponentInParent<Player>().SearchClips[Random.Range(0, GetComponentInParent<Player>().SearchClips.Length)];
-                GetComponentInParent<Player>().VoiceSound.Play();
+				if (HasInputAuthority) {
+					SearchSound.clip = SearchStartSound;
+					SearchSound.Play();
+					GetComponentInParent<Player>().VoiceSound.clip = GetComponentInParent<Player>().SearchClips[Random.Range(0, GetComponentInParent<Player>().SearchClips.Length)];
+					GetComponentInParent<Player>().VoiceSound.Play();
+				}
             }
 
             _pendingWeapon = newWeapon;

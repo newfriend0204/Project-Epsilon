@@ -219,7 +219,7 @@ namespace ProjectEpsilon {
                         WeaponDamage.text = "15";
                         WeaponDispersion.text = "8";
                         WeaponFirerate.text = "75";
-                        WeaponReloadTime.text = "발당 0.2초";
+                        WeaponReloadTime.text = "발당0.2초";
                         break;
                     case EWeaponName.AK47:
                         WeaponExplainText.text = "위력은 강력하지만 연사력이 조금 낮은 돌격소총입니다.";
@@ -237,7 +237,7 @@ namespace ProjectEpsilon {
                         WeaponDamage.text = "20";
                         WeaponDispersion.text = "6";
                         WeaponFirerate.text = "75";
-                        WeaponReloadTime.text = "발당 0.2초";
+                        WeaponReloadTime.text = "발당0.2초";
                         break;
                     case EWeaponName.MP5:
                         WeaponExplainText.text = "연사력이 빠르지만 위력이 조금 약간 낮은 기관탄총입니다.";

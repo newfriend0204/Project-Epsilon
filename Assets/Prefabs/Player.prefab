@@ -1053,7 +1053,7 @@ MonoBehaviour:
     m_Bits: 65
   MaxHitDistance: 100
   ShotgunCrossHair: {fileID: 21300000, guid: 23799ce459cdc04419d8fd66dea5e479, type: 3}
-  CorssHair: {fileID: 21300000, guid: fd8919039a77b994e833d75425e6f53a, type: 3}
+  CrossHair: {fileID: 21300000, guid: fd8919039a77b994e833d75425e6f53a, type: 3}
   MaxClipAmmo: 20
   StartAmmo: 20
   ReloadTime: 1.8
@@ -1482,7 +1482,7 @@ AudioSource:
   m_GameObject: {fileID: 1137170509059232581}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: -973724649278464913, guid: bfbc8b07bd216478eb5fca35a6fe51e2, type: 2}
+  OutputAudioMixerGroup: {fileID: -4857660083029558138, guid: bfbc8b07bd216478eb5fca35a6fe51e2, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.2
@@ -3255,7 +3255,7 @@ MonoBehaviour:
     m_Bits: 0
   MaxHitDistance: 999999
   ShotgunCrossHair: {fileID: 21300000, guid: 23799ce459cdc04419d8fd66dea5e479, type: 3}
-  CorssHair: {fileID: 21300000, guid: fd8919039a77b994e833d75425e6f53a, type: 3}
+  CrossHair: {fileID: 21300000, guid: fd8919039a77b994e833d75425e6f53a, type: 3}
   MaxClipAmmo: 9999
   StartAmmo: 9999
   ReloadTime: 9999
@@ -4534,7 +4534,7 @@ MonoBehaviour:
     m_Bits: 65
   MaxHitDistance: 100
   ShotgunCrossHair: {fileID: 21300000, guid: 23799ce459cdc04419d8fd66dea5e479, type: 3}
-  CorssHair: {fileID: 21300000, guid: fd8919039a77b994e833d75425e6f53a, type: 3}
+  CrossHair: {fileID: 21300000, guid: fd8919039a77b994e833d75425e6f53a, type: 3}
   MaxClipAmmo: 12
   StartAmmo: 12
   ReloadTime: 1.4
@@ -5322,7 +5322,7 @@ MonoBehaviour:
     m_Bits: 65
   MaxHitDistance: 100
   ShotgunCrossHair: {fileID: 21300000, guid: 23799ce459cdc04419d8fd66dea5e479, type: 3}
-  CorssHair: {fileID: 21300000, guid: fd8919039a77b994e833d75425e6f53a, type: 3}
+  CrossHair: {fileID: 21300000, guid: fd8919039a77b994e833d75425e6f53a, type: 3}
   MaxClipAmmo: 16
   StartAmmo: 16
   ReloadTime: 2.2
@@ -6768,7 +6768,7 @@ MonoBehaviour:
     m_Bits: 65
   MaxHitDistance: 100
   ShotgunCrossHair: {fileID: 21300000, guid: 23799ce459cdc04419d8fd66dea5e479, type: 3}
-  CorssHair: {fileID: 21300000, guid: fd8919039a77b994e833d75425e6f53a, type: 3}
+  CrossHair: {fileID: 21300000, guid: fd8919039a77b994e833d75425e6f53a, type: 3}
   MaxClipAmmo: 30
   StartAmmo: 30
   ReloadTime: 2
@@ -13257,7 +13257,7 @@ MonoBehaviour:
     m_Bits: 65
   MaxHitDistance: 100
   ShotgunCrossHair: {fileID: 21300000, guid: 23799ce459cdc04419d8fd66dea5e479, type: 3}
-  CorssHair: {fileID: 21300000, guid: fd8919039a77b994e833d75425e6f53a, type: 3}
+  CrossHair: {fileID: 21300000, guid: fd8919039a77b994e833d75425e6f53a, type: 3}
   MaxClipAmmo: 3
   StartAmmo: 3
   ReloadTime: 0.2
@@ -15857,7 +15857,7 @@ AudioSource:
   m_GameObject: {fileID: 8398610786367002722}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: -973724649278464913, guid: bfbc8b07bd216478eb5fca35a6fe51e2, type: 2}
+  OutputAudioMixerGroup: {fileID: -4857660083029558138, guid: bfbc8b07bd216478eb5fca35a6fe51e2, type: 2}
   m_audioClip: {fileID: 8300000, guid: 46343a805c19e7445a5dbe87397e451c, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0.15
@@ -16391,7 +16391,7 @@ MonoBehaviour:
     m_Bits: 65
   MaxHitDistance: 100
   ShotgunCrossHair: {fileID: 21300000, guid: 23799ce459cdc04419d8fd66dea5e479, type: 3}
-  CorssHair: {fileID: 21300000, guid: fd8919039a77b994e833d75425e6f53a, type: 3}
+  CrossHair: {fileID: 21300000, guid: fd8919039a77b994e833d75425e6f53a, type: 3}
   MaxClipAmmo: 7
   StartAmmo: 7
   ReloadTime: 0.2

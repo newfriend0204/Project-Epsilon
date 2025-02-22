@@ -38,7 +38,7 @@ namespace ProjectEpsilon {
 		public LayerMask HitMask;
 		public float MaxHitDistance = 100f;
         public Sprite ShotgunCrossHair;
-        public Sprite CorssHair;
+        public Sprite CrossHair;
 
 		[Header("Ammo")]
 		public int MaxClipAmmo = 12;
@@ -177,8 +177,10 @@ namespace ProjectEpsilon {
 
             _fireCooldown = TickTimer.CreateFromSeconds(Runner, ReloadTime);
 			if (loop == 0) {
-				GetComponentInParent<Player>().VoiceSound.clip = GetComponentInParent<Player>().ReloadClips[Random.Range(0, GetComponentInParent<Player>().ReloadClips.Length)];
-				GetComponentInParent<Player>().VoiceSound.Play();
+                if (HasInputAuthority) {
+                    GetComponentInParent<Player>().VoiceSound.clip = GetComponentInParent<Player>().ReloadClips[Random.Range(0, GetComponentInParent<Player>().ReloadClips.Length)];
+                    GetComponentInParent<Player>().VoiceSound.Play();
+                }
 			}
         }
 
@@ -376,10 +378,30 @@ namespace ProjectEpsilon {
                     _sceneObjects.GameUI.PlayerView.Crosshair.LeftCrossHair.GetComponent<Image>().sprite = ShotgunCrossHair;
                     _sceneObjects.GameUI.PlayerView.Crosshair.RightCrossHair.GetComponent<Image>().sprite = ShotgunCrossHair;
 
-                    _sceneObjects.GameUI.PlayerView.Crosshair.TopCrossHair.GetComponent<RectTransform>().sizeDelta = new Vector2(_sceneObjects.GameUI.PlayerView.Crosshair.TopCrossHair.GetComponent<RectTransform>().sizeDelta.x, 100);
-                    _sceneObjects.GameUI.PlayerView.Crosshair.BottomCrossHair.GetComponent<RectTransform>().sizeDelta = new Vector2(_sceneObjects.GameUI.PlayerView.Crosshair.BottomCrossHair.GetComponent<RectTransform>().sizeDelta.x, 100);
-                    _sceneObjects.GameUI.PlayerView.Crosshair.LeftCrossHair.GetComponent<RectTransform>().sizeDelta = new Vector2(_sceneObjects.GameUI.PlayerView.Crosshair.LeftCrossHair.GetComponent<RectTransform>().sizeDelta.x, 100);
-                    _sceneObjects.GameUI.PlayerView.Crosshair.RightCrossHair.GetComponent<RectTransform>().sizeDelta = new Vector2(_sceneObjects.GameUI.PlayerView.Crosshair.RightCrossHair.GetComponent<RectTransform>().sizeDelta.x, 100);
+                    _sceneObjects.GameUI.PlayerView.Crosshair.TopCrossHair.GetComponent<RectTransform>().sizeDelta = new Vector2(_sceneObjects.GameUI.PlayerView.Crosshair.TopCrossHair.GetComponent<RectTransform>().sizeDelta.x, 60);
+                    _sceneObjects.GameUI.PlayerView.Crosshair.BottomCrossHair.GetComponent<RectTransform>().sizeDelta = new Vector2(_sceneObjects.GameUI.PlayerView.Crosshair.BottomCrossHair.GetComponent<RectTransform>().sizeDelta.x, 60);
+                    _sceneObjects.GameUI.PlayerView.Crosshair.LeftCrossHair.GetComponent<RectTransform>().sizeDelta = new Vector2(_sceneObjects.GameUI.PlayerView.Crosshair.LeftCrossHair.GetComponent<RectTransform>().sizeDelta.x, 60);
+                    _sceneObjects.GameUI.PlayerView.Crosshair.RightCrossHair.GetComponent<RectTransform>().sizeDelta = new Vector2(_sceneObjects.GameUI.PlayerView.Crosshair.RightCrossHair.GetComponent<RectTransform>().sizeDelta.x, 60);
+
+                    _sceneObjects.GameUI.PlayerView.Crosshair.TopCrossHair.GetComponent<RectTransform>().rotation = Quaternion.Euler(0, 0, 270);
+                    _sceneObjects.GameUI.PlayerView.Crosshair.BottomCrossHair.GetComponent<RectTransform>().rotation = Quaternion.Euler(0, 0, 90);
+                    _sceneObjects.GameUI.PlayerView.Crosshair.LeftCrossHair.GetComponent<RectTransform>().rotation = Quaternion.Euler(0, 0, 180);
+                    _sceneObjects.GameUI.PlayerView.Crosshair.RightCrossHair.GetComponent<RectTransform>().rotation = Quaternion.Euler(0, 0, 0);
+                } else {
+                    _sceneObjects.GameUI.PlayerView.Crosshair.TopCrossHair.GetComponent<Image>().sprite = CrossHair;
+                    _sceneObjects.GameUI.PlayerView.Crosshair.BottomCrossHair.GetComponent<Image>().sprite = CrossHair;
+                    _sceneObjects.GameUI.PlayerView.Crosshair.LeftCrossHair.GetComponent<Image>().sprite = CrossHair;
+                    _sceneObjects.GameUI.PlayerView.Crosshair.RightCrossHair.GetComponent<Image>().sprite = CrossHair;
+
+                    _sceneObjects.GameUI.PlayerView.Crosshair.TopCrossHair.GetComponent<RectTransform>().sizeDelta = new Vector2(_sceneObjects.GameUI.PlayerView.Crosshair.TopCrossHair.GetComponent<RectTransform>().sizeDelta.x, 15);
+                    _sceneObjects.GameUI.PlayerView.Crosshair.BottomCrossHair.GetComponent<RectTransform>().sizeDelta = new Vector2(_sceneObjects.GameUI.PlayerView.Crosshair.BottomCrossHair.GetComponent<RectTransform>().sizeDelta.x, 15);
+                    _sceneObjects.GameUI.PlayerView.Crosshair.LeftCrossHair.GetComponent<RectTransform>().sizeDelta = new Vector2(_sceneObjects.GameUI.PlayerView.Crosshair.LeftCrossHair.GetComponent<RectTransform>().sizeDelta.x, 15);
+                    _sceneObjects.GameUI.PlayerView.Crosshair.RightCrossHair.GetComponent<RectTransform>().sizeDelta = new Vector2(_sceneObjects.GameUI.PlayerView.Crosshair.RightCrossHair.GetComponent<RectTransform>().sizeDelta.x, 15);
+
+                    _sceneObjects.GameUI.PlayerView.Crosshair.TopCrossHair.GetComponent<RectTransform>().rotation = Quaternion.Euler(0, 0, 0);
+                    _sceneObjects.GameUI.PlayerView.Crosshair.BottomCrossHair.GetComponent<RectTransform>().rotation = Quaternion.Euler(0, 0, 0);
+                    _sceneObjects.GameUI.PlayerView.Crosshair.LeftCrossHair.GetComponent<RectTransform>().rotation = Quaternion.Euler(0, 0, -90);
+                    _sceneObjects.GameUI.PlayerView.Crosshair.RightCrossHair.GetComponent<RectTransform>().rotation = Quaternion.Euler(0, 0, -90);
                 }
                 _sceneObjects.GameUI.PlayerView.Crosshair.TopCrossHair.transform.localPosition = new Vector3(0, _saveDispersion * 20);
                 _sceneObjects.GameUI.PlayerView.Crosshair.BottomCrossHair.transform.localPosition = new Vector3(0, -_saveDispersion * 20);
@@ -586,8 +608,10 @@ namespace ProjectEpsilon {
 			if (HasInputAuthority && Runner.IsForward) {
 				_sceneObjects.GameUI.PlayerView.Crosshair.ShowHit(enemyHealth.IsAlive == false, isCriticalHit);
 				if (enemyHealth.IsAlive == false) {
-                    GetComponentInParent<Player>().VoiceSound.clip = GetComponentInParent<Player>().KillClips[Random.Range(0, GetComponentInParent<Player>().KillClips.Length)];
-                    GetComponentInParent<Player>().VoiceSound.PlayDelayed(2.5f);
+                    if (HasInputAuthority) {
+                        GetComponentInParent<Player>().VoiceSound.clip = GetComponentInParent<Player>().KillClips[Random.Range(0, GetComponentInParent<Player>().KillClips.Length)];
+                        GetComponentInParent<Player>().VoiceSound.PlayDelayed(2.5f);
+                    }
                 }
 			}
 		}
