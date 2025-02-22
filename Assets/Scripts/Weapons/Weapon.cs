@@ -3,7 +3,7 @@ using Fusion.Addons.SimpleKCC;
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using UnityEngine.Serialization;
 
 namespace ProjectEpsilon {
@@ -37,6 +37,8 @@ namespace ProjectEpsilon {
 		public float Dispersion = 0f;
 		public LayerMask HitMask;
 		public float MaxHitDistance = 100f;
+        public Sprite ShotgunCrossHair;
+        public Sprite CorssHair;
 
 		[Header("Ammo")]
 		public int MaxClipAmmo = 12;
@@ -87,7 +89,6 @@ namespace ProjectEpsilon {
 		private int _fireTicks;
 		private int _visibleFireCount;
 		private bool _reloadingVisible;
-        private bool checkAim = false;
 		private float _saveDispersion;
         private GameObject _muzzleEffectInstance;
 		private SceneObjects _sceneObjects;
@@ -106,18 +107,18 @@ namespace ProjectEpsilon {
 				return;
 			}
 
-            if (IsReloading && ClipAmmo > 0) {
-                _fireCooldown = TickTimer.CreateFromTicks(Runner, 1);
-                IsReloading = false;
-                ReloadingSound.Stop();
-            }
-
             if (ClipAmmo <= 0) {
 				PlayEmptyClipSound(justPressed);
 				return;
 			}
 
-			Random.InitState(Runner.Tick * unchecked((int)Object.Id.Raw));
+            if (IsReloading) {
+                _fireCooldown = TickTimer.CreateFromTicks(Runner, 1);
+                IsReloading = false;
+                ReloadingSound.Stop();
+            }
+
+            Random.InitState(Runner.Tick * unchecked((int)Object.Id.Raw));
 
 			for (int i = 0; i < ProjectilesPerShot; i++) {
 				var projectileDirection = fireDirection;
@@ -164,7 +165,7 @@ namespace ProjectEpsilon {
             if (!GetComponentInParent<Weapons>().weaponTimer.ExpiredOrNotRunning(Runner))
                 return;
             if (GetComponentInParent<Player>().IsAiming == true) {
-                return;
+                ExitADS();
             }
 
             if (Type == EWeaponType.Shotgun && ClipAmmo < MaxClipAmmo - 1) {
@@ -239,31 +240,31 @@ namespace ProjectEpsilon {
 
         public override void Render() {
             if (_visibleFireCount < _fireCount) {
-				PlayFireEffect();
-			}
+                PlayFireEffect();
+            }
 
-			for (int i = _visibleFireCount; i < _fireCount; i++) {
-				var data = _projectileData[i % _projectileData.Length];
-				var muzzleTransform = HasInputAuthority ? FirstPersonMuzzleTransform : ThirdPersonMuzzleTransform;
+            for (int i = _visibleFireCount; i < _fireCount; i++) {
+                var data = _projectileData[i % _projectileData.Length];
+                var muzzleTransform = HasInputAuthority ? FirstPersonMuzzleTransform : ThirdPersonMuzzleTransform;
 
-				var projectileVisual = Instantiate(ProjectileVisualPrefab, muzzleTransform.position, muzzleTransform.rotation);
-				projectileVisual.SetHit(data.HitPosition, data.HitNormal, data.ShowHitEffect);
-			}
+                var projectileVisual = Instantiate(ProjectileVisualPrefab, muzzleTransform.position, muzzleTransform.rotation);
+                projectileVisual.SetHit(data.HitPosition, data.HitNormal, data.ShowHitEffect);
+            }
 
-			_visibleFireCount = _fireCount;
+            _visibleFireCount = _fireCount;
 
             if (!IsReloading)
                 ReloadingSound.Stop();
 
             if (_reloadingVisible != IsReloading) {
-				Animator.SetBool("IsReloading", IsReloading);
+                Animator.SetBool("IsReloading", IsReloading);
 
-				if (IsReloading) {
-					ReloadingSound.Play();
-				}
+                if (IsReloading) {
+                    ReloadingSound.Play();
+                }
 
-				_reloadingVisible = IsReloading;
-			}
+                _reloadingVisible = IsReloading;
+            }
 
             if (Type == EWeaponType.Shotgun && ClipAmmo == MaxClipAmmo) {
                 Animator.SetBool("ReloadEnd", true);
@@ -331,14 +332,6 @@ namespace ProjectEpsilon {
                 Reload();
             }
 
-            if (Input.GetMouseButtonDown(1) && HasInputAuthority) {
-                if (ClipAmmo > 0) {
-                    EnterADS();
-                }
-            } else if (Input.GetMouseButtonUp(1) && HasInputAuthority) {
-                ExitADS();
-            }
-
             if (GetComponentInParent<Player>().isInteracting) {
                 FirstPersonVisual.SetActive(false);
                 PickupVisual.SetActive(true);
@@ -349,21 +342,22 @@ namespace ProjectEpsilon {
 
             _saveDispersion = Dispersion;
             if (GetComponentInParent<Player>().IsAiming) {
-                _saveDispersion -= Dispersion / 10 * 4f;
+                _saveDispersion -= Dispersion / 10 * 5f;
                 if (IsReloading) {
                     _fireCooldown = TickTimer.CreateFromTicks(Runner, 1);
                     IsReloading = false;
                     ReloadingSound.Stop();
                 }
             }
-            if (GetComponentInParent<Player>().IsSneaking) {
-                _saveDispersion -= Dispersion / 10 * 2f;
-            }
             if (GetComponentInParent<Player>().IsCrouching) {
-                _saveDispersion -= Dispersion / 10 * 2.5f;
+                _saveDispersion -= Dispersion / 10 * 3f;
             }
             if (GetComponentInParent<Player>().IsMoving) {
-                _saveDispersion += Dispersion / 10 * 1.5f;
+                if (!GetComponentInParent<Player>().IsSneaking) {
+                    _saveDispersion += Dispersion / 10 * 2f;
+                } else {
+                    _saveDispersion += Dispersion / 10 * 0.5f;
+                }
             }
 
             if (GetComponentInParent<Player>().IsRunning) {
@@ -376,6 +370,17 @@ namespace ProjectEpsilon {
             }
 
             if (HasInputAuthority) {
+                if (WeaponName == EWeaponName.SuperShorty || WeaponName == EWeaponName.RemingtonM870) {
+                    _sceneObjects.GameUI.PlayerView.Crosshair.TopCrossHair.GetComponent<Image>().sprite = ShotgunCrossHair;
+                    _sceneObjects.GameUI.PlayerView.Crosshair.BottomCrossHair.GetComponent<Image>().sprite = ShotgunCrossHair;
+                    _sceneObjects.GameUI.PlayerView.Crosshair.LeftCrossHair.GetComponent<Image>().sprite = ShotgunCrossHair;
+                    _sceneObjects.GameUI.PlayerView.Crosshair.RightCrossHair.GetComponent<Image>().sprite = ShotgunCrossHair;
+
+                    _sceneObjects.GameUI.PlayerView.Crosshair.TopCrossHair.GetComponent<RectTransform>().sizeDelta = new Vector2(_sceneObjects.GameUI.PlayerView.Crosshair.TopCrossHair.GetComponent<RectTransform>().sizeDelta.x, 100);
+                    _sceneObjects.GameUI.PlayerView.Crosshair.BottomCrossHair.GetComponent<RectTransform>().sizeDelta = new Vector2(_sceneObjects.GameUI.PlayerView.Crosshair.BottomCrossHair.GetComponent<RectTransform>().sizeDelta.x, 100);
+                    _sceneObjects.GameUI.PlayerView.Crosshair.LeftCrossHair.GetComponent<RectTransform>().sizeDelta = new Vector2(_sceneObjects.GameUI.PlayerView.Crosshair.LeftCrossHair.GetComponent<RectTransform>().sizeDelta.x, 100);
+                    _sceneObjects.GameUI.PlayerView.Crosshair.RightCrossHair.GetComponent<RectTransform>().sizeDelta = new Vector2(_sceneObjects.GameUI.PlayerView.Crosshair.RightCrossHair.GetComponent<RectTransform>().sizeDelta.x, 100);
+                }
                 _sceneObjects.GameUI.PlayerView.Crosshair.TopCrossHair.transform.localPosition = new Vector3(0, _saveDispersion * 20);
                 _sceneObjects.GameUI.PlayerView.Crosshair.BottomCrossHair.transform.localPosition = new Vector3(0, -_saveDispersion * 20);
                 _sceneObjects.GameUI.PlayerView.Crosshair.LeftCrossHair.transform.localPosition = new Vector3(_saveDispersion * 20, 0);
@@ -602,14 +607,14 @@ namespace ProjectEpsilon {
 		}
 
         public void EnterADS() {
-            checkAim = true;
+            GetComponentInParent<Player>().IsAiming = true;
             Animator.SetTrigger("enterADS");
 			GetComponentInParent<Player>().ZoomIn();
             Animator.ResetTrigger("exitADS");
         }
 
         public void ExitADS() {
-            checkAim = false;
+            GetComponentInParent<Player>().IsAiming = false;
             Animator.SetTrigger("exitADS");
 			GetComponentInParent<Player>().ZoomOut();
         }

@@ -94,10 +94,10 @@ namespace ProjectEpsilon {
                 PrimaryName.color = color;
 
                 color = SidearmIcon.color;
-                color.a = 0.2f;
+                color.a = 0.1f;
                 SidearmIcon.color = color;
                 color = SidearmName.color;
-                color.a = 0.2f;
+                color.a = 0.1f;
                 SidearmName.color = color;
             }
             if (weaponsScript.currentWeapon == weaponsScript.currentSidearm) {
@@ -109,10 +109,10 @@ namespace ProjectEpsilon {
                 SidearmName.color = color;
 
                 color = PrimaryIcon.color;
-                color.a = 0.2f;
+                color.a = 0.1f;
                 PrimaryIcon.color = color;
                 color = PrimaryName.color;
-                color.a = 0.2f;
+                color.a = 0.1f;
                 PrimaryName.color = color;
             }
 
@@ -137,9 +137,9 @@ namespace ProjectEpsilon {
             }
 
 
-            SetAmmoTransparency(0.2f, Ammo45ACP);
-            SetAmmoTransparency(0.2f, Ammo7_62mm);
-            SetAmmoTransparency(0.2f, Ammo12Gauge);
+            SetAmmoTransparency(0.1f, Ammo45ACP);
+            SetAmmoTransparency(0.1f, Ammo7_62mm);
+            SetAmmoTransparency(0.1f, Ammo12Gauge);
 
             switch (weaponsScript.currentWeapon) {
                 case EWeaponName.M1911:
@@ -198,7 +198,7 @@ namespace ProjectEpsilon {
                         WeaponExplainText.text = "가장 기본적인 권총입니다. 위력, 탄창 모두 평균입니다.";
                         WeaponGunExplain.text = "<mark>특성:보조무기</mark>\r\n들고 있을때 요원 속도가 <color=green>소폭 증가</color>합니다.\r\n무기 교체 시간이 <color=green>소폭 감소</color>합니다.\r\n거리별 위력 감소가 <color=red>증가</color>합니다.\r\n거리별 위력 길이가 <color=red>감소</color>합니다.";
                         WeaponAmmo.text = ".45 ACP\r\n총 12발";
-                        WeaponDamage.text = "36";
+                        WeaponDamage.text = "35";
                         WeaponDispersion.text = "4";
                         WeaponFirerate.text = "450";
                         WeaponReloadTime.text = "1.4초";
@@ -234,7 +234,7 @@ namespace ProjectEpsilon {
                         WeaponExplainText.text = "중거리까지 든든히 교전할 수 있는 펌프 액션 산탄총입니다.";
                         WeaponGunExplain.text = "<mark>특성:주무기</mark>\r\n들고 있을때 요원 속도가 <color=red>소폭 감소</color>합니다.\r\n무기 교체 시간이 <color=red>소폭 증가</color>합니다.\r\n거리별 위력 감소가 <color=green>감소</color>합니다.\r\n거리별 위력 길이가 <color=green>증가</color>합니다.";
                         WeaponAmmo.text = "12게이지\r\n총 7발";
-                        WeaponDamage.text = "25";
+                        WeaponDamage.text = "20";
                         WeaponDispersion.text = "6";
                         WeaponFirerate.text = "75";
                         WeaponReloadTime.text = "발당 0.2초";

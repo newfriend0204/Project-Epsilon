@@ -1052,6 +1052,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 65
   MaxHitDistance: 100
+  ShotgunCrossHair: {fileID: 21300000, guid: 23799ce459cdc04419d8fd66dea5e479, type: 3}
+  CorssHair: {fileID: 21300000, guid: fd8919039a77b994e833d75425e6f53a, type: 3}
   MaxClipAmmo: 20
   StartAmmo: 20
   ReloadTime: 1.8
@@ -3252,6 +3254,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   MaxHitDistance: 999999
+  ShotgunCrossHair: {fileID: 21300000, guid: 23799ce459cdc04419d8fd66dea5e479, type: 3}
+  CorssHair: {fileID: 21300000, guid: fd8919039a77b994e833d75425e6f53a, type: 3}
   MaxClipAmmo: 9999
   StartAmmo: 9999
   ReloadTime: 9999
@@ -4529,6 +4533,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 65
   MaxHitDistance: 100
+  ShotgunCrossHair: {fileID: 21300000, guid: 23799ce459cdc04419d8fd66dea5e479, type: 3}
+  CorssHair: {fileID: 21300000, guid: fd8919039a77b994e833d75425e6f53a, type: 3}
   MaxClipAmmo: 12
   StartAmmo: 12
   ReloadTime: 1.4
@@ -5315,6 +5321,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 65
   MaxHitDistance: 100
+  ShotgunCrossHair: {fileID: 21300000, guid: 23799ce459cdc04419d8fd66dea5e479, type: 3}
+  CorssHair: {fileID: 21300000, guid: fd8919039a77b994e833d75425e6f53a, type: 3}
   MaxClipAmmo: 16
   StartAmmo: 16
   ReloadTime: 2.2
@@ -6759,6 +6767,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 65
   MaxHitDistance: 100
+  ShotgunCrossHair: {fileID: 21300000, guid: 23799ce459cdc04419d8fd66dea5e479, type: 3}
+  CorssHair: {fileID: 21300000, guid: fd8919039a77b994e833d75425e6f53a, type: 3}
   MaxClipAmmo: 30
   StartAmmo: 30
   ReloadTime: 2
@@ -13240,12 +13250,14 @@ MonoBehaviour:
   IsAutomatic: 0
   Damage: 15
   FireRate: 75
-  ProjectilesPerShot: 8
+  ProjectilesPerShot: 7
   Dispersion: 8
   HitMask:
     serializedVersion: 2
     m_Bits: 65
   MaxHitDistance: 100
+  ShotgunCrossHair: {fileID: 21300000, guid: 23799ce459cdc04419d8fd66dea5e479, type: 3}
+  CorssHair: {fileID: 21300000, guid: fd8919039a77b994e833d75425e6f53a, type: 3}
   MaxClipAmmo: 3
   StartAmmo: 3
   ReloadTime: 0.2
@@ -15848,7 +15860,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: -973724649278464913, guid: bfbc8b07bd216478eb5fca35a6fe51e2, type: 2}
   m_audioClip: {fileID: 8300000, guid: 46343a805c19e7445a5dbe87397e451c, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.3
+  m_Volume: 0.15
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -16370,14 +16382,16 @@ MonoBehaviour:
   Type: 2
   WeaponName: 3
   IsAutomatic: 0
-  Damage: 25
+  Damage: 20
   FireRate: 75
-  ProjectilesPerShot: 10
+  ProjectilesPerShot: 8
   Dispersion: 6
   HitMask:
     serializedVersion: 2
     m_Bits: 65
   MaxHitDistance: 100
+  ShotgunCrossHair: {fileID: 21300000, guid: 23799ce459cdc04419d8fd66dea5e479, type: 3}
+  CorssHair: {fileID: 21300000, guid: fd8919039a77b994e833d75425e6f53a, type: 3}
   MaxClipAmmo: 7
   StartAmmo: 7
   ReloadTime: 0.2

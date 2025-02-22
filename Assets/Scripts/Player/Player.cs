@@ -4,6 +4,7 @@ using Fusion.Addons.SimpleKCC;
 using Cinemachine;
 using System.Collections;
 using TMPro;
+using System.Collections.Generic;
 
 namespace ProjectEpsilon {
     [DefaultExecutionOrder(-5)]
@@ -66,6 +67,9 @@ namespace ProjectEpsilon {
 
         private bool isPressedSneak = false;
         private bool isPressedRun = false;
+        private bool isPressedAim = false;
+        private Player player;
+        private List<GameObject> objectsToOutline = new List<GameObject>();
 
         [Networked]
         internal int ammo45ACP { get; set; }
@@ -125,6 +129,7 @@ namespace ProjectEpsilon {
                     }
                 }
             }
+            player = FindObjectOfType<Player>();
 
             MoveSpeed = 5f;
             _saveOriginalSpeed = MoveSpeed;
@@ -214,32 +219,33 @@ namespace ProjectEpsilon {
                 IsSneaking = false;
             }
 
-            if (IsSearching && HasInputAuthority) {
-                Player player = FindObjectOfType<Player>();
-                foreach (GameObject obj in GameObject.FindObjectsOfType<GameObject>()) {
-                    if (obj != player.gameObject) {
-                        Transform thirdPersonTransform = obj.transform.Find("ThirdPersonRoot");
-                        if (thirdPersonTransform != null) {
-                            Outline outline = thirdPersonTransform.GetComponent<Outline>();
-                            float distance = Vector3.Distance(player.transform.position, thirdPersonTransform.position);
-                            if (distance >= 20f) {
-                                outline.enabled = true;
-                            } else {
-                                outline.enabled = false;
-                            }
-                        }
+            if (player == null) {
+                player = FindObjectOfType<Player>();
+                if (player == null)
+                    return;
+            }
+
+            objectsToOutline.Clear();
+
+            foreach (GameObject obj in GameObject.FindObjectsOfType<GameObject>()) {
+                if (obj != player.gameObject) {
+                    Transform thirdPersonTransform = obj.transform.Find("ThirdPersonRoot");
+                    if (thirdPersonTransform != null) {
+                        objectsToOutline.Add(thirdPersonTransform.gameObject);
                     }
                 }
+            }
+
+            if (IsSearching && HasInputAuthority) {
+                foreach (GameObject obj in objectsToOutline) {
+                    Outline outline = obj.GetComponent<Outline>();
+                    float distance = Vector3.Distance(player.transform.position, obj.transform.position);
+                    outline.enabled = distance >= 20f;
+                }
             } else {
-                Player player = FindObjectOfType<Player>();
-                foreach (GameObject obj in GameObject.FindObjectsOfType<GameObject>()) {
-                    if (obj != player.gameObject) {
-                        Transform thirdPersonTransform = obj.transform.Find("ThirdPersonRoot");
-                        if (thirdPersonTransform != null) {
-                            Outline outline = thirdPersonTransform.GetComponent<Outline>();
-                            outline.enabled = false;
-                        }
-                    }
+                foreach (GameObject obj in objectsToOutline) {
+                    Outline outline = obj.GetComponent<Outline>();
+                    outline.enabled = false;
                 }
             }
         }
@@ -298,7 +304,7 @@ namespace ProjectEpsilon {
                 MoveSpeed -= _saveOriginalSpeed / 10 * 4f;
             }
             if (IsRunning) {
-                MoveSpeed += _saveOriginalSpeed / 10 * 5f;
+                MoveSpeed += _saveOriginalSpeed / 10 * 4f;
             }
             if (GetComponent<Weapons>().currentWeapon == GetComponent<Weapons>().currentSidearm) {
                 MoveSpeed += _saveOriginalSpeed / 10 * 0.5f;
@@ -328,11 +334,11 @@ namespace ProjectEpsilon {
             }
 
             if (input.Buttons.IsSet(EInputButton.Run) && !IsAiming) {
-                if (IsCrouching) {
-                    IsCrouching = false;
-                    StartCoroutine(MoveCamera(crounchPosition));
-                }
                 if (!isPressedRun) {
+                    if (IsCrouching) {
+                        IsCrouching = false;
+                        StartCoroutine(MoveCamera(crounchPosition));
+                    }
                     isPressedRun = true;
                     IsRunning = true;
                 }
@@ -348,11 +354,16 @@ namespace ProjectEpsilon {
                 }
             }
 
-            if (input.Buttons.IsSet(EInputButton.Aim) && HasInputAuthority && Weapons.CurrentWeapon.allAmmo > 0 && Weapons.CurrentWeapon.Type != EWeaponType.Search) {
-                if (Weapons.CurrentWeapon.ClipAmmo > 0)
-                    IsAiming = true;
+            if (input.Buttons.IsSet(EInputButton.Aim) && Weapons.CurrentWeapon.Type != EWeaponType.Search && Weapons.CurrentWeapon.ClipAmmo > 0) {
+                if (!isPressedAim) {
+                    isPressedAim = true;
+                    Weapons.CurrentWeapon.EnterADS();
+                }
             } else {
-                IsAiming = false;
+                if (isPressedAim) {
+                    isPressedAim = false;
+                    Weapons.CurrentWeapon.ExitADS();
+                }
             }
 
             if (input.Buttons.IsSet(EInputButton.Fire) && !GetComponent<Weapons>().IsSwitching) {
@@ -365,6 +376,7 @@ namespace ProjectEpsilon {
 
             if (input.Buttons.WasPressed(_previousButtons, EInputButton.Crouch)) {
                 if (!IsCrouching) {
+                    IsRunning = false;
                     IsCrouching = true;
                     StartCoroutine(MoveCamera(originalPosition));
                 } else {
@@ -454,7 +466,8 @@ namespace ProjectEpsilon {
             } else {
                 acceleration = KCC.IsGrounded == true ? GroundAcceleration : AirAcceleration;
                 if (isPressedRun) {
-                    IsRunning = true;
+                    if (!IsCrouching)
+                        IsRunning = true;
                 }
                 if (isPressedSneak) {
                     IsSneaking = true;
@@ -494,14 +507,17 @@ namespace ProjectEpsilon {
             StartCoroutine(ChangeFOV(60, 0.07f));
         }
 
-        IEnumerator ChangeFOV(float endFOV, float duration) {
+        private IEnumerator ChangeFOV(float endFOV, float duration) {
             float startFOV = cam.m_Lens.FieldOfView;
             float time = 0;
+
             while (time < duration) {
                 cam.m_Lens.FieldOfView = Mathf.Lerp(startFOV, endFOV, time / duration);
                 yield return null;
                 time += Time.deltaTime;
             }
+
+            cam.m_Lens.FieldOfView = endFOV;
         }
 
         public IEnumerator MoveCamera(Vector3 targetPosition) {
