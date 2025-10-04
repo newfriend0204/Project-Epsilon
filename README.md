@@ -7,6 +7,11 @@ Photon Engine을 활용하여 **멀티플레이** 기능을 구현했으며, 친
 
 ---
 
+## 시현 영상
+**[YouTube로 보기](https://www.youtube.com/watch?v=YmGyOinU4HU)**
+
+---
+
 ## 주요 특징
 - **멀티플레이 지원**  
   Photon Engine을 이용해 전 세계 플레이어와 실시간 대전 가능
